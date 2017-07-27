@@ -9,4 +9,5 @@ Athena is a visual AI programming environment.
 - Parameterise machine learning modules
 - Train machine learning modules and test it directly
 - Generates learning code
+- Support your preferred AI libraries - Tensorflow, Torch, Theano
 
