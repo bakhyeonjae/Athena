@@ -38,6 +38,11 @@ class TesterBox(CommonModuleBox):
         CommonModuleBox.__init__(self, parent)
         self.setText('CNN Tester')
 
+class OptimizerBox(CommonModuleBox):
+    def __init__(self, parent=None):
+        CommonModuleBox.__init__(self, parent)
+        self.setText('CNN Optimizer')
+
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -54,8 +59,11 @@ class MainWindow(QWidget):
         self.tester = TesterBox(self)
         self.tester.move(100, 350)
 
+        self.optimizer = OptimizerBox(self)
+        self.optimizer.move(100, 500)
+
         self.setWindowTitle('Click or Move')
-        self.setGeometry(300, 300, 280, 550)
+        self.setGeometry(300, 300, 280, 700)
 
     def dragEnterEvent(self, e):
         e.accept()
