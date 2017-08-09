@@ -1,15 +1,18 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
 import sys
+import trainerbox
 
 class CommonModuleBox(QLabel):
+    popupActions = [];  # list of dictionary, Key :"title","desc","method"
+
     def __init__(self, parent=None):
         QLabel.__init__(self, parent)
         self.setStyleSheet("QLabel { background-color : white; color : black; border: 20px solid white}")
 
     def mouseReleaseEvent(self, event):
-        #print 'Label clicked!'
-        pass
+        self.createPopupActions()
+        self.createPopupMenu()
 
     def mouseMoveEvent(self, e):
         if e.buttons() != Qt.LeftButton:
@@ -22,11 +25,27 @@ class CommonModuleBox(QLabel):
         drag.setHotSpot(e.pos() - self.rect().topLeft())
         dropAction = drag.start(Qt.MoveAction)
 
+    def createPopupActions(self):
+        menu_list = []
+        setPopupActionList(menu_list)
 
-class TrainerBox(CommonModuleBox):
-    def __init__(self, parent=None):
-        CommonModuleBox.__init__(self, parent)
-        self.setText('CNN Trainer')
+    def createPopupMenu(self):
+        """ This method creates popup menu and display on screen. Menu items will be given by child classes. Child classes must override createPopupActions to set menu items.
+        """
+        menu = QMenu()
+
+        for action in self.popupActions:
+            act = QAction(action["title"], self)
+            act.setStatusTip(action["desc"])
+            act.triggered.connect(action["method"])
+            menu.addAction(act)
+
+        menu.exec_(QCursor.pos())
+
+    def setPopupActionList(self,menuList):
+        for menu in menuList:
+            if menu not in self.popupActions:
+                self.popupActions.append(menu) 
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None):
@@ -50,7 +69,7 @@ class MainWindow(QWidget):
 
     def initUI(self):
         self.setAcceptDrops(True)
-        self.trainer= TrainerBox(self)
+        self.trainer= trainerbox.TrainerBox(self)
         self.trainer.move(100, 50)
 
         self.model= ModelBox(self)
