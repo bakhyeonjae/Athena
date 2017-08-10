@@ -12,3 +12,6 @@ Athena is a visual AI programming environment.
 - Generates learning code
 - Support your preferred AI libraries - Tensorflow, Torch, Theano
 
+## Task Management
+
+https://tree.taiga.io/project/hjbak-athena
