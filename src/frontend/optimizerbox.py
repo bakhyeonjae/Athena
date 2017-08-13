@@ -13,7 +13,8 @@ class OptimizerBox(athena.CommonModuleBox):
     popupActions = [];  # list of dictionary, Key :"title","desc","method"
 
     def __init__(self, parent=None):
-        athena.CommonModuleBox.__init__(self, parent)
+        # athena.CommonModuleBox.__init__(self, parent)
+        super(OptimizerBox, self).__init__(parent)
         self.setText('CNN Optimizer')
 
     def createPopupActions(self):
