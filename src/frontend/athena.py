@@ -1,7 +1,6 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
 import sys
-import trainerbox
 
 class CommonModuleBox(QLabel):
     popupActions = [];  # list of dictionary, Key :"title","desc","method"
@@ -57,10 +56,8 @@ class TesterBox(CommonModuleBox):
         CommonModuleBox.__init__(self, parent)
         self.setText('CNN Tester')
 
-class OptimizerBox(CommonModuleBox):
-    def __init__(self, parent=None):
-        CommonModuleBox.__init__(self, parent)
-        self.setText('CNN Optimizer')
+import trainerbox
+import optimizerbox
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -78,7 +75,7 @@ class MainWindow(QWidget):
         self.tester = TesterBox(self)
         self.tester.move(100, 350)
 
-        self.optimizer = OptimizerBox(self)
+        self.optimizer = optimizerbox.OptimizerBox(self)
         self.optimizer.move(100, 500)
 
         self.setWindowTitle('Click or Move')
