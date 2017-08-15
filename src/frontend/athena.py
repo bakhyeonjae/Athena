@@ -1,7 +1,8 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
 import sys
-import trainerbox
+#import trainerbox
+import trainerboxcnn
 
 class CommonModuleBox(QLabel):
     popupActions = [];  # list of dictionary, Key :"title","desc","method"
@@ -69,7 +70,7 @@ class MainWindow(QWidget):
 
     def initUI(self):
         self.setAcceptDrops(True)
-        self.trainer= trainerbox.TrainerBox(self)
+        self.trainer= trainerboxcnn.TrainerBoxCNN(self)
         self.trainer.move(100, 50)
 
         self.model= ModelBox(self)

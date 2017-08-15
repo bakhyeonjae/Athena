@@ -12,7 +12,6 @@ class TrainerBox(athena.CommonModuleBox):
     """
     def __init__(self, parent=None):
         athena.CommonModuleBox.__init__(self, parent)
-        self.setText('CNN Trainer')
 
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
@@ -23,11 +22,11 @@ class TrainerBox(athena.CommonModuleBox):
         self.setPopupActionList(menus)
 
     def export(self):
-        print("Export!")
+        pass
 
     def train(self):
-        print("Train begin!")
+        pass
 
     def config(self):
-        print("Config!")
+        pass
 
