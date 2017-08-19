@@ -6,6 +6,7 @@ import trainerboxcnn
 
 class CommonModuleBox(QLabel):
     popupActions = [];  # list of dictionary, Key :"title","desc","method"
+    tempValue = 0x0;
 
     def __init__(self, parent=None):
         QLabel.__init__(self, parent)
