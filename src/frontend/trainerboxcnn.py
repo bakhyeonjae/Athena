@@ -13,6 +13,8 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
 from controltower import cnn
+from controltower import cnnkeras
+
 import trainerbox
 
 class TrainerBoxCNN(trainerbox.TrainerBox):
@@ -27,6 +29,12 @@ class TrainerBoxCNN(trainerbox.TrainerBox):
 
     def train(self):
         print("Train begin!")
+        menus = [{"title":"MNIST MLP on Keras", "desc":"Train MNIST MLP on Keras", "method": cnnkeras.train_mnist_mlp_on_keras},
+                 {"title":"MNIST CNN on Keras", "desc":"Train MNIST CNN on Keras", "method": cnnkeras.train_mnist_cnn_on_keras}]
+        self.setPopupActionList(menus)
+
+        # cnnkeras.train_mnist_cnn_on_keras()
+        # cnnkeras.train_mnist_mlp_on_keras()
 
     def config(self):
         print("Config!")
