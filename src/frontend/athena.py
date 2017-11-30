@@ -95,7 +95,10 @@ class MainWindow(QWidget):
         e.accept()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    # check if QApplication already exists
+    app = QApplication.instance()
+    if not app:     # create QApplication if it doesnt exist
+        app = QApplication(sys.argv)
     mywin = MainWindow()
     mywin.show()
     sys.exit(app.exec_())
