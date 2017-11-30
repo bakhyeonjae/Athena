@@ -48,6 +48,18 @@ class CommonModuleBox(QLabel):
             if menu not in self.popupActions:
                 self.popupActions.append(menu) 
 
+    def checkPosition(self,pos):
+        if pos.x() < self.pos().x():
+            return False
+        if pos.x() > self.pos().x() + self.width():
+            return False
+        if pos.y() < self.pos().y():
+            return False
+        if pos.y() > self.pos().y() + self.height():
+            return False
+
+        return True
+
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None):
         CommonModuleBox.__init__(self, parent)
@@ -64,33 +76,50 @@ class OptimizerBox(CommonModuleBox):
         self.setText('CNN Optimizer')
 
 class MainWindow(QWidget):
+    listBox = []
+    selectedBox = None
+    compensated_pos = 0
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
 
     def initUI(self):
         self.setAcceptDrops(True)
-        self.trainer= trainerboxcnn.TrainerBoxCNN(self)
-        self.trainer.move(100, 50)
 
-        self.model= ModelBox(self)
-        self.model.move(100, 200)
+        trainer= trainerboxcnn.TrainerBoxCNN(self)
+        trainer.move(100, 50)
+        self.listBox.append(trainer)
 
-        self.tester = TesterBox(self)
-        self.tester.move(100, 350)
+        model= ModelBox(self)
+        model.move(100, 200)
+        self.listBox.append(model)
 
-        self.optimizer = OptimizerBox(self)
-        self.optimizer.move(100, 500)
+        tester = TesterBox(self)
+        tester.move(100, 350)
+        self.listBox.append(tester)
+
+        optimizer = OptimizerBox(self)
+        optimizer.move(100, 500)
+        self.listBox.append(optimizer)
 
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 280, 700)
 
     def dragEnterEvent(self, e):
+        for box in self.listBox:
+            if box.checkPosition(e.pos()):
+                self.selectedBox = box
+        self.compensated_pos = e.pos() - self.selectedBox.pos()
+        e.accept()
+
+    def dragMoveEvent(self, e):
+        position = e.pos()
+        self.selectedBox.move(position - self.compensated_pos)
         e.accept()
 
     def dropEvent(self, e):
-        position = e.pos()
-        self.button.move(position)
+        self.selectedBox = None
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
