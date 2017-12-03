@@ -22,7 +22,7 @@ class TrainerBoxCNN(trainerbox.TrainerBox):
     """
     def __init__(self, parent=None):
         trainerbox.TrainerBox.__init__(self,parent)
-        self.setText('CNN Trainer')
+        #self.setText('CNN Trainer')
 
     def export(self):
         print("Export!")

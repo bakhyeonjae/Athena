@@ -3,13 +3,45 @@ from PySide.QtCore import *
 import sys
 #import trainerbox
 import trainerboxcnn
+import Port
 
-class CommonModuleBox(QLabel):
-    popupActions = [];  # list of dictionary, Key :"title","desc","method"
+#class CommonModuleBox(QLabel):
+class CommonModuleBox(QFrame):
+    popupActions = []  # list of dictionary, Key :"title","desc","method"
+    inPorts = []
+    outPorts = []
 
-    def __init__(self, parent=None):
-        QLabel.__init__(self, parent)
-        self.setStyleSheet("QLabel { background-color : white; color : black; border: 20px solid white}")
+    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
+        QFrame.__init__(self, parent)
+        self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
+        self.setContentsMargins(1,1,1,1)
+        layout = QVBoxLayout()
+        inputLayout = QHBoxLayout()
+        inputLayout.addStretch()
+        for pin in inputPort:
+            new_port = Port.PortIn(self)
+            self.inPorts.append(new_port)
+            inputLayout.addWidget(new_port)
+            inputLayout.addStretch()
+
+        bodyLayout = QHBoxLayout()
+        bodyLayout.addWidget(QLabel(instName))
+        
+        outputLayout = QHBoxLayout()
+        outputLayout.addStretch()
+        for pout in outputPort:
+            new_port = Port.PortOut(self)
+            self.outPorts.append(new_port)
+            outputLayout.addWidget(new_port)
+            outputLayout.addStretch()
+
+        layout.addLayout(outputLayout)
+        layout.addWidget(QLabel(instName))
+        layout.addWidget(QLabel('(%s)' % typeName))
+        layout.addLayout(inputLayout)
+        
+        self.setLayout(layout)
+        self.show()
 
     def mouseReleaseEvent(self, event):
         self.createPopupActions()
@@ -60,25 +92,36 @@ class CommonModuleBox(QLabel):
 
         return True
 
+    def isConnecting(self,pos):
+        for port in self.outPorts:
+            if port.checkPosition(pos-self.pos()):
+                return port
+        return None
+
+    def isArrived(self,pos):
+        for port in self.inPorts:
+            if port.checkPosition(pos-self.pos()):
+                return port
+        return None
+
 class ModelBox(CommonModuleBox):
-    def __init__(self, parent=None):
-        CommonModuleBox.__init__(self, parent)
-        self.setText('CNN Model')
+    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
+        CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
 
 class TesterBox(CommonModuleBox):
-    def __init__(self, parent=None):
-        CommonModuleBox.__init__(self, parent)
-        self.setText('CNN Tester')
+    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
+        CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
 
 class OptimizerBox(CommonModuleBox):
-    def __init__(self, parent=None):
-        CommonModuleBox.__init__(self, parent)
-        self.setText('CNN Optimizer')
+    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
+        CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
 
-class MainWindow(QWidget):
+class MainWindow(QFrame):
     listBox = []
     selectedBox = None
     compensated_pos = 0
+    isConnecting = False
+    beginningPort = None
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -87,39 +130,77 @@ class MainWindow(QWidget):
     def initUI(self):
         self.setAcceptDrops(True)
 
-        trainer= trainerboxcnn.TrainerBoxCNN(self)
+        trainer= ModelBox(self,[1],[],'Dimension Reducer','Visualiser.tSNE')
         trainer.move(100, 50)
         self.listBox.append(trainer)
 
-        model= ModelBox(self)
+        model= ModelBox(self,[1,2],[1,1,1],'Test Module','NN.CNN')
         model.move(100, 200)
         self.listBox.append(model)
 
-        tester = TesterBox(self)
+        tester = TesterBox(self,[1],[1],'MNIST loader','Generator.ImageLoader')
         tester.move(100, 350)
         self.listBox.append(tester)
 
-        optimizer = OptimizerBox(self)
+        optimizer = OptimizerBox(self,[1],[1],'Data generator','Generator.Random')
         optimizer.move(100, 500)
         self.listBox.append(optimizer)
 
+
         self.setWindowTitle('Click or Move')
-        self.setGeometry(300, 300, 280, 700)
+        self.setGeometry(300, 300, 580, 700)
+
 
     def dragEnterEvent(self, e):
         for box in self.listBox:
             if box.checkPosition(e.pos()):
                 self.selectedBox = box
-        self.compensated_pos = e.pos() - self.selectedBox.pos()
+
+        if self.selectedBox:
+            port = self.selectedBox.isConnecting(e.pos())
+            if port:
+                self.isConnecting = True
+                self.beginningPort = port
+                self.beginningPort.createConnectionLine()
+            else:
+                print("BOX IS SELECTED")
+                self.compensated_pos = e.pos() - self.selectedBox.pos()
+
         e.accept()
 
+    def paintEvent(self, eventQPaintEvent):
+        qp = QPainter()
+        qp.begin(self)
+        print("Paint event is invoked")
+        qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())
+        qp.end()
+
     def dragMoveEvent(self, e):
-        position = e.pos()
-        self.selectedBox.move(position - self.compensated_pos)
+        if self.isConnecting:
+            self.beginningPort.updateDstPosition(e.pos())
+            self.update()
+        else:
+            position = e.pos()
+            self.selectedBox.move(position - self.compensated_pos)
+
         e.accept()
 
     def dropEvent(self, e):
+        if self.isConnecting:
+            currBox = None
+            for box in self.listBox:
+                if box.checkPosition(e.pos()):
+                    currBox = box
+
+            if currBox and currBox.isArrived(e.pos()) and currBox != self.selectedBox:
+                pass
+            else:
+                self.beginningPort.deleteConnectionLine()
+                self.isConnecting = False
+            
         self.selectedBox = None
+        self.update()
+
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
