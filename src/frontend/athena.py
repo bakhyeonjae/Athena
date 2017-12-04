@@ -163,7 +163,6 @@ class MainWindow(QFrame):
                 self.beginningPort = port
                 self.beginningPort.createConnectionLine()
             else:
-                print("BOX IS SELECTED")
                 self.compensated_pos = e.pos() - self.selectedBox.pos()
 
         e.accept()
@@ -171,7 +170,7 @@ class MainWindow(QFrame):
     def paintEvent(self, eventQPaintEvent):
         qp = QPainter()
         qp.begin(self)
-        print("Paint event is invoked")
+        qp.setRenderHints(QPainter.Antialiasing, True)
         qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())
         qp.end()
 
