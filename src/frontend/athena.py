@@ -146,10 +146,8 @@ class MainWindow(QFrame):
         optimizer.move(100, 500)
         self.listBox.append(optimizer)
 
-
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
-
 
     def dragEnterEvent(self, e):
         for box in self.listBox:
@@ -190,8 +188,8 @@ class MainWindow(QFrame):
             for box in self.listBox:
                 if box.checkPosition(e.pos()):
                     currBox = box
-
-            if currBox and currBox.isArrived(e.pos()) and currBox != self.selectedBox:
+            port = currBox.isArrived(e.pos())
+            if currBox and port and currBox != self.selectedBox:
                 pass
             else:
                 self.beginningPort.deleteConnectionLine()

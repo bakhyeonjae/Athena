@@ -41,6 +41,7 @@ class Connection(object):
 
 class PortIn(Port):
     connection = None
+    dataType = None
 
     def __init__(self, parent):
         Port.__init__(self,parent)
@@ -62,6 +63,7 @@ class PortOut(Port):
     data = None
     connection = None
     parent = None
+    dataType = None
 
     def __init__(self,parent):
         Port.__init__(self,parent)
@@ -73,7 +75,7 @@ class PortOut(Port):
 
     def createConnectionLine(self):
         self.connection = Connection()
-        self.connection.setSrcCoord(self.pos() + self.parent.pos())
+        self.connection.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
     def updateDstPosition(self, pos):
         self.connection.setDstCoord(pos)
@@ -83,4 +85,10 @@ class PortOut(Port):
 
     def deleteConnectionLine(self):
         self.connection = None
+
+    def checkPortMatch(self,portIn):
+        if self.dataType == portIn.dataType:
+            return True
+        else:
+            return False
 
