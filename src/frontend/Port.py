@@ -40,11 +40,12 @@ class Connection(object):
         return self.coordDst
 
 class PortIn(Port):
-    connection = None
-    dataType = None
+    connectedTo = None
+    parent = None
 
     def __init__(self, parent):
         Port.__init__(self,parent)
+        self.parent = parent
         self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
 
     def mouseMoveEvent(self, e):
@@ -58,12 +59,20 @@ class PortIn(Port):
         drag.setHotSpot(e.pos() - self.rect().topLeft())
         dropAction = drag.start(Qt.MoveAction)
 
+    def connectPort(self,portOut):
+        self.connectedTo = portOut
+
+    def getConnection(self):
+        if self.connectedTo:
+            return self.connectedTo.getConnection()
+        else:
+            return None
     
 class PortOut(Port):
     data = None
     connection = None
+    connectedTo = None
     parent = None
-    dataType = None
 
     def __init__(self,parent):
         Port.__init__(self,parent)
@@ -91,4 +100,17 @@ class PortOut(Port):
             return True
         else:
             return False
+
+    def isConnected(self):
+        if self.connectedTo:
+            return True
+        else:
+            return False
+            
+    def connectPort(self,portIn):
+        self.connectedTo = portIn
+        portIn.connectPort(self)
+
+    def disconnectPort(self):
+        self.connectedTo = None
 

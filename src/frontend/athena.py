@@ -104,6 +104,17 @@ class CommonModuleBox(QFrame):
                 return port
         return None
 
+    def updatePortPos(self):
+        for port in self.outPorts:
+            print(port)
+            if port.getConnection():
+                port.getConnection().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
+
+        print("****")
+        #for inport in self.inPorts:
+        #    if inport.getConnection():
+        #        inport.getConnection().setDstCoord(inport.parent.pos())# + QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()/2) + inport.parent.pos())
+
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
         CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
@@ -149,6 +160,20 @@ class MainWindow(QFrame):
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
 
+    def paintEvent(self, eventQPaintEvent):
+        qp = QPainter()
+        qp.begin(self)
+        qp.setRenderHints(QPainter.Antialiasing, True)
+        if self.isConnecting:
+            qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())
+
+        # Scan all the output ports to draw connected lines.
+        for box in self.listBox:
+            for port in box.outPorts:
+                if port.isConnected():
+                    qp.drawLine(port.getConnection().getSrcCoord(),port.getConnection().getDstCoord())
+        qp.end()
+
     def dragEnterEvent(self, e):
         for box in self.listBox:
             if box.checkPosition(e.pos()):
@@ -165,35 +190,33 @@ class MainWindow(QFrame):
 
         e.accept()
 
-    def paintEvent(self, eventQPaintEvent):
-        qp = QPainter()
-        qp.begin(self)
-        qp.setRenderHints(QPainter.Antialiasing, True)
-        qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())
-        qp.end()
-
     def dragMoveEvent(self, e):
         if self.isConnecting:
             self.beginningPort.updateDstPosition(e.pos())
-            self.update()
         else:
             position = e.pos()
             self.selectedBox.move(position - self.compensated_pos)
+            self.selectedBox.updatePortPos()
 
+        self.update()
         e.accept()
 
     def dropEvent(self, e):
         if self.isConnecting:
             currBox = None
+            port = None
             for box in self.listBox:
                 if box.checkPosition(e.pos()):
                     currBox = box
-            port = currBox.isArrived(e.pos())
-            if currBox and port and currBox != self.selectedBox:
-                pass
+
+            if currBox:
+                port = currBox.isArrived(e.pos())
+
+            if currBox and port and currBox != self.selectedBox and self.beginningPort.checkPortMatch(port):
+                self.beginningPort.connectPort(port)
             else:
                 self.beginningPort.deleteConnectionLine()
-                self.isConnecting = False
+            self.isConnecting = False
             
         self.selectedBox = None
         self.update()
