@@ -40,11 +40,10 @@ class Connection(object):
         return self.coordDst
 
 class PortIn(Port):
-    connectedTo = None
-    parent = None
-
+    
     def __init__(self, parent):
         Port.__init__(self,parent)
+        self.connectedTo = None
         self.parent = parent
         self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
 
@@ -62,6 +61,12 @@ class PortIn(Port):
     def connectPort(self,portOut):
         self.connectedTo = portOut
 
+    def isConnected(self):
+        if self.connectedTo:
+            return True
+        else:
+            return False
+
     def getConnection(self):
         if self.connectedTo:
             return self.connectedTo.getConnection()
@@ -69,13 +74,12 @@ class PortIn(Port):
             return None
     
 class PortOut(Port):
-    data = None
-    connection = None
-    connectedTo = None
-    parent = None
 
     def __init__(self,parent):
         Port.__init__(self,parent)
+        self.data = None
+        self.connection = None
+        self.connectedTo = None
         self.parent = parent
         self.setStyleSheet("QLabel {background-color:red; color:black; border:1px solid white}")
 

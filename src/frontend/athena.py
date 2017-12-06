@@ -7,12 +7,12 @@ import Port
 
 #class CommonModuleBox(QLabel):
 class CommonModuleBox(QFrame):
-    popupActions = []  # list of dictionary, Key :"title","desc","method"
-    inPorts = []
-    outPorts = []
-
+    
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
         QFrame.__init__(self, parent)
+        self.popupActions = []  # list of dictionary, Key :"title","desc","method"
+        self.inPorts = []
+        self.outPorts = []
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setContentsMargins(1,1,1,1)
         layout = QVBoxLayout()
@@ -106,26 +106,24 @@ class CommonModuleBox(QFrame):
 
     def updatePortPos(self):
         for port in self.outPorts:
-            print(port)
             if port.getConnection():
                 port.getConnection().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
 
-        print("****")
-        #for inport in self.inPorts:
-        #    if inport.getConnection():
-        #        inport.getConnection().setDstCoord(inport.parent.pos())# + QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()/2) + inport.parent.pos())
+        for inport in self.inPorts:
+            if inport.getConnection():
+                inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()/2) + inport.parent.pos())
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
-        CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
+        super().__init__(parent, inputPort, outputPort, instName, typeName)
 
 class TesterBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
-        CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
+        super().__init__(parent, inputPort, outputPort, instName, typeName)
 
 class OptimizerBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
-        CommonModuleBox.__init__(self, parent, inputPort, outputPort, instName, typeName)
+        super().__init__(parent, inputPort, outputPort, instName, typeName)
 
 class MainWindow(QFrame):
     listBox = []
