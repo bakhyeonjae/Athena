@@ -1,7 +1,6 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
 import sys
-#import trainerbox
 import trainerboxcnn
 from Box import CommonModuleBox
 
@@ -12,6 +11,7 @@ parentdir = os.path.dirname(parentdir)
 sys.path.insert(0,parentdir) 
 
 from boxes.builtin.visualisers.plotscatter import BoxPlotScatter
+from boxes.builtin.primitives.genrandom import BoxRandomGenerator
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
@@ -42,6 +42,10 @@ class MainWindow(QFrame):
         trainer= BoxPlotScatter.Box(self,[1],[],'Dimension Reducer')
         trainer.move(100, 50)
         self.listBox.append(trainer)
+
+        randomGenerator = BoxRandomGenerator.Box(self,[],[1],'random generator')
+        randomGenerator.move(200,50)
+        self.listBox.append(randomGenerator)
 
         model= ModelBox(self,[1,2],[1,1,1],'Test Module','NN.CNN')
         model.move(100, 200)

@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import os, sys, inspect
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -14,6 +13,9 @@ class Box(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = ''):
         self.typeName = type(self)
         super().__init__(parent, inputPort, outputPort, instName, self.typeName)
+
+        self.dim = [900,2]
+        self.randType = 'uniform'
 
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
@@ -34,11 +36,7 @@ class Box(CommonModuleBox):
         pass
 
     def execute(self):
-        for pin in self.inPorts:
-            data = pin.getData()
+        self.data = np.random.rand(self.dim[0],self.dim[1])
 
-        fig = plt.figure()
-        ax = fig.subplots()
-        ax.scatter(data[:,0],data[:,1])
-        plt.show()
-
+        for port in self.outPorts:
+            port.transferData(self.data)

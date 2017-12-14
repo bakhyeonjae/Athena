@@ -45,6 +45,7 @@ class PortIn(Port):
         Port.__init__(self,parent)
         self.connectedTo = None
         self.parent = parent
+        self.data = None
         self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
 
     def mouseMoveEvent(self, e):
@@ -72,6 +73,16 @@ class PortIn(Port):
             return self.connectedTo.getConnection()
         else:
             return None
+
+    def propagateExecution(self):
+        if self.connectedTo:
+            self.connectedTo.propagateExecution()
+
+    def passToBox(self,data):
+        self.data = data
+
+    def getData(self):
+        return self.data
     
 class PortOut(Port):
 
@@ -118,3 +129,10 @@ class PortOut(Port):
     def disconnectPort(self):
         self.connectedTo = None
 
+    def propagateExecution(self):
+        self.parent.run()
+
+    def transferData(self,data):
+        if self.connectedTo:
+            self.connectedTo.passToBox(data)
+            
