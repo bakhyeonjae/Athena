@@ -1,7 +1,8 @@
-from PySide.QtGui import *
-from PySide.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtWidgets import *
 import sys
-import trainerboxcnn
+#import trainerboxcnn
 from Box import CommonModuleBox
 
 import os,sys,inspect
