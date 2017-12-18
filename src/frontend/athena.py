@@ -4,6 +4,7 @@ from PySide2.QtWidgets import *
 import sys
 import math
 #import trainerboxcnn
+
 from Box import CommonModuleBox
 
 import os,sys,inspect
@@ -14,6 +15,7 @@ sys.path.insert(0,parentdir)
 
 from boxes.builtin.visualisers.plotscatter import BoxPlotScatter
 from boxes.builtin.primitives.genrandom import BoxRandomGenerator
+from boxes.builtin.learners.tmpmnist import BoxMNIST
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
@@ -46,21 +48,13 @@ class MainWindow(QFrame):
         self.listBox.append(trainer)
 
         randomGenerator = BoxRandomGenerator.Box(self,[],[1],'random generator')
-        randomGenerator.move(200,50)
+        randomGenerator.move(100,300)
         self.listBox.append(randomGenerator)
 
-        model= ModelBox(self,[1,2],[1,1,1],'Test Module','NN.CNN')
-        model.move(100, 200)
-        self.listBox.append(model)
-
-        tester = TesterBox(self,[1],[1],'MNIST loader','Generator.ImageLoader')
-        tester.move(100, 350)
-        self.listBox.append(tester)
-
-        optimizer = OptimizerBox(self,[1],[1],'Data generator','Generator.Random')
-        optimizer.move(100, 500)
-        self.listBox.append(optimizer)
-
+        mnist = BoxMNIST.Box(self,[1],[1],'MNIST')
+        mnist.move(100,500)
+        self.listBox.append(mnist)
+        
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
 
