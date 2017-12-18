@@ -70,21 +70,39 @@ class MainWindow(QFrame):
         qp.begin(self)
         qp.setPen(self.penStart)        
         qp.setRenderHints(QPainter.Antialiasing, True)
+        qp.setPen(self.penEnd)
+        qp.setBrush(self.brushEnd)
+
         if self.isConnecting:
+            qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),'narrow-long'))
             qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())        
 
         # Scan all the output ports to draw connected lines.
         for box in self.listBox:
             for port in box.outPorts:
                 if port.isConnected():
-                    qp.setPen(self.penEnd)
-                    qp.setBrush(self.brushEnd)
                     qp.drawLine(port.getConnection().getSrcCoord(),port.getConnection().getDstCoord())
-                    self.ploygon = self.createPoly(3, 60, port.getConnection().getSrcCoord(), port.getConnection().getDstCoord())
-                    qp.drawPolygon(self.ploygon)
-
+                    qp.drawPolygon(self.createArrowHead(port.getConnection().getSrcCoord(), port.getConnection().getDstCoord(),'narrow-long'))
         qp.end()
 
+    def createArrowHead(self,s,d,style):
+        arrow_style = {'narrow-long':{'length':30, 'width':5},
+                       'wide-long':{'length':30, 'width':20},
+                       'narrow-short':{'length':15, 'width':5},
+                       'wide-short':{'length':15, 'width':5}}
+        polygon = QPolygonF()
+        dx = d.x() - s.x()
+        dy = d.y() - s.y()
+        l = math.sqrt(dx*dx+dy*dy)
+        rv = QPointF(s.x()-d.x(),s.y()-d.y())/l   # reverse vector
+        nv = QPointF(s.y()-d.y(),d.x()-s.x())/l   # normal vector
+        ep = QPointF(d.x(),d.y())                 # end point
+        polygon.append(ep)
+        polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
+        polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
+        return polygon
+
+    """
     def createPoly(self, n, r, s, d):
         print("CreatePoly", n, r, d.x(), d.y())
         polygon = QPolygonF()
@@ -97,10 +115,10 @@ class MainWindow(QFrame):
             if i == 0:
                 polygon.append(QPointF(d.x(), d.y()))
             else:
-                polygon.append(QPointF(d.x()+x/3, d.y()+y/3))
+                polygon.append(QPointF(d.x()+x/5, d.y()+y/5))
 
         return polygon
-    
+ 
     def getDegree(self, src, dst):
         dx = dst.x() - src.x()
         dy = dst.y() - src.y()
@@ -108,6 +126,7 @@ class MainWindow(QFrame):
         rads %= 2*math.pi
         degs = math.degrees(rads)
         return degs
+    """
 
     def dragEnterEvent(self, e):
         for box in self.listBox:

@@ -109,7 +109,8 @@ class CommonModuleBox(QFrame):
 
         for inport in self.inPorts:
             if inport.getConnection():
-                inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()/2) + inport.parent.pos())
+                #inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()/2) + inport.parent.pos())
+                inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
 
     def run(self):
         self.propagateExecution()
