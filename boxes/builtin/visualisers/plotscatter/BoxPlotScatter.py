@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import os, sys, inspect
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -18,17 +19,9 @@ class Box(CommonModuleBox):
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
         """
-        menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},
-                 {"title":"Train", "desc":"Train", "method":self.train},
-                 {"title":"Config", "desc":"Configure module parameters", "method":self.config},
+        menus = [{"title":"Config", "desc":"Configure module parameters", "method":self.config},
                  {"title":"Run", "desc":"Configure module parameters", "method":self.run}]
         self.setPopupActionList(menus)
-
-    def export(self):
-        pass
-
-    def train(self):
-        pass
 
     def config(self):
         pass
@@ -38,7 +31,12 @@ class Box(CommonModuleBox):
             data = pin.getData()
 
         fig = plt.figure()
-        ax = fig.subplots()
-        ax.scatter(data[:,0],data[:,1])
+        if data.shape[1] == 2:
+            ax = fig.subplots()
+            ax.scatter(data[:,0],data[:,1])
+        elif data.shape[1] == 3:
+            ax = fig.add_subplot(111,projection='3d')
+            ax.scatter(data[:,0],data[:,1],data[:,2])
+        
         plt.show()
 
