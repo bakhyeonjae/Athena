@@ -73,8 +73,10 @@ class MainWindow(QFrame):
         qp.setPen(self.penEnd)
         qp.setBrush(self.brushEnd)
 
+        arrow_style = 'narrow-long'
+
         if self.isConnecting:
-            qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),'narrow-long'))
+            qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),arrow_style))
             qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())        
 
         # Scan all the output ports to draw connected lines.
@@ -82,7 +84,7 @@ class MainWindow(QFrame):
             for port in box.outPorts:
                 if port.isConnected():
                     qp.drawLine(port.getConnection().getSrcCoord(),port.getConnection().getDstCoord())
-                    qp.drawPolygon(self.createArrowHead(port.getConnection().getSrcCoord(), port.getConnection().getDstCoord(),'narrow-long'))
+                    qp.drawPolygon(self.createArrowHead(port.getConnection().getSrcCoord(), port.getConnection().getDstCoord(),arrow_style))
         qp.end()
 
     def createArrowHead(self,s,d,style):
