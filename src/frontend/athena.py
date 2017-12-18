@@ -2,6 +2,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 import sys
+import math
 #import trainerboxcnn
 from Box import CommonModuleBox
 
@@ -63,19 +64,56 @@ class MainWindow(QFrame):
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
 
+        self.penStart = QPen(QColor(255,0,0))
+        self.penStart.setWidth(3)        
+
+        self.penEnd = QPen(QColor(0,0,0))
+        self.penEnd.setWidth(1)
+        self.brushEnd = QBrush(QColor(0, 0, 0, 255))
+
     def paintEvent(self, eventQPaintEvent):
         qp = QPainter()
         qp.begin(self)
+        qp.setPen(self.penStart)        
         qp.setRenderHints(QPainter.Antialiasing, True)
         if self.isConnecting:
-            qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())
+            qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())        
 
         # Scan all the output ports to draw connected lines.
         for box in self.listBox:
             for port in box.outPorts:
                 if port.isConnected():
+                    qp.setPen(self.penEnd)
+                    qp.setBrush(self.brushEnd)
                     qp.drawLine(port.getConnection().getSrcCoord(),port.getConnection().getDstCoord())
+                    self.ploygon = self.createPoly(3, 60, port.getConnection().getSrcCoord(), port.getConnection().getDstCoord())
+                    qp.drawPolygon(self.ploygon)
+
         qp.end()
+
+    def createPoly(self, n, r, s, d):
+        print("CreatePoly", n, r, d.x(), d.y())
+        polygon = QPolygonF()
+        w = 360/n
+        for i in range(n):
+            t = w*i
+            add_d = self.getDegree(s, d)
+            x = r*math.cos(math.radians(t - add_d))
+            y = r*math.sin(math.radians(t - add_d))
+            if i == 0:
+                polygon.append(QPointF(d.x(), d.y()))
+            else:
+                polygon.append(QPointF(d.x()+x/3, d.y()+y/3))
+
+        return polygon
+    
+    def getDegree(self, src, dst):
+        dx = dst.x() - src.x()
+        dy = dst.y() - src.y()
+        rads = math.atan2(-dy,dx)
+        rads %= 2*math.pi
+        degs = math.degrees(rads)
+        return degs
 
     def dragEnterEvent(self, e):
         for box in self.listBox:
