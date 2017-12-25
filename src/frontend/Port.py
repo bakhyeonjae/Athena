@@ -4,12 +4,12 @@ from PySide2.QtWidgets import *
 import sys
 
 class Port(QLabel):
-    dataType = None
 
     def __init__(self, parent=None):
         QLabel.__init__(self,parent)
+        self.dataType = None
 
-    def setPortType(self, portType, dataType):
+    def setPortType(self, dataType):
         self.dataType = dataType
 
     def checkPosition(self, pos):
@@ -25,8 +25,6 @@ class Port(QLabel):
         return True
 
 class Connection(object):
-    coordSrc = None
-    coordDst = None
 
     def setSrcCoord(self, pos):
         self.coordSrc = pos

@@ -6,7 +6,7 @@ import Port
 
 class CommonModuleBox(QFrame):
     
-    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
+    def __init__(self, parent=None, inputPortNum=0, outputPortNum=0, instName = '', typeName = ''):
         QFrame.__init__(self, parent)
         self.popupActions = []  # list of dictionary, Key :"title","desc","method"
         self.inPorts = []
@@ -16,7 +16,7 @@ class CommonModuleBox(QFrame):
         layout = QVBoxLayout()
         inputLayout = QHBoxLayout()
         inputLayout.addStretch()
-        for pin in inputPort:
+        for idx in range(inputPortNum):
             new_port = Port.PortIn(self)
             self.inPorts.append(new_port)
             inputLayout.addWidget(new_port)
@@ -27,7 +27,7 @@ class CommonModuleBox(QFrame):
         
         outputLayout = QHBoxLayout()
         outputLayout.addStretch()
-        for pout in outputPort:
+        for idx in range(outputPortNum):
             new_port = Port.PortOut(self)
             self.outPorts.append(new_port)
             outputLayout.addWidget(new_port)

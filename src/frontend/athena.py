@@ -16,6 +16,11 @@ sys.path.insert(0,parentdir)
 from boxes.builtin.visualisers.plotscatter import BoxPlotScatter
 from boxes.builtin.primitives.genrandom import BoxRandomGenerator
 from boxes.builtin.learners.tmpmnist import BoxMNIST
+from boxes.builtin.loaders.image import BoxImageLoader
+from boxes.builtin.learners.models.imageclassifier import BoxImageClassifier
+from boxes.builtin.learners.trainers import BoxTrainer
+
+from framework.dialog.AlertDialog import AlertDialog
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
@@ -43,18 +48,36 @@ class MainWindow(QFrame):
     def initUI(self):
         self.setAcceptDrops(True)
 
-        trainer= BoxPlotScatter.Box(self,[1],[],'Dimension Reducer')
-        trainer.move(100, 50)
-        self.listBox.append(trainer)
+        plotter = BoxPlotScatter.Box(self,'Dimension Reducer')
+        plotter.move(100, 50)
+        self.listBox.append(plotter)
 
-        randomGenerator = BoxRandomGenerator.Box(self,[],[1],'random generator')
+        randomGenerator = BoxRandomGenerator.Box(self,'random generator')
         randomGenerator.move(100,300)
         self.listBox.append(randomGenerator)
 
+        train_image = BoxImageLoader.Box(self,'training-data loader')
+        train_image.move(100,600)
+        self.listBox.append(train_image)
+
+        validation_image = BoxImageLoader.Box(self,'validation-data loader')
+        validation_image.move(500,600)
+        self.listBox.append(validation_image)
+
+        model = BoxImageClassifier.Box(self,'Classfication Model')
+        model.move(100,800)
+        self.listBox.append(model)
+
+        trainer = BoxTrainer.Box(self,'Trainer')
+        trainer.move(500,800)
+        self.listBox.append(trainer)
+
+        """
         mnist = BoxMNIST.Box(self,[1],[1],'MNIST')
         mnist.move(100,500)
         self.listBox.append(mnist)
-        
+        """ 
+
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
 
@@ -73,7 +96,7 @@ class MainWindow(QFrame):
         qp.setPen(self.penEnd)
         qp.setBrush(self.brushEnd)
 
-        arrow_style = 'narrow-long'
+        arrow_style = 'narrow-short'
 
         if self.isConnecting:
             qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),arrow_style))
@@ -103,32 +126,6 @@ class MainWindow(QFrame):
         polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
         polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
         return polygon
-
-    """
-    def createPoly(self, n, r, s, d):
-        print("CreatePoly", n, r, d.x(), d.y())
-        polygon = QPolygonF()
-        w = 360/n
-        for i in range(n):
-            t = w*i
-            add_d = self.getDegree(s, d)
-            x = r*math.cos(math.radians(t - add_d))
-            y = r*math.sin(math.radians(t - add_d))
-            if i == 0:
-                polygon.append(QPointF(d.x(), d.y()))
-            else:
-                polygon.append(QPointF(d.x()+x/5, d.y()+y/5))
-
-        return polygon
- 
-    def getDegree(self, src, dst):
-        dx = dst.x() - src.x()
-        dy = dst.y() - src.y()
-        rads = math.atan2(-dy,dx)
-        rads %= 2*math.pi
-        degs = math.degrees(rads)
-        return degs
-    """
 
     def dragEnterEvent(self, e):
         for box in self.listBox:
@@ -164,14 +161,23 @@ class MainWindow(QFrame):
             for box in self.listBox:
                 if box.checkPosition(e.pos()):
                     currBox = box
-
             if currBox:
                 port = currBox.isArrived(e.pos())
 
-            if currBox and port and currBox != self.selectedBox and self.beginningPort.checkPortMatch(port):
+            condition_flag = True
+            condition_flag = False if not currBox else condition_flag
+            condition_flag = False if not port else condition_flag
+            condition_flag = False if currBox == self.selectedBox else condition_flag
+
+            if not self.beginningPort.checkPortMatch(port): 
+                condition_flag = False 
+                AlertDialog.show(self,'Port types do not match.\nCheck the types')
+
+            if condition_flag:
                 self.beginningPort.connectPort(port)
             else:
                 self.beginningPort.deleteConnectionLine()
+   
             self.isConnecting = False
             
         self.selectedBox = None

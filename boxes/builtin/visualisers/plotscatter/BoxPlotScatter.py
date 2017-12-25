@@ -12,9 +12,12 @@ sys.path.insert(0,parentdir)
 from src.frontend.Box import CommonModuleBox
 
 class Box(CommonModuleBox):
-    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = ''):
+    def __init__(self, parent=None, instName = ''):
         self.typeName = type(self)
-        super().__init__(parent, inputPort, outputPort, instName, self.typeName)
+        super().__init__(parent, 1, 0, instName, self.typeName)
+
+        data_in_port = self.inPorts[0]
+        data_in_port.setPortType(np.ndarray)
 
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
