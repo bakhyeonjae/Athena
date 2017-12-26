@@ -19,6 +19,7 @@ from boxes.builtin.learners.tmpmnist import BoxMNIST
 from boxes.builtin.loaders.image import BoxImageLoader
 from boxes.builtin.learners.models.imageclassifier import BoxImageClassifier
 from boxes.builtin.learners.trainers import BoxTrainer
+from boxes.builtin.visualisers.plottimeline import BoxPlotTimeline
 
 from framework.dialog.AlertDialog import AlertDialog
 
@@ -71,6 +72,14 @@ class MainWindow(QFrame):
         trainer = BoxTrainer.Box(self,'Trainer')
         trainer.move(500,800)
         self.listBox.append(trainer)
+
+        plot_acc = BoxPlotTimeline.Box(self,'training error')
+        plot_acc.move(700,400)
+        self.listBox.append(plot_acc)
+
+        plot_error = BoxPlotTimeline.Box(self,'training accuracy')
+        plot_error.move(700,100)
+        self.listBox.append(plot_error)
 
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)

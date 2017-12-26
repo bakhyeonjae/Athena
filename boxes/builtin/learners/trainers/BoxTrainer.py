@@ -33,6 +33,10 @@ class Box(CommonModuleBox):
         self.piTestData.setPortType(torch.utils.data.dataloader.DataLoader)
         self.piModel = self.inPorts[2]
         self.piModel.setPortType(nn.Module)
+        self.poAccuracy = self.outPorts[0]
+        self.poAccuracy.setPortType(list)
+        self.poError = self.outPorts[1]
+        self.poError.setPortType(list)
 
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
@@ -82,8 +86,14 @@ class Box(CommonModuleBox):
                     print('Train Step: {}\tLoss: {:.3f}\tAccuracy: {:.3f}'.format(i, loss.data[0], accuracy))
                 i += 1
 
-        plt.plot(np.arange(len(train_loss)), train_loss)
-        plt.plot(np.arange(len(train_accu)), train_accu)
+                self.poAccuracy.transferData(train_accu)
+                self.poAccuracy.driveForward()
+
+                self.poError.transferData(train_loss)
+                self.poError.driveForward()
+                
+        #plt.plot(np.arange(len(train_loss)), train_loss)
+        #plt.plot(np.arange(len(train_accu)), train_accu)
 
         """
         model.eval()

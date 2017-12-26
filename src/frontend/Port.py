@@ -82,6 +82,9 @@ class PortIn(Port):
 
     def getData(self):
         return self.data
+
+    def driveBox(self):
+        self.parent.update()        
     
 class PortOut(Port):
 
@@ -134,4 +137,7 @@ class PortOut(Port):
     def transferData(self,data):
         if self.connectedTo:
             self.connectedTo.passToBox(data)
+
+    def driveForward(self):
+        self.connectedTo.driveBox() 
             
