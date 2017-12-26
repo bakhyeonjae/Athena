@@ -18,7 +18,7 @@ import torch
 from torchvision import datasets, transforms
 
 class Box(CommonModuleBox):
-    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = ''):
+    def __init__(self, parent=None, instName = ''):
         self.typeName = type(self)
         super().__init__(parent, 0, 1, instName, self.typeName)
 

@@ -48,7 +48,7 @@ class MainWindow(QFrame):
     def initUI(self):
         self.setAcceptDrops(True)
 
-        plotter = BoxPlotScatter.Box(self,'Dimension Reducer')
+        plotter = BoxPlotScatter.Box(self,'scatter plotter')
         plotter.move(100, 50)
         self.listBox.append(plotter)
 
@@ -71,12 +71,6 @@ class MainWindow(QFrame):
         trainer = BoxTrainer.Box(self,'Trainer')
         trainer.move(500,800)
         self.listBox.append(trainer)
-
-        """
-        mnist = BoxMNIST.Box(self,[1],[1],'MNIST')
-        mnist.move(100,500)
-        self.listBox.append(mnist)
-        """ 
 
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
