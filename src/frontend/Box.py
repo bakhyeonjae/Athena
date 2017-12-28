@@ -13,6 +13,7 @@ class CommonModuleBox(QFrame):
         self.outPorts = []
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setContentsMargins(1,1,1,1)
+        self.instName = instName
         layout = QVBoxLayout()
         inputLayout = QHBoxLayout()
         inputLayout.addStretch()
