@@ -20,6 +20,7 @@ from boxes.builtin.loaders.image import BoxImageLoader
 from boxes.builtin.learners.models.imageclassifier import BoxImageClassifier
 from boxes.builtin.learners.trainers import BoxTrainer
 from boxes.builtin.visualisers.plottimeline import BoxPlotTimeline
+from boxes.builtin.visualisers.plotcrossvalidation import BoxPlotCrossValidation
 
 from framework.dialog.AlertDialog import AlertDialog
 
@@ -61,7 +62,7 @@ class MainWindow(QFrame):
         train_image.move(100,600)
         self.listBox.append(train_image)
 
-        validation_image = BoxImageLoader.Box(self,'validation-data loader')
+        validation_image = BoxImageLoader.BoxTest(self,'validation-data loader')
         validation_image.move(500,600)
         self.listBox.append(validation_image)
 
@@ -80,6 +81,10 @@ class MainWindow(QFrame):
         plot_error = BoxPlotTimeline.Box(self,'training accuracy')
         plot_error.move(700,100)
         self.listBox.append(plot_error)
+
+        plot_cv = BoxPlotCrossValidation.Box(self,'cross validation')
+        plot_cv.move(700,700)
+        self.listBox.append(plot_cv)
 
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
