@@ -195,7 +195,7 @@ class MainWindow(QFrame):
 
         e.setDropAction(Qt.MoveAction)
         e.accept()
-
+"""
 # left Tree class
 class TreeWidget(QTreeWidget):
 
@@ -203,8 +203,8 @@ class TreeWidget(QTreeWidget):
 
         QTreeWidget.__init__(self)
 
-        builtinList = list(list(next(os.walk('./../../boxes/builtin'))[1]))
-        globalList = list(list(next(os.walk('./../../boxes/global'))[1]))
+        builtinList = list(list(next(os.walk('../../boxes/builtin'))[1]))
+        globalList = list(list(next(os.walk('../../boxes/global'))[1]))
 
         self.header = QTreeWidgetItem(["Boxes"])
         self.setHeaderItem(self.header)
@@ -224,6 +224,36 @@ class TreeWidget(QTreeWidget):
             boxItem.setData(2, Qt.EditRole, box + "_builtIn ")
 
         self.itemClicked.connect(lambda: self.printer(self.currentItem()))
+
+    def printer(self, treeItem):
+        foldername = treeItem.text(0)
+        print(foldername + ' selected!!!')
+"""
+
+# left Tree class
+class TreeWidget(QTreeWidget):
+
+    def __init__(self):
+
+        QTreeWidget.__init__(self)
+
+        box_dir = '../../boxes'
+        categories = self.getSubDir(box_dir)
+
+        self.header = QTreeWidgetItem(["Boxes"])
+        self.setHeaderItem(self.header)
+
+        self.constructSubTree(box_dir,self)
+
+    def constructSubTree(self,pathName,parentItem):
+        subitem = self.getSubDir(pathName)
+        for category in subitem:
+            subWidgetItem = QTreeWidgetItem(parentItem, [category])
+            self.constructSubTree('{}/{}'.format(pathName,category),subWidgetItem)
+
+    def getSubDir(self,pathName):
+        sub_dir = list(list(next(os.walk(pathName))[1]))
+        return sub_dir
 
     def printer(self, treeItem):
         foldername = treeItem.text(0)
