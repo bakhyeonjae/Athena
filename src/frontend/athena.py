@@ -3,6 +3,7 @@ from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 import sys
 import math
+import os
 #import trainerboxcnn
 
 from Box import CommonModuleBox
@@ -95,6 +96,7 @@ class MainWindow(QFrame):
         self.penEnd = QPen(QColor(0,0,0))
         self.penEnd.setWidth(1)
         self.brushEnd = QBrush(QColor(0, 0, 0, 255))
+
 
     def paintEvent(self, eventQPaintEvent):
         qp = QPainter()
@@ -194,11 +196,66 @@ class MainWindow(QFrame):
         e.setDropAction(Qt.MoveAction)
         e.accept()
 
+# left Tree class
+class TreeWidget(QTreeWidget):
+
+    def __init__(self):
+
+        QTreeWidget.__init__(self)
+
+        builtinList = list(list(next(os.walk('./../../boxes/builtin'))[1]))
+        globalList = list(list(next(os.walk('./../../boxes/global'))[1]))
+
+        self.header = QTreeWidgetItem(["Boxes"])
+        self.setHeaderItem(self.header)
+
+        self.builtInBox = QTreeWidgetItem(self, ["BuiltIn"])
+        self.builtInBox.setData(2, Qt.EditRole, "built in boxes")
+
+        for box in builtinList:
+            boxItem = QTreeWidgetItem(self.builtInBox, [box])
+            boxItem.setData(2, Qt.EditRole, box + "_builtIn ")
+
+        self.globalBox = QTreeWidgetItem(self, ["Global"])
+        self.globalBox.setData(2, Qt.EditRole, "add on boxes")
+
+        for box in globalList:
+            boxItem = QTreeWidgetItem(self.globalBox, [box])
+            boxItem.setData(2, Qt.EditRole, box + "_builtIn ")
+
+        self.itemClicked.connect(lambda: self.printer(self.currentItem()))
+
+    def printer(self, treeItem):
+        foldername = treeItem.text(0)
+        print(foldername + ' selected!!!')
+
+
+# Top main window has tree and right frame
+class TopWindow(QWidget):
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+
+        self.setGeometry(100, 100, 1600, 900)
+
+        self.tree = TreeWidget()
+        self.tree.setFixedWidth(280)
+        self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
+
+        self.frame = MainWindow()
+        # self.frame2.resize(1000, 800)
+        self.frame.setStyleSheet("background-color: rgb(100, 155, 255)")
+
+        layout = QHBoxLayout()
+        layout.addWidget(self.tree)
+        layout.addWidget(self.frame)
+        self.setLayout(layout)
+
+
 if __name__ == "__main__":
     # check if QApplication already exists
     app = QApplication.instance()
     if not app:     # create QApplication if it doesnt exist
         app = QApplication(sys.argv)
-    mywin = MainWindow()
+    mywin = TopWindow()
     mywin.show()
     sys.exit(app.exec_())
