@@ -14,6 +14,7 @@ parentdir = os.path.dirname(parentdir)
 sys.path.insert(0,parentdir) 
 
 from src.frontend.Box import CommonModuleBox
+from framework.datatypes.dataloader import DataLoader
 
 import torch
 import torch.nn as nn
@@ -28,9 +29,9 @@ class Box(CommonModuleBox):
         super().__init__(parent, 3, 3, instName, self.typeName)
 
         self.piTrainingData = self.inPorts[0]
-        self.piTrainingData.setPortType(torch.utils.data.dataloader.DataLoader)
+        self.piTrainingData.setPortType(DataLoader)
         self.piTestData = self.inPorts[1]
-        self.piTestData.setPortType(torch.utils.data.dataloader.DataLoader)
+        self.piTestData.setPortType(DataLoader)
         self.piModel = self.inPorts[2]
         self.piModel.setPortType(nn.Module)
         self.poAccuracy = self.outPorts[0]
@@ -75,10 +76,7 @@ class Box(CommonModuleBox):
         test_loss  = []
         i = 0
         for epoch in range(10):
-            for data, target in test_data:
-                test_data = Variable(data)
-                test_target = Variable(target)
-
+            
             for data, target in training_data:
                 data, target = Variable(data), Variable(target)
                 optimizer.zero_grad()
@@ -88,23 +86,27 @@ class Box(CommonModuleBox):
                 train_loss.append(loss.data[0])
                 optimizer.step()   # update gradients
                 prediction = output.data.max(1)[1]   # first column has actual prob.
-                test_out = model(test_data)
-                loss = F.nll_loss(test_out, test_target)
-                test_loss.append(loss.data[0])
                 accuracy = prediction.eq(target.data).sum()/batch_size*100
                 train_accu.append(accuracy)
                 if i % 10 == 0:
                     print('Train Step: {}\tLoss: {:.3f}\tAccuracy: {:.3f}'.format(i, loss.data[0], accuracy))
                 i += 1
 
-                self.poAccuracy.transferData(train_accu)
-                self.poAccuracy.driveForward()
+            for data, target in test_data:
+                test_data = Variable(data)
+                test_target = Variable(target)
+                test_out = model(test_data)
+                loss = F.nll_loss(test_out, test_target)
+                test_loss.append(loss.data[0])
 
-                self.poTrainError.transferData(train_loss)
-                self.poTrainError.driveForward()
+            self.poAccuracy.transferData(train_accu)
+            self.poAccuracy.driveForward()
 
-                self.poTestError.transferData(test_loss)
-                self.poTestError.driveForward()
+            self.poTrainError.transferData(train_loss)
+            self.poTrainError.driveForward()
+
+            self.poTestError.transferData(test_loss)
+            self.poTestError.driveForward()
                 
         #plt.plot(np.arange(len(train_loss)), train_loss)
         #plt.plot(np.arange(len(train_accu)), train_accu)

@@ -13,6 +13,7 @@ parentdir = os.path.dirname(parentdir)
 sys.path.insert(0,parentdir) 
 
 from src.frontend.Box import CommonModuleBox
+from framework.datatypes.dataloader import DataLoader
 
 import torch
 from torchvision import datasets, transforms
@@ -23,7 +24,7 @@ class Box(CommonModuleBox):
         super().__init__(parent, 0, 1, instName, self.typeName)
 
         data_port = self.outPorts[0]
-        data_port.setPortType(torch.utils.data.dataloader.DataLoader)
+        data_port.setPortType(DataLoader)
 
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
@@ -42,7 +43,7 @@ class Box(CommonModuleBox):
     def execute(self):
 
         batch_size = 50
-        train_loader = torch.utils.data.DataLoader(datasets.MNIST('data', train=True, download=True, transform=transforms.ToTensor()), batch_size=batch_size, shuffle=True)
+        train_loader = DataLoader()
 
         self.data = train_loader
 
@@ -55,7 +56,7 @@ class BoxTest(CommonModuleBox):
         super().__init__(parent, 0, 1, instName, self.typeName)
 
         data_port = self.outPorts[0]
-        data_port.setPortType(torch.utils.data.dataloader.DataLoader)
+        data_port.setPortType(DataLoader)
 
     def createPopupActions(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
@@ -74,7 +75,7 @@ class BoxTest(CommonModuleBox):
     def execute(self):
 
         batch_size = 200
-        train_loader = torch.utils.data.DataLoader(datasets.MNIST('data', train=False, download=True, transform=transforms.ToTensor()), batch_size=batch_size, shuffle=True)
+        train_loader = DataLoader()
 
         self.data = train_loader
 
