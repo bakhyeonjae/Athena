@@ -12,7 +12,7 @@ class BoxLoader:
     @classmethod
     def createBox(self, module_name, class_name, container):
         my_class = getattr(importlib.import_module('{}.{}'.format(module_name,class_name)), 'Box')
-        instance = my_class(container,'')
+        instance = my_class(container,'Name this box')
         return instance
 
     @classmethod
