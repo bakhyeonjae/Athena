@@ -4,7 +4,6 @@ from PySide2.QtWidgets import *
 import sys
 import math
 import os
-#import trainerboxcnn
 
 from Box import CommonModuleBox
 
@@ -25,6 +24,7 @@ from boxes.builtin.visualisers.plotcrossvalidation import BoxPlotCrossValidation
 from boxes.builtin.visualisers.imageviewer import BoxImageViewer
 
 from framework.dialog.AlertDialog import AlertDialog
+from framework.core.boxloader import BoxLoader
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
@@ -51,7 +51,7 @@ class MainWindow(QFrame):
 
     def initUI(self):
         self.setAcceptDrops(True)
-
+        """
         plotter = BoxPlotScatter.Box(self,'scatter plotter')
         plotter.move(100, 50)
         self.listBox.append(plotter)
@@ -91,7 +91,7 @@ class MainWindow(QFrame):
         image_viewer = BoxImageViewer.Box(self,'image viewer')
         image_viewer.move(800,800)
         self.listBox.append(image_viewer)
-
+        """
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
 
@@ -102,6 +102,9 @@ class MainWindow(QFrame):
         self.penEnd.setWidth(1)
         self.brushEnd = QBrush(QColor(0, 0, 0, 255))
 
+    def addBox(self, box):
+        box.move(500,500)
+        self.listBox.append(box)
 
     def paintEvent(self, eventQPaintEvent):
         qp = QPainter()
@@ -206,8 +209,9 @@ class TreeWidget(QTreeWidget):
 
     def __init__(self):
 
-        QTreeWidget.__init__(self)
+        QTreeWidget.__init__(self,canvas)
 
+        self.canvas = canvas
         builtinList = list(list(next(os.walk('../../boxes/builtin'))[1]))
         globalList = list(list(next(os.walk('../../boxes/global'))[1]))
 
@@ -238,9 +242,11 @@ class TreeWidget(QTreeWidget):
 # left Tree class
 class TreeWidget(QTreeWidget):
 
-    def __init__(self):
+    def __init__(self,canvas):
 
         QTreeWidget.__init__(self)
+
+        self.canvas = canvas
 
         box_dir = '../../boxes'
         categories = self.getSubDir(box_dir)
@@ -249,6 +255,9 @@ class TreeWidget(QTreeWidget):
         self.setHeaderItem(self.header)
 
         self.constructSubTree(box_dir,self)
+
+        #self.itemClicked.connect(lambda: print('boxes{}'.format(self.getModuleName(self.currentItem()))))
+        self.itemClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas)))
 
     def constructSubTree(self,pathName,parentItem):
         subitem = self.getSubDir(pathName)
@@ -263,7 +272,14 @@ class TreeWidget(QTreeWidget):
     def printer(self, treeItem):
         foldername = treeItem.text(0)
         print(foldername + ' selected!!!')
+        print(treeItem.parent().text(0))
 
+    def getModuleName(self,currItem):
+        if currItem:
+            name = currItem.text(0)
+            return '{}.{}'.format(self.getModuleName(currItem.parent()),name)
+        else:
+            return ''
 
 # Top main window has tree and right frame
 class TopWindow(QWidget):
@@ -272,19 +288,17 @@ class TopWindow(QWidget):
 
         self.setGeometry(100, 100, 1600, 900)
 
-        self.tree = TreeWidget()
+        self.frame = MainWindow()
+        self.frame.setStyleSheet("background-color: rgb(100, 155, 255)")
+
+        self.tree = TreeWidget(self.frame)
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
-
-        self.frame = MainWindow()
-        # self.frame2.resize(1000, 800)
-        self.frame.setStyleSheet("background-color: rgb(100, 155, 255)")
 
         layout = QHBoxLayout()
         layout.addWidget(self.tree)
         layout.addWidget(self.frame)
         self.setLayout(layout)
-
 
 if __name__ == "__main__":
     # check if QApplication already exists

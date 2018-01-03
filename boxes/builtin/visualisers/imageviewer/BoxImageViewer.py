@@ -34,8 +34,6 @@ class Box(CommonModuleBox):
         for pin in self.inPorts:
             data = pin.getData()
  
-        #print(data.getData(0,0))
         plt.imshow(data.getData(0,0)[0][0])
         plt.pause(0.001)
-        print(data.getData(0,0)[0].shape)
 
