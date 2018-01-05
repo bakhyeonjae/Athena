@@ -9,6 +9,7 @@ class ConfigDialog(QDialog):
 
         # nice widget for editing the date
         self.dimension= QComboBox()
+        self.dimension.addItem('1')
         self.dimension.addItem('2')
         self.dimension.addItem('3')
         layout.addWidget(self.dimension)
@@ -22,7 +23,7 @@ class ConfigDialog(QDialog):
 
     # get current date and time from the dialog
     def getDimension(self):
-        return self.dimension.currentIndex() + 2
+        return self.dimension.currentIndex() + 1
 
     # static method to create the dialog and return (date, time, accepted)
     @staticmethod
