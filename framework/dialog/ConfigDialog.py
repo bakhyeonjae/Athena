@@ -1,5 +1,5 @@
-from PySide2.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox
-from PySide2.QtCore import Qt, QDateTime
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox
+from PyQt5.QtCore import Qt, QDateTime
 
 class ConfigDialog(QDialog):
     def __init__(self, parent = None):

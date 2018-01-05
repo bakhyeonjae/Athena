@@ -24,4 +24,12 @@ class BoxLoader:
             if 'Box' in fname and '.py' in fname:
                 module_name = fname
         return module_name.replace('.py','')
- 
+
+    @classmethod
+    def loadBoxDescription(self,baseDir,moduleName,receiver):
+        fname = 'Description.md'
+        path_name = '{}/{}'.format(baseDir,moduleName.replace('.','/'))
+        full_name = '{}/{}'.format(path_name,fname)
+        with open(full_name) as f:
+            md_data = f.read()
+            receiver.displayBoxDescription(md_data)

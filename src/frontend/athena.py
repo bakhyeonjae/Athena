@@ -6,6 +6,7 @@ import math
 import os
 
 from Box import CommonModuleBox
+from infoview import InfoView
 
 import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -51,47 +52,7 @@ class MainWindow(QFrame):
 
     def initUI(self):
         self.setAcceptDrops(True)
-        """
-        plotter = BoxPlotScatter.Box(self,'scatter plotter')
-        plotter.move(100, 50)
-        self.listBox.append(plotter)
 
-        randomGenerator = BoxRandomGenerator.Box(self,'random generator')
-        randomGenerator.move(100,300)
-        self.listBox.append(randomGenerator)
-
-        train_image = BoxImageLoader.Box(self,'training-data loader')
-        train_image.move(100,600)
-        self.listBox.append(train_image)
-
-        validation_image = BoxImageLoader.BoxTest(self,'validation-data loader')
-        validation_image.move(500,600)
-        self.listBox.append(validation_image)
-
-        model = BoxImageClassifier.Box(self,'Classfication Model')
-        model.move(100,800)
-        self.listBox.append(model)
-
-        trainer = BoxTrainer.Box(self,'Trainer')
-        trainer.move(500,800)
-        self.listBox.append(trainer)
-
-        plot_acc = BoxPlotTimeline.Box(self,'training error')
-        plot_acc.move(700,400)
-        self.listBox.append(plot_acc)
-
-        plot_error = BoxPlotTimeline.Box(self,'training accuracy')
-        plot_error.move(700,100)
-        self.listBox.append(plot_error)
-
-        plot_cv = BoxPlotCrossValidation.Box(self,'cross validation')
-        plot_cv.move(700,700)
-        self.listBox.append(plot_cv)
-
-        image_viewer = BoxImageViewer.Box(self,'image viewer')
-        image_viewer.move(800,800)
-        self.listBox.append(image_viewer)
-        """
         self.setWindowTitle('Click or Move')
         self.setGeometry(300, 300, 580, 700)
 
@@ -242,11 +203,12 @@ class TreeWidget(QTreeWidget):
 # left Tree class
 class TreeWidget(QTreeWidget):
 
-    def __init__(self,canvas):
+    def __init__(self,canvas,infoView):
 
         QTreeWidget.__init__(self)
 
         self.canvas = canvas
+        self.infoView = infoView
 
         box_dir = '../../boxes'
         categories = self.getSubDir(box_dir)
@@ -257,11 +219,14 @@ class TreeWidget(QTreeWidget):
         self.constructSubTree(box_dir,self)
 
         #self.itemClicked.connect(lambda: print('boxes{}'.format(self.getModuleName(self.currentItem()))))
-        self.itemClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas)))
+        self.itemDoubleClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas)))
+        self.itemClicked.connect(lambda: BoxLoader.loadBoxDescription(box_dir,self.getModuleName(self.currentItem()),self.infoView))
 
     def constructSubTree(self,pathName,parentItem):
         subitem = self.getSubDir(pathName)
         for category in subitem:
+            if '__pycache__' in category:
+                continue
             subWidgetItem = QTreeWidgetItem(parentItem, [category])
             self.constructSubTree('{}/{}'.format(pathName,category),subWidgetItem)
 
@@ -291,13 +256,18 @@ class TopWindow(QWidget):
         self.frame = MainWindow()
         self.frame.setStyleSheet("background-color: rgb(100, 155, 255)")
 
-        self.tree = TreeWidget(self.frame)
+        self.viewInfo = InfoView()
+        self.viewInfo.setFixedWidth(280)
+
+        self.tree = TreeWidget(self.frame,self.viewInfo)
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
+
 
         layout = QHBoxLayout()
         layout.addWidget(self.tree)
         layout.addWidget(self.frame)
+        layout.addWidget(self.viewInfo)
         self.setLayout(layout)
 
 if __name__ == "__main__":
