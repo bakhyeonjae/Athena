@@ -26,7 +26,7 @@ class Box(CommonModuleBox):
         data_port = self.outPorts[0]
         data_port.setPortType(DataLoader)
 
-    def createPopupActions(self):
+    def configPopupMenu(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},
@@ -58,7 +58,7 @@ class BoxTest(CommonModuleBox):
         data_port = self.outPorts[0]
         data_port.setPortType(DataLoader)
 
-    def createPopupActions(self):
+    def configPopupMenu(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},

@@ -27,8 +27,8 @@ class Box(CommonModuleBox):
             port.setPortType(np.ndarray)
         self.inPorts[0].setPortType(np.ndarray)
 
-    def createPopupActions(self):
-        """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
+    def configPopupMenu(self):
+        """ configPopupMenu method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},
                  {"title":"Run", "desc":"Configure module parameters", "method":self.run}]

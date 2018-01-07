@@ -41,7 +41,7 @@ class Box(CommonModuleBox):
         self.poTestError  = self.outPorts[2]
         self.poTestError.setPortType(list)
 
-    def createPopupActions(self):
+    def configPopupMenu(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},

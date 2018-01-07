@@ -20,8 +20,8 @@ class Box(CommonModuleBox):
         data_in_port = self.inPorts[0]
         data_in_port.setPortType(DataLoader)
 
-    def createPopupActions(self):
-        """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
+    def configPopupMenu(self):
+        """ configPopupMenu method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Config", "desc":"Configure module parameters", "method":self.config},
                  {"title":"Run", "desc":"Configure module parameters", "method":self.run}]

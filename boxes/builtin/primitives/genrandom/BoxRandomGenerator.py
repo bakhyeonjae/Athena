@@ -29,7 +29,7 @@ class Box(CommonModuleBox):
         self.dim = [900,2]
         self.randType = 'uniform'
 
-    def createPopupActions(self):
+    def configPopupMenu(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},
