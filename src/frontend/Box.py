@@ -50,16 +50,19 @@ class CommonModuleBox(QFrame):
     def deleteBox(self):
         # Disconnect all the connections with output port
         for port in self.outPorts:
-            connection = port.getConnection()
-            if connection:
-                del connection         
-            port.connectedTo.disconnectPort()
-            port.disconnectPort()
+            port.deleteConnectionLine()
+            if port:
+                if port.connectedTo:
+                    port.connectedTo.disconnectPort()
+                port.disconnectPort()
+
         # Disconnect all the connections with input port
         for port in self.inPorts:  
             # connection instance belongs to output ports.
-            port.connectedTo.disconnectPort()
-            port.disconnectPort()
+            if port:
+                if port.connectedTo:
+                    port.connectedTo.disconnectPort()
+                port.disconnectPort()
 
        	self.parent.deleteBox(self) 
 
