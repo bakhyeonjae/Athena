@@ -61,6 +61,9 @@ class PortIn(Port):
     def connectPort(self,portOut):
         self.connectedTo = portOut
 
+    def disconnectPort(self):
+        self.connectedTo = None
+
     def isConnected(self):
         if self.connectedTo:
             return True
@@ -68,6 +71,7 @@ class PortIn(Port):
             return False
 
     def getConnection(self):
+        # Connection is created by output port object. So, do not delete on input port.
         if self.connectedTo:
             return self.connectedTo.getConnection()
         else:

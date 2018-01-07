@@ -67,6 +67,13 @@ class MainWindow(QFrame):
         box.move(500,500)
         self.listBox.append(box)
 
+    def deleteBox(self, box):
+        selected = next(x for x in self.listBox if x == box)
+        selected.setParent(None)
+        self.listBox.remove(selected)
+        del selected
+        self.update()
+
     def paintEvent(self, eventQPaintEvent):
         qp = QPainter()
         qp.begin(self)

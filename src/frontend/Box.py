@@ -8,6 +8,7 @@ class CommonModuleBox(QFrame):
     
     def __init__(self, parent=None, inputPortNum=0, outputPortNum=0, instName = '', typeName = ''):
         QFrame.__init__(self, parent)
+        self.parent = parent
         self.popupActions = []  # list of dictionary, Key :"title","desc","method"
         self.inPorts = []
         self.outPorts = []
@@ -41,6 +42,29 @@ class CommonModuleBox(QFrame):
         
         self.setLayout(layout)
         self.show()
+
+        menus = [{"title":"delete", "desc":"Configure module parameters", "method":self.deleteBox}]
+        self.setPopupActionList(menus)
+        self.configPopupMenu()
+
+    def deleteBox(self):
+        # Disconnect all the connections with output port
+        for port in self.outPorts:
+            connection = port.getConnection()
+            if connection:
+                del connection         
+            port.connectedTo.disconnectPort()
+            port.disconnectPort()
+        # Disconnect all the connections with input port
+        for port in self.inPorts:  
+            # connection instance belongs to output ports.
+            port.connectedTo.disconnectPort()
+            port.disconnectPort()
+
+       	self.parent.deleteBox(self) 
+
+    def configPopupMenu(self):
+        pass
 
     def mouseReleaseEvent(self, event):
         self.createPopupActions()
@@ -110,7 +134,6 @@ class CommonModuleBox(QFrame):
 
         for inport in self.inPorts:
             if inport.getConnection():
-                #inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()/2) + inport.parent.pos())
                 inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
 
     def run(self):

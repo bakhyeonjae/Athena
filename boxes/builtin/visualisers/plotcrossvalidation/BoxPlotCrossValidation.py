@@ -26,12 +26,13 @@ class Box(CommonModuleBox):
         self.idxFig = next(self._getId)
         self.enableWindow = True
 
-    def createPopupActions(self):
+    def configPopupMenu(self):
         """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
         """
         menus = [{"title":"Config", "desc":"Configure module parameters", "method":self.config},
                  {"title":"Open the window", "desc":"Configure module parameters", "method":self.openWindow},
                  {"title":"Close the window", "desc":"Configure module parameters", "method":self.closeWindow}]
+
         self.setPopupActionList(menus)
 
     def config(self):
