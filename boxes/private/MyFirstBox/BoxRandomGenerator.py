@@ -22,14 +22,13 @@ from framework.dialog.ConfigDialog import ConfigDialog
 
 class Box(CommonModuleBox):
     def __init__(self, parent=None, instName = ''):
-        print("#####{}".format(currentdir))
         loader = BoxLoader()
-        print("***{}".format(currentdir))
-        print('@@@{}'.format(list(next(os.walk('.'))[2])))
-        with open('/Users/hj.bak/projects/Athena/boxes/private/MyFirstBox/BoxRandomLabeled.box','r') as f:
+        with open('../../boxes/private/MyFirstBox/BoxRandomLabeled.box','r') as f:
             data = f.read()
             box = loader.loadBoxDesc(data)
-            loader.createBox(parent,box['sub-box'][0])
+            for subbox in box['sub-box']:
+                loader.createBox(parent,subbox)
+                parent.addBox(subbox)
         #super().__init__(parent, 0, 1, instName, self.typeName)
 
     def configPopupMenu(self):

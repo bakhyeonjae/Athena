@@ -63,9 +63,10 @@ class MainWindow(QFrame):
         self.penEnd.setWidth(1)
         self.brushEnd = QBrush(QColor(0, 0, 0, 255))
 
-    def addBox(self, box):
-        box.move(500,500)
-        self.listBox.append(box)
+    def addBoxes(self, boxes):
+        for box in boxes:
+            box.move(500,500)
+            self.listBox.append(box)
 
     def deleteBox(self, box):
         selected = next(x for x in self.listBox if x == box)
@@ -226,7 +227,7 @@ class TreeWidget(QTreeWidget):
         self.constructSubTree(box_dir,self)
 
         #self.itemClicked.connect(lambda: print('boxes{}'.format(self.getModuleName(self.currentItem()))))
-        self.itemDoubleClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas)))
+        self.itemDoubleClicked.connect(lambda: self.canvas.addBoxes(BoxLoader.createBox('../../boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas)))
         self.itemClicked.connect(lambda: BoxLoader.loadBoxDescription(box_dir,self.getModuleName(self.currentItem()),self.infoView))
 
     def constructSubTree(self,pathName,parentItem):
@@ -249,7 +250,7 @@ class TreeWidget(QTreeWidget):
     def getModuleName(self,currItem):
         if currItem:
             name = currItem.text(0)
-            return '{}.{}'.format(self.getModuleName(currItem.parent()),name)
+            return '{}/{}'.format(self.getModuleName(currItem.parent()),name)
         else:
             return ''
 

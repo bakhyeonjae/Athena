@@ -24,5 +24,5 @@ class BoxLoader(object):
         return box
 	 
     def createBox(self,parent, desc):
-        CommonModuleBox(parent,len(desc['in-port']),len(desc['out-port']),desc['name'],desc['type'])
+        CommonModuleBox(parent,len(desc['in-port']),len(desc['out-port']),desc['name'],'')#desc['type'])
 
