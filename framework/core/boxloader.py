@@ -7,25 +7,20 @@ parentdir = os.path.dirname(currentdir)
 parentdir = os.path.dirname(parentdir)
 sys.path.insert(0,parentdir) 
 
-from boxes.builtin.visualisers.imageviewer import BoxImageViewer
 from src.frontend.Box import CommonModuleBox
+from framework.core.boxcore import Box
 
 class BoxLoader:
     @classmethod
     def createBox(self, module_name, class_name, container):
         boxes = []
-        with open('{}/{}'.format(module_name,class_name),'r') as f:
+        spec_name = '{}/{}'.format(module_name,class_name)
+        with open(spec_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
-            box = desc['box']
-            subboxes = box['sub-box']
-            inputs   = box['in-port']
-            outputs  = box['out-port']
-
-            for subbox in box['sub-box']:
-                boxes.append(CommonModuleBox(container,len(subbox['in-port']),len(subbox['out-port']),subbox['name'],subbox['type']))
-
-        return boxes
+            box = Box(desc,container,spec_name)
+            
+        return box
 
     @classmethod
     def findModuleName(self,baseDir,moduleName):
@@ -33,7 +28,6 @@ class BoxLoader:
         files = list(next(os.walk(path_name))[2])
         module_name = None
         for fname in files:
-            #if 'Box' in fname and '.py' in fname:
             if '.box' in fname:
                 module_name = fname
         return module_name
