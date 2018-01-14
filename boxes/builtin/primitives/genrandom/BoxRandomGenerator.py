@@ -1,54 +1,9 @@
 import numpy as np
-import os, sys, inspect
 
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-parentdir = os.path.dirname(parentdir)
-parentdir = os.path.dirname(parentdir)
-sys.path.insert(0,parentdir) 
-
-from src.frontend.Box import CommonModuleBox
-from src.frontend.Port import PortIn
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-parentdir = os.path.dirname(parentdir)
-parentdir = os.path.dirname(parentdir)
-sys.path.insert(0,parentdir) 
-
-from framework.dialog.ConfigDialog import ConfigDialog
-
-class Box(CommonModuleBox):
-    def __init__(self, parent=None, instName = ''):
-        self.typeName = type(self)
-        super().__init__(parent, 0, 1, instName, self.typeName)
-
-        data_out_port = self.outPorts[0]
-        data_out_port.setPortType(np.ndarray)
-
-        self.dim = [900,2]
-        self.randType = 'uniform'
-
-    def configPopupMenu(self):
-        """ createPopupActions method defines popup menu and method when a popup menu is selected by users. 
-        """
-        menus = [{"title":"Export", "desc":"Export logic to source code", "method":self.export},
-                 {"title":"Config", "desc":"Configure module parameters", "method":self.config},
-                 {"title":"Run", "desc":"Configure module parameters", "method":self.run}]
-        self.setPopupActionList(menus)
-
-    def export(self):
+class randomgen(object):
+    def __init__(self):
         pass
 
-    def train(self):
-        pass
-
-    def config(self):
-        dimension, ok = ConfigDialog.getParameters()
-        self.dim[1] = dimension
-
-    def execute(self):
-        self.data = np.random.rand(self.dim[0],self.dim[1])
-
-        for port in self.outPorts:
-            port.transferData(self.data)
+    def execute(self, mean, variance):
+        dim = [900,2]
+        self.data = np.random.normal(loc=mean,scale=variance,size=(dim[0],dim[1]))

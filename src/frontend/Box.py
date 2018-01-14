@@ -6,7 +6,7 @@ import Port
 
 class CommonModuleBox(QFrame):
     
-    def __init__(self, parent=None, inputPortNum=0, outputPortNum=0, instName = '', typeName = ''):
+    def __init__(self, core=None, parent=None, inputPortNum=0, outputPortNum=0, instName = '', typeName = ''):
         QFrame.__init__(self, parent)
         self.parent = parent
         self.popupActions = []  # list of dictionary, Key :"title","desc","method"
@@ -15,11 +15,12 @@ class CommonModuleBox(QFrame):
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setContentsMargins(1,1,1,1)
         self.instName = instName
+        self.core = core
         layout = QVBoxLayout()
         inputLayout = QHBoxLayout()
         inputLayout.addStretch()
         for idx in range(inputPortNum):
-            new_port = Port.PortIn(self)
+            new_port = Port.ViewPortIn(self)
             self.inPorts.append(new_port)
             inputLayout.addWidget(new_port)
             inputLayout.addStretch()
@@ -30,7 +31,7 @@ class CommonModuleBox(QFrame):
         outputLayout = QHBoxLayout()
         outputLayout.addStretch()
         for idx in range(outputPortNum):
-            new_port = Port.PortOut(self)
+            new_port = Port.ViewPortOut(self)
             self.outPorts.append(new_port)
             outputLayout.addWidget(new_port)
             outputLayout.addStretch()
@@ -43,7 +44,8 @@ class CommonModuleBox(QFrame):
         self.setLayout(layout)
         self.show()
 
-        menus = [{"title":"delete", "desc":"Configure module parameters", "method":self.deleteBox}]
+        menus = [{"title":"run", "desc":"Configure module parameters", "method":self.run},
+                 {"title":"delete", "desc":"Configure module parameters", "method":self.deleteBox}]
         self.setPopupActionList(menus)
         self.configPopupMenu()
 
@@ -140,8 +142,9 @@ class CommonModuleBox(QFrame):
                 inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
 
     def run(self):
-        self.propagateExecution()
-        self.execute()
+        self.core.run()
+        #self.propagateExecution()
+        #self.execute()
 
     def execute(self):
         pass

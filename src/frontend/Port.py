@@ -3,7 +3,7 @@ from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 import sys
 
-class Port(QLabel):
+class ViewPort(QLabel):
 
     def __init__(self, parent=None):
         QLabel.__init__(self,parent)
@@ -38,10 +38,10 @@ class Connection(object):
     def getDstCoord(self):
         return self.coordDst
 
-class PortIn(Port):
+class ViewPortIn(ViewPort):
     
     def __init__(self, parent):
-        Port.__init__(self,parent)
+        ViewPort.__init__(self,parent)
         self.connectedTo = None
         self.parent = parent
         self.data = None
@@ -90,10 +90,10 @@ class PortIn(Port):
     def driveBox(self):
         self.parent.update()        
     
-class PortOut(Port):
+class ViewPortOut(ViewPort):
 
     def __init__(self,parent):
-        Port.__init__(self,parent)
+        ViewPort.__init__(self,parent)
         self.data = None
         self.connection = None
         self.connectedTo = None

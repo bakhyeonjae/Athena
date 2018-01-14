@@ -18,7 +18,7 @@ class BoxLoader:
         with open(spec_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
-            box = Box(desc,container,spec_name)
+            box = Box(desc,container,spec_name.replace('../','').replace('/','.').replace('.box',''))
             
         return box
 

@@ -5,18 +5,17 @@
                 "data":"float",
                 "type":"batch",
                 "name":"mean",
-                "connect":"mean@random"
+                "connect":"mean@randomgen"
             },
             {
                 "data":"float",
                 "type":"batch",
                 "name":"variance",
-                "connect":"variance@random"
+                "connect":"variance@randomgen"
             }
         ],
         "code":{
             "class":"randomgen",
-            "name":"random",
             "param":[
                 {
                     "type":"float",
@@ -28,9 +27,11 @@
                     "name":"variance",
                     "optional":"True"
                 }
+            ],
             "return":[
                 {
-                    "name":"random.data"
+                    "type":"numpy.ndarray",
+                    "name":"data",
                     "connect":"data"
                 }
             ]
