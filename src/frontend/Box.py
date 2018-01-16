@@ -19,8 +19,9 @@ class CommonModuleBox(QFrame):
         layout = QVBoxLayout()
         inputLayout = QHBoxLayout()
         inputLayout.addStretch()
-        for idx in range(inputPortNum):
+        for port_core in inputPortNum:
             new_port = Port.ViewPortIn(self)
+            new_port.setPortCore(port_core)
             self.inPorts.append(new_port)
             inputLayout.addWidget(new_port)
             inputLayout.addStretch()
@@ -30,8 +31,9 @@ class CommonModuleBox(QFrame):
         
         outputLayout = QHBoxLayout()
         outputLayout.addStretch()
-        for idx in range(outputPortNum):
+        for port_core in outputPortNum:
             new_port = Port.ViewPortOut(self)
+            new_port.setPortCore(port_core)
             self.outPorts.append(new_port)
             outputLayout.addWidget(new_port)
             outputLayout.addStretch()

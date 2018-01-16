@@ -10,6 +10,19 @@ class Port(object):
     def setView(self,viewPort):
         self.view = viewPort
 
+    def isConnected(self):
+        if self.connectedTo:
+            return True
+        else:
+            return False
+
+    def disconnectPort(self):
+        connectedTo = self.connectedTo
+        self.connectedTo = None
+
+        if connectedTo:
+            connectTo.disconnectPort()
+
 class PortIn(Port):
     def __init__(self, box, instName):
         super().__init__(box, instName)
@@ -17,6 +30,10 @@ class PortIn(Port):
         self.targetPort = None
         self.targetClass = None
         self.targetParam = None
+
+    def propagateExecution(self):
+        if self.connectedTo:
+            self.connectedTo.propagateExecution()
 
     def configFromDesc(self,desc):
         """
@@ -51,6 +68,9 @@ class PortIn(Port):
         """
         return self.data
 
+    def connectPort(self,portOut):
+        self.connectedTo = portOut
+
 class PortOut(Port):
     def __init__(self, box, instName):
         super().__init__(box, instName)
@@ -64,4 +84,10 @@ class PortOut(Port):
             self.data = data   # if it requires caching...  I'm not so sure if it's required or not now. 
             self.connectedTo.passToBox(data)
 
+    def propagateExecution(self):
+        self.box.run()
+
+    def connectPort(self,portIn):
+        self.connectedTo = portIn
+        portIn.connectPort(self)
 

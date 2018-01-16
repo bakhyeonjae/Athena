@@ -59,31 +59,35 @@ class Box(object):
 
         # connect all the ports and logic or boxes
 
-        self.view = CommonModuleBox(self,self.viewContainter,len(self.inputs),len(self.outputs),'',self.spec)
+        self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
 
     def run(self):
+        self.propagateExecution()
         self.execute()
 
+    def propagateExecution(self):
+        for port in self.inputs:
+            port.propagateExecution()
+
     def execute(self):
-        # These 2 statement is for only test
-        self.inputs[0].passToBox(9)
-        self.inputs[1].passToBox(0.1)
 
         self.executeCode()
 
     def executeCode(self):
         box = self.desc['box']
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
-        for port in self.inputs:
+        for idx,port in enumerate(self.inputs):
             if box['code']['class'] != port.targetClass:
                 return #Raise exception
             params = [p['name'] for p in box['code']['param']]
             if port.targetParam not in params:
                 return #Raise exception
-            exec_str += '{}={}'.format(port.targetParam,port.getData())
+            #exec_str += '{}={}'.format(port.targetParam,port.getData())
+            exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
         exec_str += ')'
+        print(exec_str)
         eval(exec_str)
 
         rets = box['code']['return']

@@ -9,6 +9,9 @@ class ViewPort(QLabel):
         QLabel.__init__(self,parent)
         self.dataType = None
 
+    def setPortCore(self, core):
+        self.core = core
+
     def setPortType(self, dataType):
         self.dataType = dataType
 
@@ -59,16 +62,19 @@ class ViewPortIn(ViewPort):
         dropAction = drag.start(Qt.MoveAction)
 
     def connectPort(self,portOut):
-        self.connectedTo = portOut
+        self.core.connectPort(portOut.core)
+        #self.connectedTo = portOut
 
     def disconnectPort(self):
-        self.connectedTo = None
+        self.core.disconnectPort()
+        #self.connectedTo = None
 
     def isConnected(self):
-        if self.connectedTo:
-            return True
-        else:
-            return False
+        return self.core.isConnected()
+        #if self.connectedTo:
+        #    return True
+        #else:
+        #    return False
 
     def getConnection(self):
         # Connection is created by output port object. So, do not delete on input port.
@@ -123,17 +129,21 @@ class ViewPortOut(ViewPort):
             return False
 
     def isConnected(self):
-        if self.connectedTo:
-            return True
-        else:
-            return False
+        return self.core.isConnected()
+        #if self.connectedTo:
+        #    return True
+        #else:
+        #    return False
             
     def connectPort(self,portIn):
-        self.connectedTo = portIn
-        portIn.connectPort(self)
+        print("#####", portIn.core)
+        self.core.connectPort(portIn.core)
+        #self.connectedTo = portIn
+        #portIn.connectPort(self)
 
     def disconnectPort(self):
-        self.connectedTo = None
+        self.core.disconnectPort()
+        #self.connectedTo = None
 
     def propagateExecution(self):
         self.parent.run()

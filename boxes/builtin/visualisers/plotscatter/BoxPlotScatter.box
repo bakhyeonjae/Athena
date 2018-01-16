@@ -1,0 +1,22 @@
+{
+	"box":{
+        "in-port":[
+            {
+                "data":"numpy.ndarray",
+                "type":"batch",
+                "name":"data",
+                "connect":"points@PlotScatter"
+            }
+        ],
+        "code":{
+            "class":"PlotScatter",
+            "param":[
+                {
+                    "type":"numpy.ndarray",
+                    "name":"points",
+                    "optional":"True"
+                }
+            ]
+        }
+	}
+}

@@ -141,6 +141,7 @@ class MainWindow(QFrame):
         e.accept()
 
     def dropEvent(self, e):
+        print("DROP EVENT")
         if self.isConnecting:
             currBox = None
             port = None
@@ -159,6 +160,7 @@ class MainWindow(QFrame):
                 condition_flag = False 
                 AlertDialog.show(self,'Port types do not match.\nCheck the types')
 
+            print("******", condition_flag, self.beginningPort)
             if condition_flag:
                 self.beginningPort.connectPort(port)
             else:
