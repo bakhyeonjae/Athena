@@ -21,7 +21,7 @@ class Port(object):
         self.connectedTo = None
 
         if connectedTo:
-            connectTo.disconnectPort()
+            connectedTo.disconnectPort()
 
 class PortIn(Port):
     def __init__(self, box, instName):
