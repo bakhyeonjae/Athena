@@ -141,7 +141,6 @@ class MainWindow(QFrame):
         e.accept()
 
     def dropEvent(self, e):
-        print("DROP EVENT")
         if self.isConnecting:
             currBox = None
             port = None
@@ -160,7 +159,6 @@ class MainWindow(QFrame):
                 condition_flag = False 
                 AlertDialog.show(self,'Port types do not match.\nCheck the types')
 
-            print("******", condition_flag, self.beginningPort)
             if condition_flag:
                 self.beginningPort.connectPort(port)
             else:
@@ -173,41 +171,6 @@ class MainWindow(QFrame):
 
         e.setDropAction(Qt.MoveAction)
         e.accept()
-"""
-# left Tree class
-class TreeWidget(QTreeWidget):
-
-    def __init__(self):
-
-        QTreeWidget.__init__(self,canvas)
-
-        self.canvas = canvas
-        builtinList = list(list(next(os.walk('../../boxes/builtin'))[1]))
-        globalList = list(list(next(os.walk('../../boxes/global'))[1]))
-
-        self.header = QTreeWidgetItem(["Boxes"])
-        self.setHeaderItem(self.header)
-
-        self.builtInBox = QTreeWidgetItem(self, ["BuiltIn"])
-        self.builtInBox.setData(2, Qt.EditRole, "built in boxes")
-
-        for box in builtinList:
-            boxItem = QTreeWidgetItem(self.builtInBox, [box])
-            boxItem.setData(2, Qt.EditRole, box + "_builtIn ")
-
-        self.globalBox = QTreeWidgetItem(self, ["Global"])
-        self.globalBox.setData(2, Qt.EditRole, "add on boxes")
-
-        for box in globalList:
-            boxItem = QTreeWidgetItem(self.globalBox, [box])
-            boxItem.setData(2, Qt.EditRole, box + "_builtIn ")
-
-        self.itemClicked.connect(lambda: self.printer(self.currentItem()))
-
-    def printer(self, treeItem):
-        foldername = treeItem.text(0)
-        print(foldername + ' selected!!!')
-"""
 
 # left Tree class
 class TreeWidget(QTreeWidget):

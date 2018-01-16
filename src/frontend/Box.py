@@ -6,22 +6,25 @@ import Port
 
 class CommonModuleBox(QFrame):
     
-    def __init__(self, core=None, parent=None, inputPortNum=0, outputPortNum=0, instName = '', typeName = ''):
+    def __init__(self, core=None, parent=None, inputPortNum=None, outputPortNum=None, instName = '', typeName = ''):
         QFrame.__init__(self, parent)
         self.parent = parent
         self.popupActions = []  # list of dictionary, Key :"title","desc","method"
         self.inPorts = []
         self.outPorts = []
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
+        self.setStyleSheet("background-color: rgb(230,230,230)")
         self.setContentsMargins(1,1,1,1)
         self.instName = instName
         self.core = core
         layout = QVBoxLayout()
+        layout.setContentsMargins(0,0,0,0)
         inputLayout = QHBoxLayout()
         inputLayout.addStretch()
         for port_core in inputPortNum:
             new_port = Port.ViewPortIn(self)
             new_port.setPortCore(port_core)
+            port_core.setView(new_port)
             self.inPorts.append(new_port)
             inputLayout.addWidget(new_port)
             inputLayout.addStretch()
@@ -34,6 +37,7 @@ class CommonModuleBox(QFrame):
         for port_core in outputPortNum:
             new_port = Port.ViewPortOut(self)
             new_port.setPortCore(port_core)
+            port_core.setView(new_port)
             self.outPorts.append(new_port)
             outputLayout.addWidget(new_port)
             outputLayout.addStretch()
@@ -145,8 +149,6 @@ class CommonModuleBox(QFrame):
 
     def run(self):
         self.core.run()
-        #self.propagateExecution()
-        #self.execute()
 
     def execute(self):
         pass

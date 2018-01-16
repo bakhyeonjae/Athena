@@ -78,10 +78,12 @@ class ViewPortIn(ViewPort):
 
     def getConnection(self):
         # Connection is created by output port object. So, do not delete on input port.
-        if self.connectedTo:
-            return self.connectedTo.getConnection()
-        else:
-            return None
+        # Connection is owned by output port. Request core to get connection info.
+        return self.core.getConnection()
+        #if self.connectedTo:
+        #    return self.connectedTo.getConnection()
+        #else:
+        #    return None
 
     def propagateExecution(self):
         if self.connectedTo:
@@ -136,7 +138,6 @@ class ViewPortOut(ViewPort):
         #    return False
             
     def connectPort(self,portIn):
-        print("#####", portIn.core)
         self.core.connectPort(portIn.core)
         #self.connectedTo = portIn
         #portIn.connectPort(self)

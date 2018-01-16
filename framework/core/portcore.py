@@ -71,6 +71,12 @@ class PortIn(Port):
     def connectPort(self,portOut):
         self.connectedTo = portOut
 
+    def getConnection(self):
+        if self.connectedTo:
+            return self.connectedTo.getConnection()
+        else:
+            return None
+
 class PortOut(Port):
     def __init__(self, box, instName):
         super().__init__(box, instName)
@@ -90,4 +96,7 @@ class PortOut(Port):
     def connectPort(self,portIn):
         self.connectedTo = portIn
         portIn.connectPort(self)
+
+    def getConnection(self):
+        return self.view.getConnection()
 

@@ -82,7 +82,6 @@ class Box(object):
             params = [p['name'] for p in box['code']['param']]
             if port.targetParam not in params:
                 return #Raise exception
-            #exec_str += '{}={}'.format(port.targetParam,port.getData())
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
