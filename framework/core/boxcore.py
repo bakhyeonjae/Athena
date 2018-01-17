@@ -10,7 +10,7 @@ from src.frontend.Box import CommonModuleBox
 from framework.core.portcore import *
 
 class Box(object):
-    def __init__(self, desc, container, boxspec):
+    def __init__(self, desc, container, boxspec, viewenable):
         self.desc = desc
         self.boxes = []   # type : boxcore.Box
         self.inputs = []
@@ -21,6 +21,7 @@ class Box(object):
         self.viewContainter = container
         self.logic = None
         self.spec = boxspec
+        self.viewEnable = viewenable
 
         self.buildStructure()
 
@@ -44,8 +45,13 @@ class Box(object):
         if 'out-port' in box.keys():
             outputs  = box['out-port']
 
+        if self.viewEnable: 
+            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+        
         for subbox in subboxes:
-            #new_subbox = Box(subbox,None)
+            # TODO : Analyse sub-box spec and find box spec.
+            # And then create box with the box specs.
+            #new_subbox = Box(subbox, self.view, '', True)  # for test
             self.boxes.append(subbox['name'])
 
         for in_port in inputs:
@@ -58,8 +64,8 @@ class Box(object):
             self.outputs.append(new_port)
 
         # connect all the ports and logic or boxes
-
-        self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+        
+        
 
     def run(self):
         self.propagateExecution()
