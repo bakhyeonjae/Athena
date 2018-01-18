@@ -21,7 +21,6 @@ class BoxLoader(object):
             data = f.read()
             desc = json.loads(data)
             box = boxcore.Box(desc,container,spec_name.replace('../','').replace('/','.').replace('.box',''),True)
-            
         return box
 
     @classmethod
