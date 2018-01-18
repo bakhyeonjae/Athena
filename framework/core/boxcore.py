@@ -1,13 +1,18 @@
 import os,sys,inspect
 import importlib
 
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-parentdir = os.path.dirname(parentdir)
-sys.path.insert(0,parentdir) 
+#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+from boxloader import BoxLoader
+from portcore import *
+
+#parentdir = os.path.dirname(currentdir)
+#parentdir = os.path.dirname(parentdir)
+#sys.path.insert(0,parentdir) 
+
+sys.path.append('../..')
 
 from src.frontend.Box import CommonModuleBox
-from framework.core.portcore import *
 
 class Box(object):
     def __init__(self, desc, container, boxspec, viewenable):
@@ -45,15 +50,6 @@ class Box(object):
         if 'out-port' in box.keys():
             outputs  = box['out-port']
 
-        if self.viewEnable: 
-            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
-        
-        for subbox in subboxes:
-            # TODO : Analyse sub-box spec and find box spec.
-            # And then create box with the box specs.
-            #new_subbox = Box(subbox, self.view, '', True)  # for test
-            self.boxes.append(subbox['name'])
-
         for in_port in inputs:
             new_port = PortIn(self,in_port['name'])
             new_port.configFromDesc(in_port)
@@ -63,9 +59,21 @@ class Box(object):
             new_port = PortOut(self,out_port['name'])
             self.outputs.append(new_port)
 
+        if self.viewEnable: 
+            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+        
+        for subbox in subboxes:
+            CommonModuleBox(self,self.view,self.inputs,self.outputs,'',self.spec).move(50,50)
+            file_path = BoxLoader.findModuleNameByBoxID(subbox['type'])
+            class_name = '{}.box'.format(file_path.split('/')[-1]) 
+            module_name = '/'.join(file_path.split('/')[:-1])
+            b = BoxLoader.createBox(module_name,class_name,self.view)
+            # TODO : Analyse sub-box spec and find box spec.
+            # And then create box with the box specs.
+            #new_subbox = Box(subbox, self.view, '', True)  # for test
+            self.boxes.append(b)
+
         # connect all the ports and logic or boxes
-        
-        
 
     def run(self):
         self.propagateExecution()

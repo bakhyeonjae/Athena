@@ -5,25 +5,27 @@ import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 parentdir = os.path.dirname(parentdir)
-sys.path.insert(0,parentdir) 
+sys.path.append(currentdir)
+sys.path.append(parentdir)
 
 from src.frontend.Box import CommonModuleBox
-from framework.core.boxcore import Box
+from framework.core import boxcore
+from systemconfig import SystemConfig
 
-class BoxLoader:
+class BoxLoader(object):
     @classmethod
-    def createBox(self, module_name, class_name, container):
+    def createBox(cls, module_name, class_name, container):
         boxes = []
         spec_name = '{}/{}'.format(module_name,class_name)
         with open(spec_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
-            box = Box(desc,container,spec_name.replace('../','').replace('/','.').replace('.box',''),True)
+            box = boxcore.Box(desc,container,spec_name.replace('../','').replace('/','.').replace('.box',''),True)
             
         return box
 
     @classmethod
-    def findModuleName(self,baseDir,moduleName):
+    def findModuleName(cls,baseDir,moduleName):
         path_name = '{}/{}'.format(baseDir,moduleName.replace('.','/'))
         files = list(next(os.walk(path_name))[2])
         module_name = None
@@ -33,10 +35,23 @@ class BoxLoader:
         return module_name
 
     @classmethod
-    def loadBoxDescription(self,baseDir,moduleName,receiver):
+    def loadBoxDescription(cls,baseDir,moduleName,receiver):
         fname = 'Description.md'
         path_name = '{}/{}'.format(baseDir,moduleName.replace('.','/'))
         full_name = '{}/{}'.format(path_name,fname)
         with open(full_name) as f:
             md_data = f.read()
             receiver.displayBoxDescription(md_data)
+
+    @classmethod
+    def findModuleNameByBoxID(cls,boxID):
+        """
+        Find module name by box ID
+
+        :param boxID:
+
+        :rtype: list of strings
+        """
+        version = boxID.split('@')[1]
+        box_dir = '{}/{}'.format(SystemConfig.getBoxDir(),boxID.split('@')[0].replace('.','/'))
+        return box_dir

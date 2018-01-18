@@ -1,5 +1,3 @@
-
-
 class Port(object):
     def __init__(self, box, instName):
         self.dataType = None

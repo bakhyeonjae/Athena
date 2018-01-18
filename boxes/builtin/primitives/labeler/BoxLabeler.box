@@ -1,0 +1,21 @@
+{
+	"box":{
+        "code":{
+            "class":"Labeler",
+            "return":[
+                {
+                    "type":"float",
+                    "name":"data",
+                    "connect":"data"
+                }
+            ]
+        },
+		"out-port":[
+            {
+                "data":"float",
+                "type":"batch",
+                "name":"data"
+            }
+        ]
+	}
+}

@@ -8,11 +8,14 @@ import os
 from Box import CommonModuleBox
 from infoview import InfoView
 
-import os,sys,inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-parentdir = os.path.dirname(parentdir)
-sys.path.insert(0,parentdir) 
+#import os,sys,inspect
+#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+#parentdir = os.path.dirname(currentdir)
+#parentdir = os.path.dirname(parentdir)
+#sys.path.insert(0,parentdir) 
+
+sys.path.append("..")
+sys.path.append("../..")
 
 from boxes.builtin.visualisers.plotscatter import BoxPlotScatter
 from boxes.builtin.primitives.genrandom import BoxRandomGenerator
