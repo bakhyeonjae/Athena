@@ -14,13 +14,13 @@ from systemconfig import SystemConfig
 
 class BoxLoader(object):
     @classmethod
-    def createBox(cls, module_name, class_name, container):
+    def createBox(cls, module_name, class_name, container, controlTower):
         boxes = []
         spec_name = '{}/{}'.format(module_name,class_name)
         with open(spec_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
-            box = boxcore.Box(desc,container,spec_name.replace('../','').replace('/','.').replace('.box',''),True)
+            box = boxcore.Box(container,desc,container.view,spec_name.replace('../','').replace('/','.').replace('.box',''),controlTower)
         return box
 
     @classmethod
@@ -54,3 +54,12 @@ class BoxLoader(object):
         version = boxID.split('@')[1]
         box_dir = '{}/{}'.format(SystemConfig.getBoxDir(),boxID.split('@')[0].replace('.','/'))
         return box_dir
+
+    @classmethod
+    def getModuleName(cls,currItem):
+        if currItem:
+            name = currItem.text(0)
+            return '{}/{}'.format(cls.getModuleName(currItem.parent()),name)
+        else:
+            return ''
+

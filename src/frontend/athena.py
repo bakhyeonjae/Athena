@@ -29,6 +29,7 @@ from boxes.builtin.visualisers.imageviewer import BoxImageViewer
 
 from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
+from controltower.controltower import ControlTower
 
 class ModelBox(CommonModuleBox):
     def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
@@ -50,8 +51,11 @@ class MainWindow(QFrame):
     beginningPort = None
 
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
         self.initUI()
+
+    def setControlTower(self, ct):
+        self.controlTower = ct
 
     def initUI(self):
         self.setAcceptDrops(True)
@@ -66,9 +70,26 @@ class MainWindow(QFrame):
         self.penEnd.setWidth(1)
         self.brushEnd = QBrush(QColor(0, 0, 0, 255))
 
+    def resizeEvent(self, event):
+        margin = 10
+        width = self.size().width()
+        height = self.size().height()
+        self.controlTower.openedBox.view.resize(width-margin*2,height-margin*2)
+
+    def dockBox(self, box):
+        #register the given box as a main box
+        self.openedBox = box
+        margin = 10
+        width = self.size().width()
+        height = self.size().height()
+
+        self.openedBox.move(margin,margin)
+        self.openedBox.resize(width-margin*2,height-margin*2)
+        self.openedBox.openBox()
+
     def addBox(self, box):
-        box.move(500,500)
         self.listBox.append(box)
+        self.dockBox(box)
 
     def deleteBox(self, box):
         selected = next(x for x in self.listBox if x == box)
@@ -77,6 +98,7 @@ class MainWindow(QFrame):
         del selected
         self.update()
 
+    """
     def paintEvent(self, eventQPaintEvent):
         qp = QPainter()
         qp.begin(self)
@@ -98,7 +120,7 @@ class MainWindow(QFrame):
                     qp.drawLine(port.getConnection().getSrcCoord(),port.getConnection().getDstCoord())
                     qp.drawPolygon(self.createArrowHead(port.getConnection().getSrcCoord(), port.getConnection().getDstCoord(),arrow_style))
         qp.end()
-
+    """
     def createArrowHead(self,s,d,style):
         arrow_style = {'narrow-long':{'length':30, 'width':5},
                        'wide-long':{'length':30, 'width':20},
@@ -117,6 +139,7 @@ class MainWindow(QFrame):
         return polygon
 
     def dragEnterEvent(self, e):
+        """
         for box in self.listBox:
             if box.checkPosition(e.pos()):
                 self.selectedBox = box
@@ -131,8 +154,10 @@ class MainWindow(QFrame):
                 self.compensated_pos = e.pos() - self.selectedBox.pos()
 
         e.accept()
+        """
 
     def dragMoveEvent(self, e):
+        """
         if self.isConnecting:
             self.beginningPort.updateDstPosition(e.pos())
         else:
@@ -142,8 +167,10 @@ class MainWindow(QFrame):
 
         self.update()
         e.accept()
+        """
 
     def dropEvent(self, e):
+        """
         if self.isConnecting:
             currBox = None
             port = None
@@ -174,6 +201,7 @@ class MainWindow(QFrame):
 
         e.setDropAction(Qt.MoveAction)
         e.accept()
+        """
 
 # left Tree class
 class TreeWidget(QTreeWidget):
@@ -193,8 +221,12 @@ class TreeWidget(QTreeWidget):
 
         self.constructSubTree(box_dir,self)
 
-        self.itemDoubleClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('../../boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas).view))
+        self.itemDoubleClicked.connect(lambda:self.controlTower.createBoxFromDesc(self.currentItem()))
+        #self.itemDoubleClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('../../boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas).view))
         #self.itemClicked.connect(lambda: BoxLoader.loadBoxDescription(box_dir,self.getModuleName(self.currentItem()),self.infoView))
+
+    def setControlTower(self, ct):
+        self.controlTower = ct
 
     def constructSubTree(self,pathName,parentItem):
         subitem = self.getSubDir(pathName)
@@ -250,5 +282,10 @@ if __name__ == "__main__":
     if not app:     # create QApplication if it doesnt exist
         app = QApplication(sys.argv)
     mywin = TopWindow()
+    controlTower = ControlTower()
+    controlTower.setWorkSpace(mywin.frame)
+    controlTower.setInfoWindow(mywin.viewInfo)
+    controlTower.setBoxTree(mywin.tree)
+    controlTower.constructInitState()
     mywin.show()
     sys.exit(app.exec_())

@@ -1,5 +1,6 @@
 import os,sys,inspect
 import importlib
+import math
 
 #currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
@@ -15,7 +16,7 @@ sys.path.append('../..')
 from src.frontend.Box import CommonModuleBox
 
 class Box(object):
-    def __init__(self, desc, container, boxspec, viewenable):
+    def __init__(self, containerBox, desc, viewContainer, boxspec, controlTower):
         self.desc = desc
         self.boxes = []   # type : boxcore.Box
         self.inputs = []
@@ -23,14 +24,31 @@ class Box(object):
         self.name = ''
         self.type = ''
         self.view = None
-        self.viewContainter = container
+        self.viewContainter = viewContainer
         self.logic = None
         self.spec = boxspec
-        self.viewEnable = viewenable
+        self.isOpened = False
+        self.containerBox = containerBox
+        self.controlTower = controlTower
 
         self.buildStructure()
 
+    def openBox(self):
+        self.isOpened = True
+        self.controlTower.openBox(self)
+        self.view.openBox()
+
+    def closeBox(self):
+        self.isOpened = False
+        for box in self.boxes:
+            box.view.parent = None
+        self.view.parent = None
+
     def buildStructure(self):
+        if not self.desc:
+            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+            return
+
         box = self.desc['box']
 
         subboxes = []
@@ -59,20 +77,20 @@ class Box(object):
             new_port = PortOut(self,out_port['name'])
             self.outputs.append(new_port)
 
-        if self.viewEnable: 
+        if self.containerBox.isOpened:
             self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
-        
-        for subbox in subboxes:
-            CommonModuleBox(self,self.view,self.inputs,self.outputs,'',self.spec).move(50,50)
+
+        for idx, subbox in enumerate(subboxes):
             file_path = BoxLoader.findModuleNameByBoxID(subbox['type'])
             class_name = '{}.box'.format(file_path.split('/')[-1]) 
             module_name = '/'.join(file_path.split('/')[:-1])
-            b = BoxLoader.createBox(module_name,class_name,self.view)
+            new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
+
             # TODO : Analyse sub-box spec and find box spec.
             # And then create box with the box specs.
             #new_subbox = Box(subbox, self.view, '', True)  # for test
-            self.boxes.append(b)
-
+            self.boxes.append(new_box)
+        
         # connect all the ports and logic or boxes
 
     def run(self):
@@ -84,7 +102,6 @@ class Box(object):
             port.propagateExecution()
 
     def execute(self):
-
         self.executeCode()
 
     def executeCode(self):
@@ -110,3 +127,8 @@ class Box(object):
                 var = eval(varname)
                 out_port = next(output for output in self.outputs if output.name == ret['name'])
                 out_port.transferData(var)
+
+    def addBox(self,box):
+        self.boxes.append(box)
+        box.view.move(500,500)
+        

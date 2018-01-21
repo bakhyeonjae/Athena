@@ -2,23 +2,38 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 
+import math
 import Port
 
 class CommonModuleBox(QFrame):
     
     def __init__(self, core=None, parent=None, inputPortNum=None, outputPortNum=None, instName = '', typeName = ''):
         QFrame.__init__(self, parent)
+
+        self.beingConnected = False
         self.parent = parent
         self.popupActions = []  # list of dictionary, Key :"title","desc","method"
         self.inPorts = []
         self.outPorts = []
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
-        self.setStyleSheet("background-color: rgb(230,230,230)")
+        self.setLineWidth(2)
+        self.setStyleSheet("background-color: rgb(230,230,230); border: 1px solid black;")
         self.setContentsMargins(1,1,1,1)
         self.instName = instName
         self.core = core
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
+        self.isOpened = False
+        self.beginningPort = None
+        self.selectedBox = None
+
+        self.penStart = QPen(QColor(255,0,0))
+        self.penStart.setWidth(3)        
+
+        self.penEnd = QPen(QColor(0,0,0))
+        self.penEnd.setWidth(1)
+        self.brushEnd = QBrush(QColor(0, 0, 0, 255))
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
         inputLayout = QHBoxLayout()
         inputLayout.addStretch()
         for port_core in inputPortNum:
@@ -28,9 +43,6 @@ class CommonModuleBox(QFrame):
             self.inPorts.append(new_port)
             inputLayout.addWidget(new_port)
             inputLayout.addStretch()
-
-        bodyLayout = QHBoxLayout()
-        bodyLayout.addWidget(QLabel(instName))
         
         outputLayout = QHBoxLayout()
         outputLayout.addStretch()
@@ -42,18 +54,51 @@ class CommonModuleBox(QFrame):
             outputLayout.addWidget(new_port)
             outputLayout.addStretch()
 
-        layout.addLayout(outputLayout)
-        layout.addWidget(QLabel(instName))
-        layout.addWidget(QLabel('(%s)' % typeName))
-        layout.addLayout(inputLayout)
+        self.layout.addLayout(outputLayout)
+        self.layout.addStretch()
+        self.instName = QLabel(instName)
+        self.instName.setStyleSheet("border: 0px")
+        self.layout.addWidget(self.instName)
+        self.typeName = QLabel('(%s)' % typeName)
+        self.typeName.setStyleSheet("border: 0px")
+        self.layout.addWidget(self.typeName)
+        self.layout.addStretch()
+        self.layout.addLayout(inputLayout)
         
-        self.setLayout(layout)
+        self.setLayout(self.layout)
+
+        self.resize(self.sizeHint())
         self.show()
 
-        menus = [{"title":"run", "desc":"Configure module parameters", "method":self.run},
-                 {"title":"delete", "desc":"Configure module parameters", "method":self.deleteBox}]
+        menus = [{"title":"Run", "desc":"Configure module parameters", "method":self.run},
+                 {"title":"Delete", "desc":"Configure module parameters", "method":self.deleteBox},
+                 {"title":"Open", "desc":"Open this box", "method":self.stepIntoBox},
+                 {"title":"Close", "desc":"Open this box", "method":self.closeBox},
+                 {"title":"Export","desc":"Generate Code", "method":self.export}
+                ]
         self.setPopupActionList(menus)
         self.configPopupMenu()
+
+    def export(self):
+        pass
+
+    def stepIntoBox(self):
+        self.core.openBox()
+
+    def openBox(self):
+        self.isOpened = True
+        self.layout.removeWidget(self.instName) 
+        self.layout.removeWidget(self.typeName) 
+        self.instName.setParent(None)
+        self.typeName.setParent(None)
+        self.setAcceptDrops(True)
+
+    def closeBox(self):
+        self.isOpend = False
+        self.instName.setParent(self)
+        self.typeName.setParent(self)
+        self.layout.addWidget(self.instName)
+        self.layout.addWidget(self.typeName)
 
     def deleteBox(self):
         # Disconnect all the connections with output port
@@ -156,4 +201,114 @@ class CommonModuleBox(QFrame):
     def propagateExecution(self):
         for port in self.inPorts:
             port.propagateExecution()
+
+    def dragEnterEvent(self, e):
+        if not self.isOpened:
+            return
+
+        for box in self.core.boxes:
+            if box.view.checkPosition(e.pos()):
+                self.selectedBox = box.view
+
+        if self.selectedBox:
+            port = self.selectedBox.isConnecting(e.pos())
+            if port:
+                self.beingConnected = True
+                self.beginningPort = port
+                self.beginningPort.createConnectionLine()
+            else:
+                self.compensated_pos = e.pos() - self.selectedBox.pos()
+
+        e.accept()
+
+    def dragMoveEvent(self, e):
+        if not self.isOpened:
+            return
+
+        if self.beingConnected:
+            self.beginningPort.updateDstPosition(e.pos())
+        else:
+            position = e.pos()
+            self.selectedBox.move(position - self.compensated_pos)
+            self.selectedBox.updatePortPos()
+
+        self.update()
+        e.accept()
+
+    def dropEvent(self, e):
+        if not self.isOpened:
+            return
+
+        if self.beingConnected:
+            currBox = None
+            port = None
+            for box in self.core.boxes:
+                if box.view.checkPosition(e.pos()):
+                    currBox = box.view
+            if currBox:
+                port = currBox.isArrived(e.pos())
+
+            condition_flag = True
+            condition_flag = False if not currBox else condition_flag
+            condition_flag = False if not port else condition_flag
+            condition_flag = False if currBox == self.selectedBox else condition_flag
+
+            if not self.beginningPort.checkPortMatch(port): 
+                condition_flag = False 
+                AlertDialog.show(self,'Port types do not match.\nCheck the types')
+
+            if condition_flag:
+                self.beginningPort.connectPort(port)
+            else:
+                self.beginningPort.deleteConnectionLine()
+   
+            self.beingConnected = False
+            
+        self.selectedBox = None
+        self.update()
+
+        e.setDropAction(Qt.MoveAction)
+        e.accept()
+
+    def paintEvent(self, eventQPaintEvent):
+        qp = QPainter()
+        qp.begin(self)
+        qp.setPen(self.penStart)        
+        qp.setRenderHints(QPainter.Antialiasing, True)
+        qp.setPen(self.penEnd)
+        qp.setBrush(self.brushEnd)
+
+        arrow_style = 'narrow-short'
+
+        if self.beingConnected:
+            qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),arrow_style))
+            qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())        
+
+        # Scan all the output ports to draw connected lines.
+        for box in self.core.boxes:
+            for port in box.outputs:
+                if port.isConnected():
+                    qp.drawLine(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord())
+                    qp.drawPolygon(self.createArrowHead(port.view.getConnection().getSrcCoord(), port.view.getConnection().getDstCoord(),arrow_style))
+        qp.end()
+
+    def createArrowHead(self,s,d,style):
+        arrow_style = {'narrow-long':{'length':30, 'width':5},
+                       'wide-long':{'length':30, 'width':20},
+                       'narrow-short':{'length':15, 'width':5},
+                       'wide-short':{'length':15, 'width':5}}
+        polygon = QPolygonF()
+        dx = d.x() - s.x()
+        dy = d.y() - s.y()
+        l = math.sqrt(dx*dx+dy*dy)
+        rv = QPointF(s.x()-d.x(),s.y()-d.y())/l   # reverse vector
+        nv = QPointF(s.y()-d.y(),d.x()-s.x())/l   # normal vector
+        ep = QPointF(d.x(),d.y())                 # end point
+        polygon.append(ep)
+        polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
+        polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
+        return polygon
+
+
+
 
