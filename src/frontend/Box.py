@@ -72,7 +72,7 @@ class CommonModuleBox(QFrame):
 
         menus = [{"title":"Run", "desc":"Configure module parameters", "method":self.run},
                  {"title":"Delete", "desc":"Configure module parameters", "method":self.deleteBox},
-                 {"title":"Open", "desc":"Open this box", "method":self.stepIntoBox},
+                 {"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox},
                  {"title":"Close", "desc":"Open this box", "method":self.closeBox},
                  {"title":"Export","desc":"Generate Code", "method":self.export}
                 ]
@@ -85,7 +85,10 @@ class CommonModuleBox(QFrame):
     def stepIntoBox(self):
         self.core.openBox()
 
-    def openBox(self):
+    def hideTitles(self):
+        """
+        Hide texts on Box View when a box is docked on main workspace
+        """
         self.isOpened = True
         self.layout.removeWidget(self.instName) 
         self.layout.removeWidget(self.typeName) 

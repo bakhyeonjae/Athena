@@ -78,18 +78,18 @@ class MainWindow(QFrame):
 
     def dockBox(self, box):
         #register the given box as a main box
-        self.openedBox = box
         margin = 10
+        self.openedBox = box
         width = self.size().width()
         height = self.size().height()
 
         self.openedBox.move(margin,margin)
         self.openedBox.resize(width-margin*2,height-margin*2)
-        self.openedBox.openBox()
+        self.openedBox.hideTitles()
 
-    def addBox(self, box):
-        self.listBox.append(box)
-        self.dockBox(box)
+    #def addBox(self, box):
+    #    self.listBox.append(box)
+    #    self.dockBox(box)
 
     def deleteBox(self, box):
         selected = next(x for x in self.listBox if x == box)

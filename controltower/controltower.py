@@ -23,15 +23,14 @@ class ControlTower(object):
         self.boxTree.setControlTower(self)
 
     def constructInitState(self):
-        self.rootBox = Box(None,None,self.workspace,None,self)
+        self.rootBox = Box(None,None,None,self,self.workspace)
         self.openedBox = self.rootBox
-        self.openedBox.openBox()
+        self.workspace.dockBox(self.openedBox.view)
 
     def openBox(self, box):
         if self.openedBox is not box:
             self.openedBox.closeBox()
         self.openedBox = box
-        self.workspace.dockBox(self.openedBox.view)
 
     def createBoxFromDesc(self,selectedBox):
         box_dir = '../../boxes'

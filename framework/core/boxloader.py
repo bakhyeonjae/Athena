@@ -14,13 +14,13 @@ from systemconfig import SystemConfig
 
 class BoxLoader(object):
     @classmethod
-    def createBox(cls, module_name, class_name, container, controlTower):
+    def createBox(cls, module_name, class_name, ancestor, controlTower):
         boxes = []
         spec_name = '{}/{}'.format(module_name,class_name)
         with open(spec_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
-            box = boxcore.Box(container,desc,container.view,spec_name.replace('../','').replace('/','.').replace('.box',''),controlTower)
+            box = boxcore.Box(desc,ancestor,spec_name.replace('../','').replace('/','.').replace('.box',''),controlTower)
         return box
 
     @classmethod

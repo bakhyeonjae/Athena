@@ -16,33 +16,48 @@ sys.path.append('../..')
 from src.frontend.Box import CommonModuleBox
 
 class Box(object):
-    def __init__(self, containerBox, desc, viewContainer, boxspec, controlTower):
+    def __init__(self, desc, ancestor, boxspec, controlTower, view=None):
         self.desc = desc
         self.boxes = []   # type : boxcore.Box
         self.inputs = []
         self.outputs = []
         self.name = ''
         self.type = ''
-        self.view = None
-        self.viewContainter = viewContainer
+        if view:
+            self.viewContainter = view
+        else:
+            self.viewContainter = ancestor.view
+        self.controlTower = controlTower
         self.logic = None
         self.spec = boxspec
         self.isOpened = False
-        self.containerBox = containerBox
-        self.controlTower = controlTower
+        self.ancestor = ancestor
 
         self.buildStructure()
 
     def openBox(self):
         self.isOpened = True
         self.controlTower.openBox(self)
-        self.view.openBox()
+        self.climbToShow()
+        width = self.ancestor.view.size().width()
+        height = self.ancestor.view.size().height()
+        self.view.move(0,0)
+        self.view.resize(width,height)
+        for box in self.boxes:
+            box.view.show()
+        self.view.hideTitles()
+
+    def climbToShow(self):
+        if self.ancestor:
+            self.ancestor.climbToShow()
+        print('{}'.format(self.view))
+        self.view.show()
 
     def closeBox(self):
         self.isOpened = False
         for box in self.boxes:
-            box.view.parent = None
-        self.view.parent = None
+            box.view.hide()
+        self.view.hide()
 
     def buildStructure(self):
         if not self.desc:
@@ -77,8 +92,7 @@ class Box(object):
             new_port = PortOut(self,out_port['name'])
             self.outputs.append(new_port)
 
-        if self.containerBox.isOpened:
-            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+        self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
 
         for idx, subbox in enumerate(subboxes):
             file_path = BoxLoader.findModuleNameByBoxID(subbox['type'])
@@ -86,11 +100,16 @@ class Box(object):
             module_name = '/'.join(file_path.split('/')[:-1])
             new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
 
+            if self.isOpened:
+                new_box.view.show()
+            else:
+                new_box.view.hide()
+
             # TODO : Analyse sub-box spec and find box spec.
             # And then create box with the box specs.
             #new_subbox = Box(subbox, self.view, '', True)  # for test
             self.boxes.append(new_box)
-        
+
         # connect all the ports and logic or boxes
 
     def run(self):
