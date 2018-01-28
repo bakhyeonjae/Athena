@@ -36,13 +36,18 @@ class Box(object):
         self.buildStructure()
 
     def openBox(self):
+        """
+        Set widget's flag to show and resize to dock it in workspace and show child boxes.
+        """
         self.isOpened = True
         self.controlTower.openBox(self)
         self.climbToShow()
+        # Suppose that ancestor(parent) widget is docked in workspace and its size is full size.
         width = self.ancestor.view.size().width()
         height = self.ancestor.view.size().height()
         self.view.move(0,0)
         self.view.resize(width,height)
+        # Show all the child boxes.
         for box in self.boxes:
             box.view.show()
         self.view.hideTitles()
@@ -52,6 +57,11 @@ class Box(object):
             self.ancestor.climbToShow()
         print('{}'.format(self.view))
         self.view.show()
+    
+    def openParentBox(self):
+        if self.ancestor:
+            self.closeBox()
+            self.ancestor.openBox()
 
     def closeBox(self):
         self.isOpened = False

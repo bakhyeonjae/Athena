@@ -87,10 +87,6 @@ class MainWindow(QFrame):
         self.openedBox.resize(width-margin*2,height-margin*2)
         self.openedBox.hideTitles()
 
-    #def addBox(self, box):
-    #    self.listBox.append(box)
-    #    self.dockBox(box)
-
     def deleteBox(self, box):
         selected = next(x for x in self.listBox if x == box)
         selected.setParent(None)

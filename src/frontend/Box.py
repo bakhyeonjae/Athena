@@ -73,7 +73,7 @@ class CommonModuleBox(QFrame):
         menus = [{"title":"Run", "desc":"Configure module parameters", "method":self.run},
                  {"title":"Delete", "desc":"Configure module parameters", "method":self.deleteBox},
                  {"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox},
-                 {"title":"Close", "desc":"Open this box", "method":self.closeBox},
+                 {"title":"Step out", "desc":"Open this box", "method":self.stepOutBox},
                  {"title":"Export","desc":"Generate Code", "method":self.export}
                 ]
         self.setPopupActionList(menus)
@@ -84,6 +84,9 @@ class CommonModuleBox(QFrame):
 
     def stepIntoBox(self):
         self.core.openBox()
+
+    def stepOutBox(self):
+        self.core.openParentBox()
 
     def hideTitles(self):
         """
