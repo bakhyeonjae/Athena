@@ -43,19 +43,20 @@ class Box(object):
         self.controlTower.openBox(self)
         self.climbToShow()
         # Suppose that ancestor(parent) widget is docked in workspace and its size is full size.
-        width = self.ancestor.view.size().width()
-        height = self.ancestor.view.size().height()
-        self.view.move(0,0)
-        self.view.resize(width,height)
+        if self.ancestor:
+            width = self.ancestor.view.size().width()
+            height = self.ancestor.view.size().height()
+            self.view.move(0,0)
+            self.view.resize(width,height)
         # Show all the child boxes.
         for box in self.boxes:
+            box.view.setAsBlackBox()
             box.view.show()
         self.view.hideTitles()
 
     def climbToShow(self):
         if self.ancestor:
             self.ancestor.climbToShow()
-        print('{}'.format(self.view))
         self.view.show()
     
     def openParentBox(self):

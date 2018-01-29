@@ -82,6 +82,11 @@ class CommonModuleBox(QFrame):
     def export(self):
         pass
 
+    def setAsBlackBox(self):
+        self.showTitles()
+        self.resize(self.sizeHint())
+        self.setAcceptDrops(False)
+
     def stepIntoBox(self):
         self.core.openBox()
 
@@ -93,18 +98,13 @@ class CommonModuleBox(QFrame):
         Hide texts on Box View when a box is docked on main workspace
         """
         self.isOpened = True
-        self.layout.removeWidget(self.instName) 
-        self.layout.removeWidget(self.typeName) 
-        self.instName.setParent(None)
-        self.typeName.setParent(None)
+        self.instName.hide()
+        self.typeName.hide()
         self.setAcceptDrops(True)
 
-    def closeBox(self):
-        self.isOpend = False
-        self.instName.setParent(self)
-        self.typeName.setParent(self)
-        self.layout.addWidget(self.instName)
-        self.layout.addWidget(self.typeName)
+    def showTitles(self):
+        self.instName.show()
+        self.typeName.show()
 
     def deleteBox(self):
         # Disconnect all the connections with output port
