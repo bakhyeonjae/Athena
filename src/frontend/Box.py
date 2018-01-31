@@ -7,7 +7,7 @@ import Port
 
 class CommonModuleBox(QFrame):
     
-    def __init__(self, core=None, parent=None, inputPortNum=None, outputPortNum=None, instName = '', typeName = ''):
+    def __init__(self, core=None, parent=None, inputPortNum=None, outputPorts=None, instName = '', typeName = ''):
         QFrame.__init__(self, parent)
 
         self.beingConnected = False
@@ -34,27 +34,27 @@ class CommonModuleBox(QFrame):
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-        inputLayout = QHBoxLayout()
-        inputLayout.addStretch()
+        self.inputLayout = QHBoxLayout()
+        self.inputLayout.addStretch()
         for port_core in inputPortNum:
             new_port = Port.ViewPortIn(self)
             new_port.setPortCore(port_core)
             port_core.setView(new_port)
             self.inPorts.append(new_port)
-            inputLayout.addWidget(new_port)
-            inputLayout.addStretch()
+            self.inputLayout.addWidget(new_port)
+            self.inputLayout.addStretch()
         
-        outputLayout = QHBoxLayout()
-        outputLayout.addStretch()
-        for port_core in outputPortNum:
+        self.outputLayout = QHBoxLayout()
+        self.outputLayout.addStretch()
+        for port_core in outputPorts:
             new_port = Port.ViewPortOut(self)
             new_port.setPortCore(port_core)
             port_core.setView(new_port)
             self.outPorts.append(new_port)
-            outputLayout.addWidget(new_port)
-            outputLayout.addStretch()
+            self.outputLayout.addWidget(new_port)
+            self.outputLayout.addStretch()
 
-        self.layout.addLayout(outputLayout)
+        self.layout.addLayout(self.outputLayout)
         self.layout.addStretch()
         self.instName = QLabel(instName)
         self.instName.setStyleSheet("border: 0px")
@@ -63,7 +63,7 @@ class CommonModuleBox(QFrame):
         self.typeName.setStyleSheet("border: 0px")
         self.layout.addWidget(self.typeName)
         self.layout.addStretch()
-        self.layout.addLayout(inputLayout)
+        self.layout.addLayout(self.inputLayout)
         
         self.setLayout(self.layout)
 
@@ -78,6 +78,24 @@ class CommonModuleBox(QFrame):
                 ]
         self.setPopupActionList(menus)
         self.configPopupMenu()
+
+    def setOutputPorts(self,ports):
+        for port_core in ports:
+            new_port = Port.ViewPortOut(self)
+            new_port.setPortCore(port_core)
+            port_core.setView(new_port)
+            self.outPorts.append(new_port)
+            self.outputLayout.addWidget(new_port)
+            self.outputLayout.addStretch()
+
+    def setInputPorts(self,ports):
+        for port_core in ports:
+            new_port = Port.ViewPortIn(self)
+            new_port.setPortCore(port_core)
+            port_core.setView(new_port)
+            self.inPorts.append(new_port)
+            self.inputLayout.addWidget(new_port)
+            self.inputLayout.addStretch()
 
     def setName(self,name):
         self.instName.setText(name)
@@ -301,6 +319,15 @@ class CommonModuleBox(QFrame):
                     qp.drawPolygon(self.createArrowHead(port.view.getConnection().getSrcCoord(), port.view.getConnection().getDstCoord(),arrow_style))
         qp.end()
 
+        # Scan all the input ports to draw connected lines to sub-boxes.
+        #if self.core.isOpened:
+        #    for port in self.core.inputs:
+        #        print('B:{}-{}'.format(port,port.isConnected()))
+        #        if port.isConnected():
+        #            print('({},{})'.format(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord()))
+        #            qp.drawLine(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord())
+        #            qp.drawPolygon(self.createArrowHead(port.view.getConnection().getSrcCoord(), port.view.getConnection().getDstCoord(),arrow_style))
+                
     def createArrowHead(self,s,d,style):
         arrow_style = {'narrow-long':{'length':30, 'width':5},
                        'wide-long':{'length':30, 'width':20},

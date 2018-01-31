@@ -9,6 +9,12 @@ class ViewPort(QLabel):
         QLabel.__init__(self,parent)
         self.dataType = None
 
+    def createConnectionLine(self):
+        self.connection = Connection()
+        self.connection.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
+
+
+
     def setPortCore(self, core):
         self.core = core
 
@@ -110,10 +116,6 @@ class ViewPortOut(ViewPort):
 
     def setData(self, data):
         self.data = data
-
-    def createConnectionLine(self):
-        self.connection = Connection()
-        self.connection.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
     def updateDstPosition(self, pos):
         self.connection.setDstCoord(pos)

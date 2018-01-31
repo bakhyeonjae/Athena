@@ -5,25 +5,25 @@
                 "data":"numpy.ndarray,list",
                 "type":"batch",
                 "name":"positive mean",
-                "connect":"mean port@positive random generator"
+                "connect":"mean@positive random generator"
             },
             {
                 "data":"numpy.ndarray,list",
                 "type":"batch",
                 "name":"positive variance",
-                "connect":"variance port@positive random genrator"
+                "connect":"variance@positive random genrator"
             },
             {
                 "data":"numpy.ndarray,list",
                 "type":"batch",
                 "name":"negative mean",
-                "connect":"mean port@negativerandom genrator"
+                "connect":"mean@negativerandom genrator"
             },
             {
                 "data":"numpy.ndarray,list",
                 "type":"batch",
-                "name":"positive variance",
-                "connect":"variance port@positive random genrator"
+                "name":"negative variance",
+                "connect":"variance@positive random genrator"
             }
         ],
 		"sub-box":[
@@ -32,19 +32,16 @@
                 "name":"positive random generator",
                 "in-port":[
                     {
-                        "type":"mean",
-                        "name":"mean port"
+                        "name":"mean"
                     },
                     {
-                        "type":"variance",
-                        "name":"variance port"
+                        "name":"variance"
                     }
                 ],   
                 "out-port":[
 					{
-						"type":"numpy.ndarray",
-						"name":"random numbers",
-						"connect":"data@positive labeler"
+						"name":"data",
+						"connect":"data@positive data"
 					}
 				],
                 "config":{
@@ -57,69 +54,30 @@
                 "name":"negative random generator",
                 "in-port":[
                     {
-                        "type":"mean",
-                        "name":"mean port"
+                        "name":"mean"
                     },
                     {
-                        "type":"variance",
-                        "name":"variance port"
+                        "name":"variance"
                     }
                 ],
                 "out-port":[
 					{
-						"type":"numpy.ndarray",
-						"name":"random numbers",
-						"connect":"data@negative labeler"
+						"name":"data",
+						"connect":"data@negative data"
 					}
 				],
                 "config":{
                     "name":"type",
                     "value":"gaussian"
                 }
-            },
-            {
-                "type":"builtin.primitives.labeler.BoxLabeler@0.0.1",
-                "name":"positive labeler",
-                "in-port":[
-					{
-						"type":"numpy.ndarray",
-						"name":"data"
-					}
-				],
-                "out-port":[
-					{
-						"type":"list",
-						"name":"labeled data",
-						"connect":"data@positive data"
-					}
-				]
-            },
-            {
-                "type":"builtin.primitives.labeler.BoxLabeler@0.0.1",
-                "name":"negative labeler",
-                "in-port":[
-					{
-						"type":"numpy.ndarray",
-						"name":"data"
-					}
-				],
-                "out-port":[
-					{
-						"type":"list",
-						"name":"labeled data",
-						"connect":"data@negative data"
-					}
-				]
             }
         ],
 		"out-port":[
             {
-                "data":"list",
                 "type":"batch",
                 "name":"positive data"
             },
             {
-                "data":"list",
                 "type":"batch",
                 "name":"negative data"
             }

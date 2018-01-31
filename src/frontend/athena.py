@@ -8,12 +8,6 @@ import os
 from Box import CommonModuleBox
 from infoview import InfoView
 
-#import os,sys,inspect
-#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-#parentdir = os.path.dirname(currentdir)
-#parentdir = os.path.dirname(parentdir)
-#sys.path.insert(0,parentdir) 
-
 sys.path.append("..")
 sys.path.append("../..")
 
@@ -93,30 +87,7 @@ class MainWindow(QFrame):
         self.listBox.remove(selected)
         del selected
         self.update()
-
-    """
-    def paintEvent(self, eventQPaintEvent):
-        qp = QPainter()
-        qp.begin(self)
-        qp.setPen(self.penStart)        
-        qp.setRenderHints(QPainter.Antialiasing, True)
-        qp.setPen(self.penEnd)
-        qp.setBrush(self.brushEnd)
-
-        arrow_style = 'narrow-short'
-
-        if self.isConnecting:
-            qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),arrow_style))
-            qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())        
-
-        # Scan all the output ports to draw connected lines.
-        for box in self.listBox:
-            for port in box.outPorts:
-                if port.isConnected():
-                    qp.drawLine(port.getConnection().getSrcCoord(),port.getConnection().getDstCoord())
-                    qp.drawPolygon(self.createArrowHead(port.getConnection().getSrcCoord(), port.getConnection().getDstCoord(),arrow_style))
-        qp.end()
-    """
+    
     def createArrowHead(self,s,d,style):
         arrow_style = {'narrow-long':{'length':30, 'width':5},
                        'wide-long':{'length':30, 'width':20},
@@ -133,72 +104,7 @@ class MainWindow(QFrame):
         polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
         polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
         return polygon
-
-    def dragEnterEvent(self, e):
-        """
-        for box in self.listBox:
-            if box.checkPosition(e.pos()):
-                self.selectedBox = box
-
-        if self.selectedBox:
-            port = self.selectedBox.isConnecting(e.pos())
-            if port:
-                self.isConnecting = True
-                self.beginningPort = port
-                self.beginningPort.createConnectionLine()
-            else:
-                self.compensated_pos = e.pos() - self.selectedBox.pos()
-
-        e.accept()
-        """
-
-    def dragMoveEvent(self, e):
-        """
-        if self.isConnecting:
-            self.beginningPort.updateDstPosition(e.pos())
-        else:
-            position = e.pos()
-            self.selectedBox.move(position - self.compensated_pos)
-            self.selectedBox.updatePortPos()
-
-        self.update()
-        e.accept()
-        """
-
-    def dropEvent(self, e):
-        """
-        if self.isConnecting:
-            currBox = None
-            port = None
-            for box in self.listBox:
-                if box.checkPosition(e.pos()):
-                    currBox = box
-            if currBox:
-                port = currBox.isArrived(e.pos())
-
-            condition_flag = True
-            condition_flag = False if not currBox else condition_flag
-            condition_flag = False if not port else condition_flag
-            condition_flag = False if currBox == self.selectedBox else condition_flag
-
-            if not self.beginningPort.checkPortMatch(port): 
-                condition_flag = False 
-                AlertDialog.show(self,'Port types do not match.\nCheck the types')
-
-            if condition_flag:
-                self.beginningPort.connectPort(port)
-            else:
-                self.beginningPort.deleteConnectionLine()
-   
-            self.isConnecting = False
-            
-        self.selectedBox = None
-        self.update()
-
-        e.setDropAction(Qt.MoveAction)
-        e.accept()
-        """
-
+    
 # left Tree class
 class TreeWidget(QTreeWidget):
 
@@ -218,8 +124,6 @@ class TreeWidget(QTreeWidget):
         self.constructSubTree(box_dir,self)
 
         self.itemDoubleClicked.connect(lambda:self.controlTower.createBoxFromDesc(self.currentItem()))
-        #self.itemDoubleClicked.connect(lambda: self.canvas.addBox(BoxLoader.createBox('../../boxes{}'.format(self.getModuleName(self.currentItem())),BoxLoader.findModuleName(box_dir,self.getModuleName(self.currentItem())),self.canvas).view))
-        #self.itemClicked.connect(lambda: BoxLoader.loadBoxDescription(box_dir,self.getModuleName(self.currentItem()),self.infoView))
 
     def setControlTower(self, ct):
         self.controlTower = ct

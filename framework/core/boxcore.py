@@ -98,12 +98,7 @@ class Box(object):
             inputs   = box['in-port']
         if 'out-port' in box.keys():
             outputs  = box['out-port']
-
-        for in_port in inputs:
-            new_port = PortIn(self,in_port['name'])
-            new_port.configFromDesc(in_port)
-            self.inputs.append(new_port)
-
+        
         for out_port in outputs:
             new_port = PortOut(self,out_port['name'])
             self.outputs.append(new_port)
@@ -128,6 +123,30 @@ class Box(object):
             self.boxes.append(new_box)
 
         # connect all the ports and logic or boxes
+        print('----------------------------------------')
+        for in_port in inputs:
+            new_port = PortIn(self,in_port['name'])
+            new_port.configFromDesc(in_port)
+            print(in_port['connect'])
+            inst = self.findPortByName(in_port['connect'])
+            new_port.connectPort(inst)
+            #inst.connectPort(new_port)
+            print('A:{}-{}'.format(new_port,new_port.isConnected()))
+            self.inputs.append(new_port)
+
+        self.view.setInputPorts(self.inputs)
+        self.view.update()
+        
+    def findPortByName(self,name):
+        tokens = name.split('@')
+        port_name = tokens[0]
+        subbox_name = tokens[1]
+
+        for box in self.boxes:
+            if box.name == subbox_name:
+                for port in box.inputs:
+                    if port.name == port_name:
+                        return port
 
     def run(self):
         self.propagateExecution()
