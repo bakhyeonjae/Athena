@@ -79,6 +79,9 @@ class CommonModuleBox(QFrame):
         self.setPopupActionList(menus)
         self.configPopupMenu()
 
+    def setName(self,name):
+        self.instName.setText(name)
+
     def export(self):
         pass
 

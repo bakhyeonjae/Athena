@@ -35,6 +35,11 @@ class Box(object):
 
         self.buildStructure()
 
+    def setName(self,name):
+        self.name = name
+        if self.view:
+            self.view.setName(self.name)
+
     def openBox(self):
         """
         Set widget's flag to show and resize to dock it in workspace and show child boxes.
@@ -110,6 +115,7 @@ class Box(object):
             class_name = '{}.box'.format(file_path.split('/')[-1]) 
             module_name = '/'.join(file_path.split('/')[:-1])
             new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
+            new_box.setName(subbox['name'])
 
             if self.isOpened:
                 new_box.view.show()
