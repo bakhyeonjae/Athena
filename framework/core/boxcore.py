@@ -6,6 +6,7 @@ import math
 
 from boxloader import BoxLoader
 from portcore import *
+from edgecore import Edge
 
 #parentdir = os.path.dirname(currentdir)
 #parentdir = os.path.dirname(parentdir)
@@ -127,11 +128,10 @@ class Box(object):
         for in_port in inputs:
             new_port = PortIn(self,in_port['name'])
             new_port.configFromDesc(in_port)
-            print(in_port['connect'])
-            inst = self.findPortByName(in_port['connect'])
-            new_port.connectPort(inst)
-            #inst.connectPort(new_port)
-            print('A:{}-{}'.format(new_port,new_port.isConnected()))
+            target_port = self.findPortByName(in_port['connect'])
+            if target_port and new_port:
+                edge = Edge()
+                edge.connectPorts(new_port, target_port) 
             self.inputs.append(new_port)
 
         self.view.setInputPorts(self.inputs)

@@ -3,6 +3,11 @@ from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 import sys
 
+sys.path.append("..")
+sys.path.append("../..")
+
+from framework.core.edgecore import Edge
+
 class ViewPort(QLabel):
 
     def __init__(self, parent=None):
@@ -10,10 +15,10 @@ class ViewPort(QLabel):
         self.dataType = None
 
     def createConnectionLine(self):
-        self.connection = Connection()
-        self.connection.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
-
-
+        #self.connection = Connection()
+        #self.connection.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
+        self.core.edge = Edge()
+        self.core.edge.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
     def setPortCore(self, core):
         self.core = core
@@ -33,6 +38,9 @@ class ViewPort(QLabel):
 
         return True
 
+    def getEdge(self):
+        return self.core.getEdge()
+
 class Connection(object):
 
     def setSrcCoord(self, pos):
@@ -41,11 +49,11 @@ class Connection(object):
     def setDstCoord(self, pos):
         self.coordDst = pos
 
-    def getSrcCoord(self):
-        return self.coordSrc
+    #def getSrcCoord(self):
+    #    return self.coordSrc
 
-    def getDstCoord(self):
-        return self.coordDst
+    #def getDstCoord(self):
+    #    return self.coordDst
 
 class ViewPortIn(ViewPort):
     
@@ -118,10 +126,12 @@ class ViewPortOut(ViewPort):
         self.data = data
 
     def updateDstPosition(self, pos):
-        self.connection.setDstCoord(pos)
+        #self.connection.setDstCoord(pos)
+        self.core.getEdge().setDstCoord(pos)
 
     def getConnection(self):
-        return self.connection
+        #return self.connection
+        return self.core.getEdge()
 
     def deleteConnectionLine(self):
         self.connection = None

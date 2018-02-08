@@ -4,22 +4,31 @@ class Port(object):
         self.box = box
         self.name = instName
         self.connectedTo = None
+        self.edge = None
+
+    def connectEdge(self):
+        self.edge = edge
+
+    def getEdge(self):
+        return self.edge
 
     def setView(self,viewPort):
         self.view = viewPort
 
     def isConnected(self):
-        if self.connectedTo:
+        if self.edge:
+        #if self.connectedTo:
             return True
         else:
             return False
 
     def disconnectPort(self):
-        connectedTo = self.connectedTo
-        self.connectedTo = None
-
-        if connectedTo:
-            connectedTo.disconnectPort()
+        self.edge = None
+        #connectedTo = self.connectedTo
+        #self.connectedTo = None
+        #
+        #if connectedTo:
+        #    connectedTo.disconnectPort()
 
 class PortIn(Port):
     def __init__(self, box, instName):
@@ -30,8 +39,10 @@ class PortIn(Port):
         self.targetParam = None
 
     def propagateExecution(self):
-        if self.connectedTo:
-            self.connectedTo.propagateExecution()
+        if self.edge:
+            self.edge.propagateExecutionToSource()
+        #if self.connectedTo:
+        #    self.connectedTo.propagateExecution()
 
     def configFromDesc(self,desc):
         """
@@ -67,13 +78,15 @@ class PortIn(Port):
         return self.data
 
     def connectPort(self,portOut):
-        self.connectedTo = portOut
+        self.edge = portOut
+        #self.connectedTo = portOut
 
     def getConnection(self):
-        if self.connectedTo:
-            return self.connectedTo.getConnection()
-        else:
-            return None
+        return self.edge
+        #if self.connectedTo:
+        #    return self.connectedTo.getConnection()
+        #else:
+        #    return None
 
 class PortOut(Port):
     def __init__(self, box, instName):
@@ -84,16 +97,19 @@ class PortOut(Port):
         self.view = viewPort
 
     def transferData(self, data):
-        if self.connectedTo:
-            self.data = data   # if it requires caching...  I'm not so sure if it's required or not now. 
-            self.connectedTo.passToBox(data)
+        if self.edge:
+            self.data = data
+            self.edge.passToBox(data)
+        #if self.connectedTo:
+        #    self.data = data   # if it requires caching...  I'm not so sure if it's required or not now. 
+        #    self.connectedTo.passToBox(data)
 
     def propagateExecution(self):
         self.box.run()
 
-    def connectPort(self,portIn):
-        self.connectedTo = portIn
-        portIn.connectPort(self)
+    #def connectPort(self,portIn):
+    #    self.connectedTo = portIn
+    #    portIn.connectPort(self)
 
     def getConnection(self):
         return self.view.getConnection()

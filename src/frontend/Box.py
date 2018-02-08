@@ -212,12 +212,18 @@ class CommonModuleBox(QFrame):
 
     def updatePortPos(self):
         for port in self.outPorts:
-            if port.getConnection():
-                port.getConnection().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
+            if port.getEdge():
+                if port.getEdge().getView():
+                    port.getEdge().getView().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
+            #if port.getConnection():
+            #    port.getConnection().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
 
         for inport in self.inPorts:
-            if inport.getConnection():
-                inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
+            if inport.getEdge():
+                if inport.getEdge().getView():
+                    inport.getEdge().getView().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
+            #if inport.getConnection():
+            #    inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
 
     def run(self):
         self.core.run()
@@ -285,7 +291,9 @@ class CommonModuleBox(QFrame):
                 AlertDialog.show(self,'Port types do not match.\nCheck the types')
 
             if condition_flag:
-                self.beginningPort.connectPort(port)
+                edge = self.beginningPort.getEdge()
+                edge.connectPorts(self.beginningPort.core,port.core)
+                #self.beginningPort.connectPort(port)
             else:
                 self.beginningPort.deleteConnectionLine()
    
@@ -308,15 +316,15 @@ class CommonModuleBox(QFrame):
         arrow_style = 'narrow-short'
 
         if self.beingConnected:
-            qp.drawPolygon(self.createArrowHead(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord(),arrow_style))
-            qp.drawLine(self.beginningPort.getConnection().getSrcCoord(),self.beginningPort.getConnection().getDstCoord())        
+            qp.drawPolygon(self.createArrowHead(self.beginningPort.getEdge().getView().getSrcCoord(),self.beginningPort.getEdge().getView().getDstCoord(),arrow_style))
+            qp.drawLine(self.beginningPort.getEdge().getView().getSrcCoord(),self.beginningPort.getEdge().getView().getDstCoord())        
 
         # Scan all the output ports to draw connected lines.
         for box in self.core.boxes:
             for port in box.outputs:
                 if port.isConnected():
-                    qp.drawLine(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord())
-                    qp.drawPolygon(self.createArrowHead(port.view.getConnection().getSrcCoord(), port.view.getConnection().getDstCoord(),arrow_style))
+                    qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
+                    qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
         qp.end()
 
         # Scan all the input ports to draw connected lines to sub-boxes.
