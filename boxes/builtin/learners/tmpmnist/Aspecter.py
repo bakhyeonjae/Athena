@@ -26,7 +26,6 @@ class Aspecter(type):
             arg_str = '[args]' if len(args) > 1 else None
             for idx in range(1,len(args)):
                 arg_str += str(args[idx]) + ',,'
-            #print("%s %s %s %d [entry] void %s.%s() %s" % (cls.LOG_TAG, day.isoformat(), t.isoformat(), threading.get_ident(), moduleName, method.__name__, arg_str))
             print("%s %s %s %d [entry] void %s.%s()" % (cls.LOG_TAG, day.isoformat(), t.isoformat(), threading.get_ident(), moduleName, method.__name__))
             results = method(*args, **kw)
             print("%s %s %s %d [exit] void %s.%s()" % (cls.LOG_TAG, day.isoformat(), t.isoformat(), threading.get_ident(), moduleName, method.__name__))

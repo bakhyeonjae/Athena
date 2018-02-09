@@ -15,8 +15,6 @@ class ViewPort(QLabel):
         self.dataType = None
 
     def createConnectionLine(self):
-        #self.connection = Connection()
-        #self.connection.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
         self.core.edge = Edge()
         self.core.edge.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
@@ -52,12 +50,6 @@ class Connection(object):
     def setDstCoord(self, pos):
         self.coordDst = pos
 
-    #def getSrcCoord(self):
-    #    return self.coordSrc
-
-    #def getDstCoord(self):
-    #    return self.coordDst
-
 class ViewPortIn(ViewPort):
     
     def __init__(self, parent):
@@ -80,28 +72,18 @@ class ViewPortIn(ViewPort):
 
     def connectPort(self,portOut):
         self.core.connectPort(portOut.core)
-        #self.connectedTo = portOut
 
     def disconnectPort(self):
         self.core.disconnectPort()
-        #self.connectedTo = None
 
     def isConnected(self):
         return self.core.isConnected()
-        #if self.connectedTo:
-        #    return True
-        #else:
-        #    return False
-
+      
     def getConnection(self):
         # Connection is created by output port object. So, do not delete on input port.
         # Connection is owned by output port. Request core to get connection info.
         return self.core.getConnection()
-        #if self.connectedTo:
-        #    return self.connectedTo.getConnection()
-        #else:
-        #    return None
-
+     
     def propagateExecution(self):
         if self.connectedTo:
             self.connectedTo.propagateExecution()
@@ -129,11 +111,9 @@ class ViewPortOut(ViewPort):
         self.data = data
 
     def updateDstPosition(self, pos):
-        #self.connection.setDstCoord(pos)
         self.core.getEdge().setDstCoord(pos)
 
     def getConnection(self):
-        #return self.connection
         return self.core.getEdge()
 
     def deleteConnectionLine(self):
@@ -147,19 +127,12 @@ class ViewPortOut(ViewPort):
 
     def isConnected(self):
         return self.core.isConnected()
-        #if self.connectedTo:
-        #    return True
-        #else:
-        #    return False
-            
+                    
     def connectPort(self,portIn):
         self.core.connectPort(portIn.core)
-        #self.connectedTo = portIn
-        #portIn.connectPort(self)
-
+        
     def disconnectPort(self):
         self.core.disconnectPort()
-        #self.connectedTo = None
 
     def propagateExecution(self):
         self.parent.run()

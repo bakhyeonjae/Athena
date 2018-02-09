@@ -114,7 +114,6 @@ class Box(object):
 
             # TODO : Analyse sub-box spec and find box spec.
             # And then create box with the box specs.
-            #new_subbox = Box(subbox, self.view, '', True)  # for test
             self.boxes.append(new_box)
 
             outputs = subbox['out-port']
@@ -149,12 +148,10 @@ class Box(object):
             
             for box in self.boxes:
                 if box.name == subbox_name:
-                    print('#####  sub box name : {}.{}'.format(box.name,subbox_name))
                     for port in box.inputs:
                         if port.name == port_name:
                             return port
                     for port in box.outputs:
-                        print('@@@@@ port name : {}'.format(port.name))
                         if port.name == port_name:
                             return port
 

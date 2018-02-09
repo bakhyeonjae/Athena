@@ -215,15 +215,11 @@ class CommonModuleBox(QFrame):
             if port.getEdge():
                 if port.getEdge().getView():
                     port.getEdge().getView().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
-            #if port.getConnection():
-            #    port.getConnection().setSrcCoord(QPoint(port.pos().x()+port.width()/2,port.pos().y()+port.height()/2) + self.pos())
 
         for inport in self.inPorts:
             if inport.getEdge():
                 if inport.getEdge().getView():
                     inport.getEdge().getView().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
-            #if inport.getConnection():
-            #    inport.getConnection().setDstCoord(QPoint(inport.pos().x()+inport.width()/2,inport.pos().y()+inport.height()) + inport.parent.pos())
 
     def run(self):
         self.core.run()
@@ -293,7 +289,6 @@ class CommonModuleBox(QFrame):
             if condition_flag:
                 edge = self.beginningPort.getEdge()
                 edge.connectPorts(self.beginningPort.core,port.core)
-                #self.beginningPort.connectPort(port)
             else:
                 self.beginningPort.deleteConnectionLine()
    
@@ -329,10 +324,8 @@ class CommonModuleBox(QFrame):
 
         if self.core.isOpened:
             for port in self.core.inputs:
-                #print('B:{}-{}'.format(port,port.isConnected()))
                 if port.isConnected():
                     port.getEdge().updateViewPos()
-        #            print('({},{})'.format(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord()))
                     qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
                     qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
         qp.end()
