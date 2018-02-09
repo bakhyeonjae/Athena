@@ -2,15 +2,9 @@ import os,sys,inspect
 import importlib
 import math
 
-#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
 from boxloader import BoxLoader
 from portcore import *
 from edgecore import Edge
-
-#parentdir = os.path.dirname(currentdir)
-#parentdir = os.path.dirname(parentdir)
-#sys.path.insert(0,parentdir) 
 
 sys.path.append('../..')
 
@@ -112,7 +106,7 @@ class Box(object):
             module_name = '/'.join(file_path.split('/')[:-1])
             new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
             new_box.setName(subbox['name'])
-
+            
             if self.isOpened:
                 new_box.view.show()
             else:
@@ -123,11 +117,21 @@ class Box(object):
             #new_subbox = Box(subbox, self.view, '', True)  # for test
             self.boxes.append(new_box)
 
+            outputs = subbox['out-port']
+            for out_port in outputs:
+                source_port = self.findPortByName('{}@{}'.format(out_port['name'],subbox['name']))
+                target_port = self.findPortByName(out_port['connect'])
+                print('desc, {} - {}'.format('{}@{}'.format(out_port['name'],subbox['name']),out_port['connect']))
+                print('ports : {}.{}'.format(source_port,target_port))
+                if target_port and source_port:
+                    edge = Edge()
+                    edge.connectPorts(source_port, target_port)
+
+
         # connect all the ports and logic or boxes
-        print('----------------------------------------')
         for in_port in inputs:
             new_port = PortIn(self,in_port['name'])
-            new_port.configFromDesc(in_port)
+            #new_port.configFromDesc(in_port)
             target_port = self.findPortByName(in_port['connect'])
             if target_port and new_port:
                 edge = Edge()
@@ -140,13 +144,27 @@ class Box(object):
     def findPortByName(self,name):
         tokens = name.split('@')
         port_name = tokens[0]
-        subbox_name = tokens[1]
+        if len(tokens) > 1:
+            subbox_name = tokens[1]
+            
+            for box in self.boxes:
+                if box.name == subbox_name:
+                    print('#####  sub box name : {}.{}'.format(box.name,subbox_name))
+                    for port in box.inputs:
+                        if port.name == port_name:
+                            return port
+                    for port in box.outputs:
+                        print('@@@@@ port name : {}'.format(port.name))
+                        if port.name == port_name:
+                            return port
 
-        for box in self.boxes:
-            if box.name == subbox_name:
-                for port in box.inputs:
-                    if port.name == port_name:
-                        return port
+        for port in self.inputs:
+            if port.name == port_name:
+                return port
+
+        for port in self.outputs:
+            if port.name == port_name:
+                return port        
 
     def run(self):
         self.propagateExecution()

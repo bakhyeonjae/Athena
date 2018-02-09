@@ -323,12 +323,13 @@ class CommonModuleBox(QFrame):
         for box in self.core.boxes:
             for port in box.outputs:
                 if port.isConnected():
+                    port.getEdge().updateViewPos()
                     qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
                     qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
 
         if self.core.isOpened:
             for port in self.core.inputs:
-                print('B:{}-{}'.format(port,port.isConnected()))
+                #print('B:{}-{}'.format(port,port.isConnected()))
                 if port.isConnected():
                     port.getEdge().updateViewPos()
         #            print('({},{})'.format(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord()))
