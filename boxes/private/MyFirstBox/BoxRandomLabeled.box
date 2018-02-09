@@ -11,19 +11,19 @@
                 "data":"numpy.ndarray,list",
                 "type":"batch",
                 "name":"positive variance",
-                "connect":"variance@positive random genrator"
+                "connect":"variance@positive random generator"
             },
             {
                 "data":"numpy.ndarray,list",
                 "type":"batch",
                 "name":"negative mean",
-                "connect":"mean@negativerandom genrator"
+                "connect":"mean@negative random generator"
             },
             {
                 "data":"numpy.ndarray,list",
                 "type":"batch",
                 "name":"negative variance",
-                "connect":"variance@positive random genrator"
+                "connect":"variance@negative random generator"
             }
         ],
 		"sub-box":[
@@ -41,7 +41,7 @@
                 "out-port":[
 					{
 						"name":"data",
-						"connect":"data@positive data"
+						"connect":"positive data"
 					}
 				],
                 "config":{
@@ -63,7 +63,7 @@
                 "out-port":[
 					{
 						"name":"data",
-						"connect":"data@negative data"
+						"connect":"negative data"
 					}
 				],
                 "config":{

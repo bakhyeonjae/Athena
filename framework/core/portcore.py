@@ -6,7 +6,7 @@ class Port(object):
         self.connectedTo = None
         self.edge = None
 
-    def connectEdge(self):
+    def connectEdge(self, edge):
         self.edge = edge
 
     def getEdge(self):
@@ -14,6 +14,9 @@ class Port(object):
 
     def setView(self,viewPort):
         self.view = viewPort
+
+    def getView(self):
+        return self.view
 
     def isConnected(self):
         if self.edge:

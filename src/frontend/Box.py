@@ -325,17 +325,17 @@ class CommonModuleBox(QFrame):
                 if port.isConnected():
                     qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
                     qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
+
+        if self.core.isOpened:
+            for port in self.core.inputs:
+                print('B:{}-{}'.format(port,port.isConnected()))
+                if port.isConnected():
+                    port.getEdge().updateViewPos()
+        #            print('({},{})'.format(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord()))
+                    qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
+                    qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
         qp.end()
 
-        # Scan all the input ports to draw connected lines to sub-boxes.
-        #if self.core.isOpened:
-        #    for port in self.core.inputs:
-        #        print('B:{}-{}'.format(port,port.isConnected()))
-        #        if port.isConnected():
-        #            print('({},{})'.format(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord()))
-        #            qp.drawLine(port.view.getConnection().getSrcCoord(),port.view.getConnection().getDstCoord())
-        #            qp.drawPolygon(self.createArrowHead(port.view.getConnection().getSrcCoord(), port.view.getConnection().getDstCoord(),arrow_style))
-                
     def createArrowHead(self,s,d,style):
         arrow_style = {'narrow-long':{'length':30, 'width':5},
                        'wide-long':{'length':30, 'width':20},
@@ -352,7 +352,3 @@ class CommonModuleBox(QFrame):
         polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
         polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
         return polygon
-
-
-
-

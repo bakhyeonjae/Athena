@@ -20,6 +20,9 @@ class ViewPort(QLabel):
         self.core.edge = Edge()
         self.core.edge.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
+    def getPos(self):
+        return QPoint(self.pos().x()+self.width()/2, self.pos().y()+self.height()/2) + self.parent.pos()
+
     def setPortCore(self, core):
         self.core = core
 
