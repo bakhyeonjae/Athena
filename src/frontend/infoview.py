@@ -1,8 +1,11 @@
-from PySide2.QtWidgets import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-class InfoView(QLabel):
-    def __init__(self):
+
+class InfoView(QWebEngineView):
+    def __init__(self, html):
         super().__init__()
+        self.setHtml(html)
 
     def setControlTower(self, ct):
         self.controlTower = ct

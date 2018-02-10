@@ -1,6 +1,6 @@
-from PySide2.QtGui import *
-from PySide2.QtCore import *
-from PySide2.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys
 import math
 import os
@@ -162,7 +162,15 @@ class TopWindow(QWidget):
         self.frame = MainWindow()
         self.frame.setStyleSheet("background-color: rgb(100, 155, 255)")
 
-        self.viewInfo = InfoView()
+        self.sampleHtml = '''
+        <html>
+            <body>
+            Hello! <br>
+            <h1>Nice to meet you</h1>
+            </body>
+        </html>
+        '''
+        self.viewInfo = InfoView(self.sampleHtml)
         self.viewInfo.setFixedWidth(280)
 
         self.tree = TreeWidget(self.frame,self.viewInfo)
