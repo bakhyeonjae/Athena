@@ -53,9 +53,6 @@ class PortIn(Port):
         self.targetClass = target_desc.split('@')[1]
         self.targetParam = target_desc.split('@')[0]
 
-    def setView(self,viewPort):
-        self.view = viewPort
-
     def passToBox(self,data):
         """
         This method is for PortOut.
@@ -82,9 +79,6 @@ class PortOut(Port):
     def __init__(self, box, instName):
         super().__init__(box, instName)
         self.data = None
-
-    def setView(self,viewPort):
-        self.view = viewPort
 
     def transferData(self, data):
         if self.edge:
