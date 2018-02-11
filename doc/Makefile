@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = python -msphinx
+SPHINXBUILD   = python3.6 -msphinx
 SPHINXPROJ    = Athena
 SOURCEDIR     = source
 BUILDDIR      = build

@@ -1,3 +1,32 @@
+""" Port module consists of 3 classes.
+
+.. graphviz::
+
+   digraph {
+      "From" -> "To";
+   }
+
+.. uml::
+
+      @startuml
+      
+      'style options 
+      skinparam monochrome true
+      skinparam circledCharacterRadius 0
+      skinparam circledCharacterFontSize 0
+      skinparam classAttributeIconSize 0
+      hide empty members
+      
+      Class01 <|-- Class02
+      Class03 *-- Class04
+      Class05 o-- Class06
+      Class07 .. Class08
+      Class09 -- Class10
+      
+      @enduml
+
+"""
+
 class Port(object):
     def __init__(self, box, instName):
         self.dataType = None

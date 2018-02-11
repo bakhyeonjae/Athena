@@ -16,9 +16,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- General configuration ------------------------------------------------
@@ -33,7 +33,9 @@
 extensions = ['sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx.ext.autodoc']
+    'sphinx.ext.autodoc',
+    'sphinx.ext.graphviz',
+    'sphinxcontrib.plantuml']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -170,5 +172,5 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-
+plantuml = 'java -jar ../utils/plantuml.jar'
 

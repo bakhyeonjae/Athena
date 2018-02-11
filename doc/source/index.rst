@@ -10,7 +10,7 @@ Welcome to Athena's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: frontend.athena
+.. automodule:: framework.core.portcore
     :members:
      
 
