@@ -14,6 +14,8 @@
     Port <|-- PortIn
     Port <|-- PortOut
 
+    Port : edgeIn
+    Port : edgeOut
     Port : connectEdge(edge)
     Port : getEdge()
     Port : setView(view)
@@ -95,9 +97,15 @@ class PortIn(Port):
             PortIn -> BoxCore : isOpened()
             activate BoxCore
             deactivate BoxCore
-            PortIn -> PortIn : setGoingInEdge(edge)
-            activate PortIn
-            deactivate PortIn
+            alt opend case
+                PortIn -> PortIn : setEdgeIn(edge)
+                activate PortIn
+                deactivate PortIn
+            else closed case
+                PortIn -> PortIn : setEdgeOut(edge)
+                activate PortIn
+                deactivate PortIn
+            end
             deactivate PortIn
 
             @enduml
