@@ -1,29 +1,40 @@
 """ Port module consists of 3 classes.
 
-.. graphviz::
-
-   digraph {
-      "From" -> "To";
-   }
-
 .. uml::
 
-      @startuml
-      
-      'style options 
-      skinparam monochrome true
-      skinparam circledCharacterRadius 0
-      skinparam circledCharacterFontSize 0
-      skinparam classAttributeIconSize 0
-      hide empty members
-      
-      Class01 <|-- Class02
-      Class03 *-- Class04
-      Class05 o-- Class06
-      Class07 .. Class08
-      Class09 -- Class10
-      
-      @enduml
+    @startuml
+
+    'style options 
+    skinparam monochrome true
+    skinparam circledCharacterRadius 0
+    skinparam circledCharacterFontSize 0
+    skinparam classAttributeIconSize 0
+    hide empty members
+
+    Port <|-- PortIn
+    Port <|-- PortOut
+
+    Port : connectEdge(edge)
+    Port : getEdge()
+    Port : setView(view)
+    Port : getView()
+    Port : isConnected()
+    Port : disconnectPort()
+    PortOut : transferData(data)
+    PortOut : propagateExecution()
+    PortOut : getConnection()
+    PortIn : targetType
+    PortIn : targetPort
+    PortIn : targetClass
+    PortIn : targetParam
+    PortIn : propagateExecution()
+    PortIn : configFromDesc(desc)
+    PortIn : passToBox(data)
+    PortIn : getData()
+    PortIn : connectPort(portOut)
+    PortIn : getConnection()
+
+    @enduml
 
 """
 
@@ -57,12 +68,41 @@ class Port(object):
         self.edge = None
 
 class PortIn(Port):
+    """ PortIn class 
+    """
     def __init__(self, box, instName):
+        """ Initialise in-port.
+        
+        Args:
+            box: box object that has this port as an element
+            instName : instance name of this port
+        """
         super().__init__(box, instName)
         self.targetType = None # 'code-param' / 'box-port'
         self.targetPort = None
         self.targetClass = None
         self.targetParam = None
+        
+    def setEdge(self,edge):
+        """ degree of all the edges is 2. 1 for incoming and 1 for outgoing.
+
+        .. uml::
+
+            @startuml
+
+            PortIn <- BoxCore : connectEdge(edge)
+            activate PortIn
+            PortIn -> BoxCore : isOpened()
+            activate BoxCore
+            deactivate BoxCore
+            PortIn -> PortIn : setGoingInEdge(edge)
+            activate PortIn
+            deactivate PortIn
+            deactivate PortIn
+
+            @enduml
+        """
+        pass
 
     def propagateExecution(self):
         if self.edge:
