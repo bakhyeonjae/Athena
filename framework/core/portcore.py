@@ -86,7 +86,6 @@ class Port(object):
         self.box.createEdge(self)
         return self.edge
 
-
 class PortIn(Port):
     """ PortIn class 
     """
