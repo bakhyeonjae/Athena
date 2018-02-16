@@ -41,12 +41,25 @@
 """
 
 class Port(object):
+    """ Common port interface
+    """
     def __init__(self, box, instName):
         self.dataType = None
         self.box = box
         self.name = instName
         self.connectedTo = None
         self.edge = None
+    
+    def isBoxOpened(self):
+        """ Check if the box is opened or not
+
+        Returns:
+            boolean
+
+            True -- The box is opened on the screen.
+            False -- The box is closed.
+        """
+        return self.box.isOpened()
 
     def connectEdge(self, edge):
         self.edge = edge
@@ -94,9 +107,12 @@ class PortIn(Port):
 
             PortIn <- BoxCore : connectEdge(edge)
             activate PortIn
+            PortIn -> PortIn : isBoxOpened()
+            activate PortIn
             PortIn -> BoxCore : isOpened()
             activate BoxCore
             deactivate BoxCore
+            deactivate PortIn
             alt opend case
                 PortIn -> PortIn : setEdgeIn(edge)
                 activate PortIn
