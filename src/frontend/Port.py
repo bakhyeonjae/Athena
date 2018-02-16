@@ -1,3 +1,6 @@
+"""
+"""
+
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
@@ -9,14 +12,32 @@ sys.path.append("../..")
 from framework.core.edgecore import Edge
 
 class ViewPort(QLabel):
+    """
+    """
 
     def __init__(self, parent=None):
         QLabel.__init__(self,parent)
         self.dataType = None
 
     def createConnectionLine(self):
-        self.core.edge = Edge()
-        self.core.edge.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
+        """ 
+        .. uml::
+
+        @startuml
+        BoxView -> ViewPort : createConnectionLine()
+        activate ViewPort
+        ViewPort -> PortCore : createEdge()
+        activate PortCore
+        PortCore -> BoxCore : createEdge(port)
+        activate BoxCore
+        deactivate BoxCore
+        deactivate PortCore
+        deactivate ViewPort 
+        @enduml
+        """
+        #self.core.edge = Edge()
+        edge = self.core.createEdge()
+        edge.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
     def getPos(self):
         return QPoint(self.pos().x()+self.width()/2, self.pos().y()+self.height()/2) + self.parent.pos()

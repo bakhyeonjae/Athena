@@ -30,6 +30,14 @@ class Box(object):
 
         self.buildStructure()
 
+    def createEdge(self, port):
+        """
+        Args:
+            port : PortCore
+        """
+        if not port.edge:
+            port.edge = Edge()
+
     def setName(self,name):
         self.name = name
         if self.view:

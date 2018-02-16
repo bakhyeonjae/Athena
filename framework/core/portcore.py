@@ -82,6 +82,11 @@ class Port(object):
     def disconnectPort(self):
         self.edge = None
 
+    def createEdge(self):
+        self.box.createEdge(self)
+        return self.edge
+
+
 class PortIn(Port):
     """ PortIn class 
     """
@@ -97,7 +102,7 @@ class PortIn(Port):
         self.targetPort = None
         self.targetClass = None
         self.targetParam = None
-        
+            
     def setEdge(self,edge):
         """ degree of all the edges is 2. 1 for incoming and 1 for outgoing.
 

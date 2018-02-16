@@ -10,6 +10,7 @@ Athena Development document
    :maxdepth: 2
    
    portcore
+   portview
 
 Indices and tables
 
