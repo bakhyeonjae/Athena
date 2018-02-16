@@ -94,7 +94,7 @@ class Port(object):
             else:
                 return False
         else:
-            if self.edgeIn:
+            if self.edgeOut:
                 return True
             else:
                 return False
