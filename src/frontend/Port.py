@@ -9,8 +9,6 @@ import sys
 sys.path.append("..")
 sys.path.append("../..")
 
-from framework.core.edgecore import Edge
-
 class ViewPort(QLabel):
     """
     """
@@ -35,7 +33,6 @@ class ViewPort(QLabel):
         deactivate ViewPort 
         @enduml
         """
-        #self.core.edge = Edge()
         edge = self.core.createEdge()
         edge.setSrcCoord(QPoint(self.pos().x()+self.width()/2,self.pos().y()+self.height()/2) + self.parent.pos())
 
