@@ -48,7 +48,9 @@ class Port(object):
         self.box = box
         self.name = instName
         self.connectedTo = None
-        self.edge = None
+        #self.edge = None
+        self.edgeIn = None
+        self.edgeOut = None
     
     def isBoxOpened(self):
         """ Check if the box is opened or not
@@ -59,13 +61,25 @@ class Port(object):
             True -- The box is opened on the screen.
             False -- The box is closed.
         """
-        return self.box.isOpened()
+        return self.box.isOpened
 
     def connectEdge(self, edge):
-        self.edge = edge
+        """
+        Args:
+            edge : (edgecore.Edge)
+        """
+        if self.isBoxOpened():
+            self.edgeIn = edge
+        else:
+            self.edgeOut = edge
+        #self.edge = edge
 
     def getEdge(self):
-        return self.edge
+        if self.isBoxOpened():
+            return self.edgeIn
+        else:
+            return self.edgeOut
+        #return self.edge
 
     def setView(self,viewPort):
         self.view = viewPort
@@ -74,17 +88,35 @@ class Port(object):
         return self.view
 
     def isConnected(self):
-        if self.edge:
-            return True
+        if self.isBoxOpened():
+            if self.edgeIn:
+                return True
+            else:
+                return False
         else:
-            return False
+            if self.edgeIn:
+                return True
+            else:
+                return False
+            
+        #if self.edge:
+        #    return True
+        #else:
+        #    return False
 
     def disconnectPort(self):
+        if self.isBoxOpened():
+            self.edgeIn = None
+        else:
+            self.edgeOut = None
         self.edge = None
 
     def createEdge(self):
         self.box.createEdge(self)
-        return self.edge
+        if self.isBoxOpened():
+            return self.edgeIn
+        else:
+            return self.edgeOut
 
 class PortIn(Port):
     """ PortIn class 

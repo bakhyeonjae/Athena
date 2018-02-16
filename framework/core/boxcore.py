@@ -35,8 +35,13 @@ class Box(object):
         Args:
             port : PortCore
         """
-        if not port.edge:
-            port.edge = Edge()
+        if self.isOpened:
+            port.edgeIn = Edge()
+        else:
+            port.edgeOut = Edge()
+    
+        #if not port.edge:
+        #    port.edge = Edge()
 
     def setName(self,name):
         self.name = name
