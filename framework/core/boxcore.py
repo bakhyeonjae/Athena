@@ -155,7 +155,7 @@ class Box(object):
         # connect all the ports and logic or boxes
         for in_port in inputs:
             new_port = PortIn(self,in_port['name'])
-            #new_port.configFromDesc(in_port)
+            new_port.configFromDesc(in_port)
             target_port = self.findPortByName(in_port['connect'])
             if target_port and new_port:
                 edge = Edge()

@@ -165,8 +165,8 @@ class PortIn(Port):
         pass
 
     def propagateExecution(self):
-        if self.edge:
-            self.edge.propagateExecutionToSource()
+        if self.edgeOut:
+            self.edgeOut.propagateExecutionToSource()
 
     def configFromDesc(self,desc):
         """
@@ -210,9 +210,9 @@ class PortOut(Port):
         self.data = None
 
     def transferData(self, data):
-        if self.edge:
+        if self.edgeOut:
             self.data = data
-            self.edge.passToBox(data)
+            self.edgeOut.passToBox(data)
         
     def propagateExecution(self):
         self.box.run()
