@@ -4,8 +4,10 @@ class EdgeView(object):
         self.core = core
 
     def updatePortPos(self, source, target):
-        self.setSrcCoord(source)
-        self.setDstCoord(target)
+        if source:
+            self.setSrcCoord(source)
+        if target:
+            self.setDstCoord(target)
 
     def setSrcCoord(self, pos):
         self.srcPos = pos

@@ -32,8 +32,12 @@ class Edge(object):
         self.target.connectEdge(self)
     
     def updateViewPos(self):
-        sourcePos = self.source.getView().getPos()
-        targetPos = self.target.getView().getPos()
+        sourcePos = None
+        targetPos = None
+        if self.source:
+            sourcePos = self.source.getView().getPos()
+        if self.target:
+            targetPos = self.target.getView().getPos()
         self.view.updatePortPos(sourcePos, targetPos)
 
     def propagateExecutionToSource(self):

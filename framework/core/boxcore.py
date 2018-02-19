@@ -36,9 +36,21 @@ class Box(object):
             port : PortCore
         """
         if self.isOpened:
-            port.edgeIn = Edge()
+            #port.edgeIn = Edge()
+            edge = Edge()
+            if isinstance(port,PortIn):
+                edge.source = port
+            elif isinstance(port,PortOut):
+                edge.target = port
+            port.edgeIn = edge
         else:
-            port.edgeOut = Edge()
+            #port.edgeOut = Edge()
+            edge = Edge()
+            if isinstance(port,PortIn):
+                edge.target = port
+            elif isinstance(port,PortOut):
+                edge.source = port
+            port.edgeOut = edge
     
         #if not port.edge:
         #    port.edge = Edge()
