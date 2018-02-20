@@ -63,15 +63,20 @@ class Port(object):
         """
         return self.box.isOpened
 
-    def connectEdge(self, edge):
+    def connectEdge(self, edge, direction='AUTO'):
         """
         Args:
             edge : (edgecore.Edge)
         """
-        if self.isBoxOpened():
+        if 'IN' == direction:
             self.edgeIn = edge
-        else:
+        elif 'OUT' == direction:
             self.edgeOut = edge
+        else:
+            if self.isBoxOpened():
+                self.edgeIn = edge
+            else:
+                self.edgeOut = edge
         #self.edge = edge
 
     def getEdge(self):

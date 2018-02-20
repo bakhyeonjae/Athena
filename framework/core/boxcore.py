@@ -149,7 +149,7 @@ class Box(object):
                 print('ports : {}.{}'.format(source_port,target_port))
                 if target_port and source_port:
                     edge = Edge()
-                    edge.connectPorts(source_port, target_port)
+                    edge.connectPorts(source_port, target_port, edgeTgtDir='IN')
 
 
         # connect all the ports and logic or boxes

@@ -19,17 +19,17 @@ class Edge(object):
     def getView(self):
         return self.view
 
-    def connectPorts(self, source, target):
-        self.setSourcePort(source)
-        self.setTargetPort(target)
+    def connectPorts(self, source, target, edgeSrcDir='AUTO', edgeTgtDir='AUTO'):
+        self.setSourcePort(source, edgeSrcDir)
+        self.setTargetPort(target, edgeTgtDir)
 
-    def setSourcePort(self, source):
+    def setSourcePort(self, source, edgeDir='AUTO'):
         self.source = source
-        self.source.connectEdge(self)
+        self.source.connectEdge(self, edgeDir)
 
-    def setTargetPort(self, target):
+    def setTargetPort(self, target, edgeDir='AUTO'):
         self.target = target
-        self.target.connectEdge(self)
+        self.target.connectEdge(self, edgeDir)
     
     def updateViewPos(self):
         sourcePos = None
