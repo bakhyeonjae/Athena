@@ -159,7 +159,7 @@ class Box(object):
             target_port = self.findPortByName(in_port['connect'])
             if target_port and new_port:
                 edge = Edge()
-                edge.connectPorts(new_port, target_port) 
+                edge.connectPorts(new_port, target_port, edgeSrcDir='IN') 
             self.inputs.append(new_port)
 
         self.view.setInputPorts(self.inputs)
