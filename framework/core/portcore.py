@@ -138,6 +138,7 @@ class PortIn(Port):
         self.targetPort = None
         self.targetClass = None
         self.targetParam = None
+        #print('port init @ box spec:{}'.format(self.box.spec))
             
     def setEdge(self,edge):
         """ degree of all the edges is 2. 1 for incoming and 1 for outgoing.
@@ -170,7 +171,7 @@ class PortIn(Port):
         pass
 
     def propagateExecution(self):
-        print('{}.propagateExecution'.format(type(self)))
+        #print('{}.propagateExecution'.format(type(self)))
         if self.edgeOut:
             self.edgeOut.propagateExecutionToSource()
 
@@ -196,8 +197,11 @@ class PortIn(Port):
         A box need to get data using getData().
         """
         # Todo : Check the data type.
-        print('{}.passToBox'.format(type(self)))
-        self.data = data
+        #print('{}.passToBox, obj:{} box spec:{}'.format(type(self),self,self.box.spec))
+        if self.box.hasSubBox():
+            self.edgeIn.passToBox(data)
+        else:
+            self.data = data
 
     def getData(self):
         """
@@ -217,13 +221,13 @@ class PortOut(Port):
         self.data = None
 
     def transferData(self, data):
-        print('{}.transferData'.format(type(self)))
+        #print('{}.transferData, box spec:{}'.format(type(self),self.box.spec))
         if self.edgeOut:
             self.data = data
             self.edgeOut.passToBox(data)
         
     def propagateExecution(self):
-        print('{}.propagateExecution'.format(type(self)))
+        #print('{}.propagateExecution'.format(type(self)))
         if self.box.hasSubBox():
             self.edgeIn.propagateExecutionToSource()
         else:

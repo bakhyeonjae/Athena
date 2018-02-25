@@ -151,8 +151,8 @@ class Box(object):
             for out_port in outputs:
                 source_port = self.findPortByName('{}@{}'.format(out_port['name'],subbox['name']))
                 target_port = self.findPortByName(out_port['connect'])
-                print('desc, {} - {}'.format('{}@{}'.format(out_port['name'],subbox['name']),out_port['connect']))
-                print('ports : {}.{}'.format(source_port,target_port))
+                #print('desc, {} - {}'.format('{}@{}'.format(out_port['name'],subbox['name']),out_port['connect']))
+                #print('ports : {}.{}'.format(source_port,target_port))
                 if target_port and source_port:
                     edge = Edge()
                     edge.connectPorts(source_port, target_port, edgeTgtDir='IN')
@@ -195,25 +195,25 @@ class Box(object):
                 return port        
 
     def run(self):
-        print('{}.run'.format(self.spec))
+        #print('{}.run'.format(self.spec))
         self.propagateExecution()
         self.execute()
 
     def propagateExecution(self):
-        print('{}.propagateExecution'.format(self.spec))
+        #print('{}.propagateExecution'.format(self.spec))
         for port in self.inputs:
             port.propagateExecution()
 
     def execute(self):
-        print('{}.execute'.format(self.spec))
+        #print('{}.execute'.format(self.spec))
         if self.boxes:
             pass
         else:
-            print(self.spec)
+            #print(self.spec)
             self.executeCode()
 
     def executeCode(self):
-        print('{}.executeCode'.format(self.spec))
+        #print('{}.executeCode'.format(self.spec))
         box = self.desc['box']
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
@@ -225,8 +225,9 @@ class Box(object):
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
+            #print('port obj:{}'.format(port))
         exec_str += ')'
-        print(exec_str)
+        #print(exec_str)
         eval(exec_str)
 
         rets = box['code']['return']

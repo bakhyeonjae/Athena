@@ -1,5 +1,7 @@
 import sys
 
+from portcore import *
+
 sys.path.append('../..')
 
 from src.frontend.edgeview import EdgeView
@@ -41,9 +43,13 @@ class Edge(object):
         self.view.updatePortPos(sourcePos, targetPos)
 
     def propagateExecutionToSource(self):
-        print('{}.propagateExecutionToSource'.format(type(self)))
+        #print('{}.propagateExecutionToSource'.format(type(self)))
         self.source.propagateExecution()
 
     def passToBox(self,data):
-        print('{}.passToBox'.format(type(self)))
-        self.target.passToBox(data)
+        #print('{}.passToBox'.format(type(self)))
+        if isinstance(self.target,PortIn):
+            self.target.passToBox(data)
+        elif isinstance(self.target,PortOut):
+            self.target.transferData(data)
+
