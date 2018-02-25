@@ -30,6 +30,12 @@ class Box(object):
 
         self.buildStructure()
 
+    def hasSubBox(self):
+        if self.boxes:
+            return True
+        else:
+            return False
+
     def createEdge(self, port):
         """
         Args:
@@ -189,17 +195,25 @@ class Box(object):
                 return port        
 
     def run(self):
+        print('{}.run'.format(self.spec))
         self.propagateExecution()
         self.execute()
 
     def propagateExecution(self):
+        print('{}.propagateExecution'.format(self.spec))
         for port in self.inputs:
             port.propagateExecution()
 
     def execute(self):
-        self.executeCode()
+        print('{}.execute'.format(self.spec))
+        if self.boxes:
+            pass
+        else:
+            print(self.spec)
+            self.executeCode()
 
     def executeCode(self):
+        print('{}.executeCode'.format(self.spec))
         box = self.desc['box']
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):

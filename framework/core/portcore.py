@@ -170,6 +170,7 @@ class PortIn(Port):
         pass
 
     def propagateExecution(self):
+        print('{}.propagateExecution'.format(type(self)))
         if self.edgeOut:
             self.edgeOut.propagateExecutionToSource()
 
@@ -195,6 +196,7 @@ class PortIn(Port):
         A box need to get data using getData().
         """
         # Todo : Check the data type.
+        print('{}.passToBox'.format(type(self)))
         self.data = data
 
     def getData(self):
@@ -215,12 +217,17 @@ class PortOut(Port):
         self.data = None
 
     def transferData(self, data):
+        print('{}.transferData'.format(type(self)))
         if self.edgeOut:
             self.data = data
             self.edgeOut.passToBox(data)
         
     def propagateExecution(self):
-        self.box.run()
+        print('{}.propagateExecution'.format(type(self)))
+        if self.box.hasSubBox():
+            self.edgeIn.propagateExecutionToSource()
+        else:
+            self.box.run()
 
     def getConnection(self):
         return self.view.getConnection()

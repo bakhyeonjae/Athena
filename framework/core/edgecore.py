@@ -41,7 +41,9 @@ class Edge(object):
         self.view.updatePortPos(sourcePos, targetPos)
 
     def propagateExecutionToSource(self):
+        print('{}.propagateExecutionToSource'.format(type(self)))
         self.source.propagateExecution()
 
     def passToBox(self,data):
+        print('{}.passToBox'.format(type(self)))
         self.target.passToBox(data)
