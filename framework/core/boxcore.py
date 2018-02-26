@@ -9,6 +9,7 @@ from edgecore import Edge
 sys.path.append('../..')
 
 from src.frontend.Box import CommonModuleBox
+from framework.util.writer import BoxWriter
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None):
@@ -151,8 +152,8 @@ class Box(object):
             for out_port in outputs:
                 source_port = self.findPortByName('{}@{}'.format(out_port['name'],subbox['name']))
                 target_port = self.findPortByName(out_port['connect'])
-                #print('desc, {} - {}'.format('{}@{}'.format(out_port['name'],subbox['name']),out_port['connect']))
-                #print('ports : {}.{}'.format(source_port,target_port))
+                print('desc, {} - {}'.format('{}@{}'.format(out_port['name'],subbox['name']),out_port['connect']))
+                print('ports : {}.{}'.format(source_port,target_port))
                 if target_port and source_port:
                     edge = Edge()
                     edge.connectPorts(source_port, target_port, edgeTgtDir='IN')
@@ -195,25 +196,25 @@ class Box(object):
                 return port        
 
     def run(self):
-        #print('{}.run'.format(self.spec))
+        print('{}.run'.format(self.spec))
         self.propagateExecution()
         self.execute()
 
     def propagateExecution(self):
-        #print('{}.propagateExecution'.format(self.spec))
+        print('{}.propagateExecution'.format(self.spec))
         for port in self.inputs:
             port.propagateExecution()
 
     def execute(self):
-        #print('{}.execute'.format(self.spec))
+        print('{}.execute'.format(self.spec))
         if self.boxes:
             pass
         else:
-            #print(self.spec)
+            print(self.spec)
             self.executeCode()
 
     def executeCode(self):
-        #print('{}.executeCode'.format(self.spec))
+        print('{}.executeCode'.format(self.spec))
         box = self.desc['box']
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
@@ -225,9 +226,9 @@ class Box(object):
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
-            #print('port obj:{}'.format(port))
+            print('port obj:{}'.format(port))
         exec_str += ')'
-        #print(exec_str)
+        print(exec_str)
         eval(exec_str)
 
         rets = box['code']['return']
@@ -241,4 +242,97 @@ class Box(object):
     def addBox(self,box):
         self.boxes.append(box)
         box.view.move(500,500)
-        
+
+    def save(self, fileName):
+        writer = BoxWriter(fileName)
+        writer.write('{')
+        writer.incIndent()
+        writer.write('\"box\":{')
+        # write inputs
+        if self.inputs:
+            writer.incIndent()
+            writer.write('\"in-port\":[')
+            writer.incIndent()
+            for port in self.inputs:
+                writer.write('{')
+                writer.incIndent()
+                writer.write('\"name\":\"{}\",'.format(port.name))
+                writer.write('\"connect\":\"{}@{}\"'.format(port.edgeIn.target.name,port.edgeIn.target.box.name)) # only if sub boxes exist
+                writer.decIndent()
+                if port == self.inputs[-1]:
+                    writer.write('}')
+                else:
+                    writer.write('},')
+            writer.decIndent()
+            writer.write('],')
+            writer.decIndent()
+            
+        # write boxes
+        if self.boxes:
+            writer.incIndent()
+            writer.write('\"sub-box\":[')
+            writer.incIndent()
+            for box in self.boxes:
+                writer.write('{')
+                writer.incIndent()
+                spec_str = box.spec.replace('boxes.','')
+                writer.write('\"type\":\"{}\",'.format(spec_str))
+                writer.write('\"name\":\"{}\",'.format(box.name))
+                writer.write('\"in-port\":[')
+                writer.incIndent()
+                for port in box.inputs:
+                    writer.write('{')
+                    writer.incIndent()
+                    writer.write('\"name\":\"{}\"'.format(port.name))
+                    writer.decIndent()
+                    if port == box.inputs[-1]:
+                        writer.write('}')
+                    else:
+                        writer.write('},')
+                writer.decIndent()
+                writer.write('],')
+                writer.write('\"out-port\":[')
+                writer.incIndent()
+                for port in box.outputs:
+                    writer.write('{')
+                    writer.incIndent()
+                    writer.write('\"name\":\"{}\",'.format(port.name))
+                    writer.write('\"connect\":\"{}\"'.format(port.edgeOut.target.name))
+                    writer.decIndent()
+                    if port == box.outputs[-1]:
+                        writer.write('}')
+                    else:
+                        writer.write('},')
+                writer.decIndent()
+                writer.write(']')
+                writer.decIndent()
+                if box == self.boxes[-1]:
+                    writer.write('}')
+                else:
+                    writer.write('},')
+            writer.decIndent()
+            writer.write('],')
+            writer.decIndent()
+
+        # write outputs
+        if self.outputs:
+            writer.incIndent()
+            writer.write('\"out-port\":[')
+            writer.incIndent()
+            for port in self.outputs:
+                writer.write('{')
+                writer.incIndent()
+                writer.write('\"name\":\"'.format(port.name))
+                writer.decIndent()
+                if port == self.outputs[-1]:
+                    writer.write('}')
+                else:
+                    writer.write('},')
+            writer.decIndent()
+            writer.write(']')
+            writer.decIndent()
+
+        writer.write('}')
+        writer.decIndent()
+        writer.write('}')
+  

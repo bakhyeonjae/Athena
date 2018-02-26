@@ -74,10 +74,14 @@ class CommonModuleBox(QFrame):
                  {"title":"Delete", "desc":"Configure module parameters", "method":self.deleteBox},
                  {"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox},
                  {"title":"Step out", "desc":"Open this box", "method":self.stepOutBox},
-                 {"title":"Export","desc":"Generate Code", "method":self.export}
+                 {"title":"Export","desc":"Generate Code", "method":self.export},
+                 {"title":"save","desc":"save to file", "method":self.save}
                 ]
         self.setPopupActionList(menus)
         self.configPopupMenu()
+
+    def save(self):
+        self.core.save('test.box')
 
     def setOutputPorts(self,ports):
         for port_core in ports:
