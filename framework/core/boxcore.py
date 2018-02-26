@@ -26,6 +26,7 @@ class Box(object):
         self.controlTower = controlTower
         self.logic = None
         self.spec = boxspec
+        self.version = None
         self.isOpened = False
         self.ancestor = ancestor
 
@@ -113,6 +114,8 @@ class Box(object):
         inputs   = []
         outputs  = []
 
+        if 'version' in box.keys():
+            self.version = box['version']
         if 'sub-box' in box.keys():
             subboxes = box['sub-box']
         if 'code' in box.keys():
@@ -248,9 +251,10 @@ class Box(object):
         writer.write('{')
         writer.incIndent()
         writer.write('\"box\":{')
+        writer.incIndent()
+        writer.write('\"version\":\"{}\",'.format(self.version))
         # write inputs
         if self.inputs:
-            writer.incIndent()
             writer.write('\"in-port\":[')
             writer.incIndent()
             for port in self.inputs:
@@ -265,17 +269,15 @@ class Box(object):
                     writer.write('},')
             writer.decIndent()
             writer.write('],')
-            writer.decIndent()
             
         # write boxes
         if self.boxes:
-            writer.incIndent()
             writer.write('\"sub-box\":[')
             writer.incIndent()
             for box in self.boxes:
                 writer.write('{')
                 writer.incIndent()
-                spec_str = box.spec.replace('boxes.','')
+                spec_str = '{}@{}'.format(box.spec.replace('boxes.',''),box.version)
                 writer.write('\"type\":\"{}\",'.format(spec_str))
                 writer.write('\"name\":\"{}\",'.format(box.name))
                 writer.write('\"in-port\":[')
@@ -312,17 +314,15 @@ class Box(object):
                     writer.write('},')
             writer.decIndent()
             writer.write('],')
-            writer.decIndent()
 
         # write outputs
         if self.outputs:
-            writer.incIndent()
             writer.write('\"out-port\":[')
             writer.incIndent()
             for port in self.outputs:
                 writer.write('{')
                 writer.incIndent()
-                writer.write('\"name\":\"'.format(port.name))
+                writer.write('\"name\":\"{}\"'.format(port.name))
                 writer.decIndent()
                 if port == self.outputs[-1]:
                     writer.write('}')
@@ -330,8 +330,8 @@ class Box(object):
                     writer.write('},')
             writer.decIndent()
             writer.write(']')
-            writer.decIndent()
 
+        writer.decIndent()
         writer.write('}')
         writer.decIndent()
         writer.write('}')
