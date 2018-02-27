@@ -86,6 +86,7 @@ class Box(object):
             box.view.setAsBlackBox()
             box.view.show()
         self.view.hideTitles()
+        self.view.setFocus()  # To get keyboard event 
 
     def climbToShow(self):
         if self.ancestor:

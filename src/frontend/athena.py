@@ -80,6 +80,7 @@ class MainWindow(QFrame):
         self.openedBox.move(margin,margin)
         self.openedBox.resize(width-margin*2,height-margin*2)
         self.openedBox.hideTitles()
+        self.openedBox.setFocus()
 
     def deleteBox(self, box):
         selected = next(x for x in self.listBox if x == box)
@@ -87,24 +88,7 @@ class MainWindow(QFrame):
         self.listBox.remove(selected)
         del selected
         self.update()
-    
-    def createArrowHead(self,s,d,style):
-        arrow_style = {'narrow-long':{'length':30, 'width':5},
-                       'wide-long':{'length':30, 'width':20},
-                       'narrow-short':{'length':15, 'width':5},
-                       'wide-short':{'length':15, 'width':5}}
-        polygon = QPolygonF()
-        dx = d.x() - s.x()
-        dy = d.y() - s.y()
-        l = math.sqrt(dx*dx+dy*dy)
-        rv = QPointF(s.x()-d.x(),s.y()-d.y())/l   # reverse vector
-        nv = QPointF(s.y()-d.y(),d.x()-s.x())/l   # normal vector
-        ep = QPointF(d.x(),d.y())                 # end point
-        polygon.append(ep)
-        polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
-        polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
-        return polygon
-    
+        
 # left Tree class
 class TreeWidget(QTreeWidget):
 

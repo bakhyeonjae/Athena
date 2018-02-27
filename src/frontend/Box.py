@@ -83,6 +83,18 @@ class CommonModuleBox(QFrame):
     def save(self):
         self.core.save('test.box')
 
+    def keyPressEvent(self, event):
+        key = event.key()
+        if ord('d') == key or ord('D') == key:
+            print('delete edge')
+            edge = self.getHighlightedEdge()
+            if edge:
+                port_src = edge.source
+                port_tgt = edge.target
+                port_src.disconnectPort()
+                port_tgt.disconnectPort()
+                self.update()
+
     def setOutputPorts(self,ports):
         for port_core in ports:
             new_port = Port.ViewPortOut(self)
@@ -152,6 +164,18 @@ class CommonModuleBox(QFrame):
 
     def configPopupMenu(self):
         pass
+
+    def getHighlightedEdge(self):
+        if self.core.boxes:
+            for box in self.core.boxes:
+                for port in box.inputs:
+                    if port.getEdge():
+                        if port.getEdge().getView().isHighlighted():
+                            return port.getEdge()
+                for port in box.outputs:
+                    if port.getEdge():
+                        if port.getEdge().getView().isHighlighted():
+                            return port.getEdge()
 
     def clearAllHighlightedEdges(self):
         if self.core.boxes:

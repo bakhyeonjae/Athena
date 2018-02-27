@@ -58,6 +58,9 @@ class EdgeView(object):
     def setHighlight(self, flag):
         self.highlighted = flag
 
+    def isHighlighted(self):
+        return self.highlighted
+
     def drawLine(self, painter):
 
         pen_restore = painter.pen()
