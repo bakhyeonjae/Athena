@@ -153,9 +153,34 @@ class CommonModuleBox(QFrame):
     def configPopupMenu(self):
         pass
 
+    def clearAllHighlightedEdges(self):
+        if self.core.boxes:
+            for box in self.core.boxes:
+                for port in box.inputs:
+                    if port.getEdge():
+                        port.getEdge().getView().setHighlight(False)
+                for port in box.outputs:
+                    if port.getEdge():
+                        port.getEdge().getView().setHighlight(False)
+
     def mouseReleaseEvent(self, event):
-        self.createPopupActions()
-        self.createPopupMenu()
+        if event.button() == Qt.LeftButton:
+            if self.core.boxes:
+                for box in self.core.boxes:
+                    for port in box.inputs:
+                        if port.getEdge():
+                            if port.getEdge().getView().isOnEdge(event.pos()):
+                                self.clearAllHighlightedEdges()
+                                port.getEdge().getView().setHighlight(True)
+                    for port in box.outputs:
+                        if port.getEdge():
+                            if port.getEdge().getView().isOnEdge(event.pos()):
+                                self.clearAllHighlightedEdges()
+                                port.getEdge().getView().setHighlight(True)
+            self.update()        
+        else:
+            self.createPopupActions()
+            self.createPopupMenu()
 
     def mouseMoveEvent(self, e):
         if e.buttons() != Qt.LeftButton:
@@ -261,9 +286,10 @@ class CommonModuleBox(QFrame):
         if self.beingConnected:
             self.beginningPort.updateDstPosition(e.pos())
         else:
-            position = e.pos()
-            self.selectedBox.move(position - self.compensated_pos)
-            self.selectedBox.updatePortPos()
+            if self.selectedBox:
+                position = e.pos()
+                self.selectedBox.move(position - self.compensated_pos)
+                self.selectedBox.updatePortPos()
 
         self.update()
         e.accept()
@@ -312,41 +338,19 @@ class CommonModuleBox(QFrame):
         qp.setPen(self.penEnd)
         qp.setBrush(self.brushEnd)
 
-        arrow_style = 'narrow-short'
-
         if self.beingConnected:
-            qp.drawPolygon(self.createArrowHead(self.beginningPort.getEdge().getView().getSrcCoord(),self.beginningPort.getEdge().getView().getDstCoord(),arrow_style))
-            qp.drawLine(self.beginningPort.getEdge().getView().getSrcCoord(),self.beginningPort.getEdge().getView().getDstCoord())        
+            self.beginningPort.getEdge().getView().drawLine(qp)
 
         # Scan all the output ports to draw connected lines.
         for box in self.core.boxes:
             for port in box.outputs:
                 if port.isConnected():
                     port.getEdge().updateViewPos()
-                    qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
-                    qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
+                    port.getEdge().getView().drawLine(qp)
 
         if self.core.isOpened:
             for port in self.core.inputs:
                 if port.isConnected():
                     port.getEdge().updateViewPos()
-                    qp.drawLine(port.view.getEdge().getView().getSrcCoord(),port.view.getEdge().getView().getDstCoord())
-                    qp.drawPolygon(self.createArrowHead(port.view.getEdge().getView().getSrcCoord(), port.view.getEdge().getView().getDstCoord(),arrow_style))
+                    port.getEdge().getView().drawLine(qp)
         qp.end()
-
-    def createArrowHead(self,s,d,style):
-        arrow_style = {'narrow-long':{'length':30, 'width':5},
-                       'wide-long':{'length':30, 'width':20},
-                       'narrow-short':{'length':15, 'width':5},
-                       'wide-short':{'length':15, 'width':5}}
-        polygon = QPolygonF()
-        dx = d.x() - s.x()
-        dy = d.y() - s.y()
-        l = math.sqrt(dx*dx+dy*dy)
-        rv = QPointF(s.x()-d.x(),s.y()-d.y())/l   # reverse vector
-        nv = QPointF(s.y()-d.y(),d.x()-s.x())/l   # normal vector
-        ep = QPointF(d.x(),d.y())                 # end point
-        polygon.append(ep)
-        polygon.append(ep+arrow_style[style]['length']*rv+arrow_style[style]['width']*nv)
-        polygon.append(ep+arrow_style[style]['length']*rv-arrow_style[style]['width']*nv)
-        return polygon
