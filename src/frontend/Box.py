@@ -279,10 +279,15 @@ class CommonModuleBox(QFrame):
 
         return True
 
-    def isConnecting(self,pos):
-        for port in self.outPorts:
-            if port.checkPosition(pos-self.pos()):
-                return port
+    def isConnecting(self, pos, beginFrom='OUTPORT'):
+        if 'OUTPORT' == beginFrom:
+            for port in self.outPorts:
+                if port.checkPosition(pos-self.pos()):
+                    return port
+        elif 'INPORT' == beginFrom:
+            for port in self.inPorts:
+                if port.checkPosition(pos):
+                    return port
         return None
 
     def isArrived(self,pos):
@@ -321,13 +326,21 @@ class CommonModuleBox(QFrame):
                 self.selectedBox = box.view
 
         if self.selectedBox:
-            port = self.selectedBox.isConnecting(e.pos())
+            port = self.selectedBox.isConnecting(e.pos(),beginFrom='OUTPORT')
             if port:
                 self.beingConnected = True
                 self.beginningPort = port
                 self.beginningPort.createConnectionLine()
             else:
                 self.compensated_pos = e.pos() - self.selectedBox.pos()
+        else:
+            port = self.isConnecting(e.pos(),beginFrom='INPORT')
+            if port:
+                self.beingConnected = True
+                self.beginningPort = port
+                self.beginningPort.createConnectionLine()
+            else:
+                self.compensated_pos = e.pos() - self.pos()
 
         e.accept()
 

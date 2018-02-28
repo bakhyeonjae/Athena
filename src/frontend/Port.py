@@ -60,6 +60,15 @@ class ViewPort(QLabel):
     def getEdge(self):
         return self.core.getEdge()
 
+    def updateDstPosition(self, pos):
+        self.core.getEdge().setDstCoord(pos)
+
+    def checkPortMatch(self,portIn):
+        if self.dataType == portIn.dataType:
+            return True
+        else:
+            return False
+
 class Connection(object):
 
     def setSrcCoord(self, pos):
@@ -128,20 +137,11 @@ class ViewPortOut(ViewPort):
     def setData(self, data):
         self.data = data
 
-    def updateDstPosition(self, pos):
-        self.core.getEdge().setDstCoord(pos)
-
     def getConnection(self):
         return self.core.getEdge()
 
     def deleteConnectionLine(self):
         self.connection = None
-
-    def checkPortMatch(self,portIn):
-        if self.dataType == portIn.dataType:
-            return True
-        else:
-            return False
 
     def isConnected(self):
         return self.core.isConnected()
