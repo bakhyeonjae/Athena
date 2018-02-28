@@ -290,10 +290,16 @@ class CommonModuleBox(QFrame):
                     return port
         return None
 
-    def isArrived(self,pos):
-        for port in self.inPorts:
-            if port.checkPosition(pos-self.pos()):
-                return port
+    def isArrived(self, pos, arriveAt='INPORT'):
+        if 'INPORT' == arriveAt:
+            for port in self.inPorts:
+                if port.checkPosition(pos-self.pos()):
+                    return port
+        elif 'OUTPORT' == arriveAt:
+            for port in self.outPorts:
+                if port.checkPosition(pos):
+                    return port
+            
         return None
 
     def updatePortPos(self):
@@ -369,8 +375,16 @@ class CommonModuleBox(QFrame):
             for box in self.core.boxes:
                 if box.view.checkPosition(e.pos()):
                     currBox = box.view
+
+            if not currBox:
+                if self.checkPosition(e.pos()):
+                    currBox = self
+
             if currBox:
-                port = currBox.isArrived(e.pos())
+                if currBox == self:
+                    port = currBox.isArrived(e.pos(), arriveAt='OUTPORT')
+                else:
+                    port = currBox.isArrived(e.pos(), arriveAt='INPORT')
 
             condition_flag = True
             condition_flag = False if not currBox else condition_flag
