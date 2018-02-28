@@ -175,16 +175,16 @@ class Box(object):
         self.view.setInputPorts(self.inputs)
         self.view.update()
 
-    def addOutPort(self):
+    def addOutPort(self,name):
         # Allow a user specify name
-        new_port = PortOut(self,'test') 
+        new_port = PortOut(self,name)
         self.outputs.append(new_port)
         self.view.setOutputPorts(self.outputs)
         self.view.update()
 
-    def addInPort(self):
+    def addInPort(self,name):
         # Allow a user specify name
-        new_port = PortIn(self,'test')
+        new_port = PortIn(self,name)
         self.inputs.append(new_port)
         self.view.setInputPorts(self.inputs)
         self.view.update()

@@ -5,6 +5,8 @@ from PySide2.QtWidgets import *
 import math
 import Port
 
+from framework.dialog.TextInputDialog import TextInputDialog
+
 class CommonModuleBox(QFrame):
     
     def __init__(self, core=None, parent=None, inputPortNum=None, outputPorts=None, instName = '', typeName = ''):
@@ -83,10 +85,14 @@ class CommonModuleBox(QFrame):
         self.configPopupMenu()
 
     def addInPort(self):
-        self.core.addInPort()
+        name, ret = TextInputDialog.getText('Name an input port')
+        if QDialog.Accepted == ret:
+            self.core.addInPort(name)
 
     def addOutPort(self):
-        self.core.addOutPort()
+        name, ret = TextInputDialog.getText('Name an output port')
+        if QDialog.Accepted == ret:
+            self.core.addOutPort(name)
 
     def save(self):
         self.core.save('test.box')
