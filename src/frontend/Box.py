@@ -75,10 +75,18 @@ class CommonModuleBox(QFrame):
                  {"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox},
                  {"title":"Step out", "desc":"Open this box", "method":self.stepOutBox},
                  {"title":"Export","desc":"Generate Code", "method":self.export},
-                 {"title":"save","desc":"save to file", "method":self.save}
+                 {"title":"Save","desc":"save to file", "method":self.save},
+                 {"title":"Another input port","desc":"Add an input port", "method":self.addInPort},
+                 {"title":"Another output port","desc":"Add an output port", "method":self.addOutPort},
                 ]
         self.setPopupActionList(menus)
         self.configPopupMenu()
+
+    def addInPort(self):
+        self.core.addInPort()
+
+    def addOutPort(self):
+        self.core.addOutPort()
 
     def save(self):
         self.core.save('test.box')
@@ -95,23 +103,43 @@ class CommonModuleBox(QFrame):
                 port_tgt.disconnectPort()
                 self.update()
 
+    def needOutputPortView(self, port):
+        need_flag = True
+        for idx in range(self.outputLayout.count()):
+            port_view = self.outputLayout.itemAt(idx).widget()
+            if port.getView()== port_view and port.getView() and port_view:
+                need_flag = False
+                break
+        return need_flag
+
     def setOutputPorts(self,ports):
         for port_core in ports:
-            new_port = Port.ViewPortOut(self)
-            new_port.setPortCore(port_core)
-            port_core.setView(new_port)
-            self.outPorts.append(new_port)
-            self.outputLayout.addWidget(new_port)
-            self.outputLayout.addStretch()
+            if self.needOutputPortView(port_core):
+                new_port = Port.ViewPortOut(self)
+                new_port.setPortCore(port_core)
+                port_core.setView(new_port)
+                self.outPorts.append(new_port)
+                self.outputLayout.addWidget(new_port)
+                self.outputLayout.addStretch()
+
+    def needInputPortView(self, port):
+        need_flag = True
+        for idx in range(self.inputLayout.count()):
+            port_view = self.inputLayout.itemAt(idx).widget()
+            if port.getView()== port_view and port.getView() and port_view:
+                need_flag = False
+                break
+        return need_flag
 
     def setInputPorts(self,ports):
         for port_core in ports:
-            new_port = Port.ViewPortIn(self)
-            new_port.setPortCore(port_core)
-            port_core.setView(new_port)
-            self.inPorts.append(new_port)
-            self.inputLayout.addWidget(new_port)
-            self.inputLayout.addStretch()
+            if self.needInputPortView(port_core):
+                new_port = Port.ViewPortIn(self)
+                new_port.setPortCore(port_core)
+                port_core.setView(new_port)
+                self.inPorts.append(new_port)
+                self.inputLayout.addWidget(new_port)
+                self.inputLayout.addStretch()
 
     def setName(self,name):
         self.instName.setText(name)

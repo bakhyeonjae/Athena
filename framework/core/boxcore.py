@@ -162,7 +162,6 @@ class Box(object):
                     edge = Edge()
                     edge.connectPorts(source_port, target_port, edgeTgtDir='IN')
 
-
         # connect all the ports and logic or boxes
         for in_port in inputs:
             new_port = PortIn(self,in_port['name'])
@@ -173,6 +172,20 @@ class Box(object):
                 edge.connectPorts(new_port, target_port, edgeSrcDir='IN') 
             self.inputs.append(new_port)
 
+        self.view.setInputPorts(self.inputs)
+        self.view.update()
+
+    def addOutPort(self):
+        # Allow a user specify name
+        new_port = PortOut(self,'test') 
+        self.outputs.append(new_port)
+        self.view.setOutputPorts(self.outputs)
+        self.view.update()
+
+    def addInPort(self):
+        # Allow a user specify name
+        new_port = PortIn(self,'test')
+        self.inputs.append(new_port)
         self.view.setInputPorts(self.inputs)
         self.view.update()
         

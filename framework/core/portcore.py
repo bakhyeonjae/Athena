@@ -51,6 +51,7 @@ class Port(object):
         #self.edge = None
         self.edgeIn = None
         self.edgeOut = None
+        self.view = None
     
     def isBoxOpened(self):
         """ Check if the box is opened or not
