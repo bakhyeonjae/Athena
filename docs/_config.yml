@@ -9,7 +9,8 @@ relative_permalinks: false
 title:               foo
 #tagline:             'foo's website
 description:         Foo's blog...
-url: https://dyndna.github.io/lanyon-plus
+#url: https://dyndna.github.io/lanyon-plus
+url: https://bakhyeonjae.github.io/Athena/
 #baseurl: "/lanyon-plus"
 urlimg: https://dyndna.github.io/lanyon-plus/images/
 markdown: kramdown
@@ -66,8 +67,7 @@ links:
     url: /
   - title: <i class="iconside iconm-user"></i> About
     url: /about/
-  - title: <i class="iconside iconm-quill"></i> Blog
-    url: /blog/
+  - title: <i class="iconside iconm-quill"></i> Blog url: /blog/
   - title: <i class="fa fa-tags"></i> Tags
     url: /tags/
   - title: <i class="fa fa-archive"></i> Archive
