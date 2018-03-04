@@ -1,8 +1,8 @@
 ---
 date: 2017-01-16
-title: Change email
+title: Box search
 categories:
-  - account-settings
+  - Cloud
 description: "Update your email address"
 type: Document
 ---

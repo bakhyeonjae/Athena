@@ -1,8 +1,8 @@
 ---
 date: 2017-01-16
-title: Change password
+title: Box share
 categories:
-  - account-settings
+  - Cloud 
 description: Keep your account secure
 type: Document
 ---
