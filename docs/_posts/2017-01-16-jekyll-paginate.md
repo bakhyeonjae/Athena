@@ -2,7 +2,7 @@
 date: 2017-01-16
 title: jekyll-paginate
 categories:
-  - plugins
+  - Usage
 description: Pagination on your Jekyll blog
 type: Document
 ---

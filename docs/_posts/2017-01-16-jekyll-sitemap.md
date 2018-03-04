@@ -2,7 +2,7 @@
 date: 2017-01-16
 title: jekyll-sitemap
 categories:
-  - plugins
+  - Usage
 description: Sitemap on your Jekyll site
 type: Document
 ---
