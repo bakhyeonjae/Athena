@@ -1,6 +1,6 @@
 ---
 date: 2017-01-16
-title: jekyll-paginate
+title: Design architecture
 categories:
   - Usage
 description: Pagination on your Jekyll blog
