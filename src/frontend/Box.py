@@ -80,9 +80,14 @@ class CommonModuleBox(QFrame):
                  {"title":"Save","desc":"save to file", "method":self.save},
                  {"title":"Another input port","desc":"Add an input port", "method":self.addInPort},
                  {"title":"Another output port","desc":"Add an output port", "method":self.addOutPort},
+                 {"title":"Name","desc":"Give a name to this box", "method":self.rename},
                 ]
         self.setPopupActionList(menus)
         self.configPopupMenu()
+
+    def rename(self):
+        name, ret = TextInputDialog.getText('Give a name to the box')
+        self.setName(name)
 
     def addInPort(self):
         name, ret = TextInputDialog.getText('Name an input port')
