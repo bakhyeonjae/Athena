@@ -29,6 +29,7 @@ class Box(object):
         self.version = None
         self.isOpened = False
         self.ancestor = ancestor
+        self.specNotVisible = ['boxes.','private.','builtin.']
 
         self.buildStructure()
 
@@ -134,7 +135,11 @@ class Box(object):
             new_port = PortOut(self,out_port['name'])
             self.outputs.append(new_port)
 
-        self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+        #self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+        simplified_spec = self.spec
+        for remove_spec in self.specNotVisible:
+            simplified_spec = simplified_spec.replace(remove_spec,'')
+        self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',simplified_spec)
 
         for idx, subbox in enumerate(subboxes):
             file_path = BoxLoader.findModuleNameByBoxID(subbox['type'])
