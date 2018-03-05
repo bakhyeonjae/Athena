@@ -41,6 +41,7 @@ class ViewPort(QLabel):
 
     def setPortCore(self, core):
         self.core = core
+        self.setToolTip(self.core.name)
 
     def setPortType(self, dataType):
         self.dataType = dataType
