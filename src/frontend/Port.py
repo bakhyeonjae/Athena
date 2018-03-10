@@ -87,6 +87,9 @@ class ViewPortIn(ViewPort):
         self.data = None
         self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
 
+    def getPos(self):
+        return QPoint(self.pos().x() + self.width()/2, self.pos().y() + self.height()) + self.parent.pos()
+
     def mouseMoveEvent(self, e):
         if e.buttons() != Qt.LeftButton:
             return
@@ -134,6 +137,9 @@ class ViewPortOut(ViewPort):
         self.connectedTo = None
         self.parent = parent
         self.setStyleSheet("QLabel {background-color:red; color:black; border:1px solid white}")
+
+    def getPos(self):
+        return QPoint(self.pos().x()+self.width()/2, self.pos().y()) + self.parent.pos()
 
     def setData(self, data):
         self.data = data
