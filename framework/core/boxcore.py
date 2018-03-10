@@ -38,9 +38,19 @@ class Box(object):
         return self.configParams
 
     def setConfigParams(self,params):
+        # Add new params
         for key in params.keys():
             self.configParams[key] = params[key]
- 
+
+        # delete removed params
+        removal_key = []
+        for key in self.configParams.keys():
+            if key not in params.keys():
+                removal_key.append(key)
+
+        for key in removal_key:
+            del self.configParams[key]
+
     def hasSubBox(self):
         if self.boxes:
             return True

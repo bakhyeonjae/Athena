@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox, QPushButton, QHBoxLayout
 from PySide2.QtCore import Qt, QDateTime
 from PySide2.QtWidgets import QTableWidget, QTableWidgetItem
+from PySide2.QtWidgets import QAbstractItemView
 
 class ConfigDialog(QDialog):
     def __init__(self, params = None, parent = None):
@@ -16,6 +17,7 @@ class ConfigDialog(QDialog):
 
         self.new_param_idx = 0
         self.tableWidget = QTableWidget()
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.setRowCount(row_cnt)
         self.tableWidget.setColumnCount(2)
 
@@ -72,7 +74,9 @@ class ConfigDialog(QDialog):
         self.new_param_idx += 1
 
     def delParam(self):
-        pass
+        indices = self.tableWidget.selectionModel().selectedRows()
+        for index in indices:
+            self.tableWidget.removeRow(index.row())
 
     # get current date and time from the dialog
     def getParams(self):
