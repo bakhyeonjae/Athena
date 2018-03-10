@@ -17,6 +17,7 @@ class Box(object):
         self.boxes = []   # type : boxcore.Box
         self.inputs = []
         self.outputs = []
+        self.cfgVars = []
         self.name = ''
         self.type = ''
         if view:
@@ -104,6 +105,7 @@ class Box(object):
         for box in self.boxes:
             box.view.setAsBlackBox()
             box.view.show()
+        # Show config ports
         self.view.hideTitles()
         self.view.setFocus()  # To get keyboard event 
 
@@ -152,6 +154,10 @@ class Box(object):
             configParams = box['config']
             for key in configParams.keys():
                 self.configParams[key] = configParams[key]
+
+        for name in self.configParams.keys():
+            new_port = PortConfig(self,name)
+            self.cfgVars.append(new_port)
         
         for out_port in outputs:
             new_port = PortOut(self,out_port['name'])
@@ -200,6 +206,9 @@ class Box(object):
             self.inputs.append(new_port)
 
         self.view.setInputPorts(self.inputs)
+        self.view.setConfigParamPorts(self.cfgVars)
+
+        # Connect all the internal variables
         self.view.update()
 
     def addOutPort(self,name):

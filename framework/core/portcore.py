@@ -124,6 +124,14 @@ class Port(object):
         else:
             return self.edgeOut
 
+class PortConfig(Port):
+    def __init__(self, box, instName):  
+        super().__init__(box, instName)
+        self.targetType = None # 'code-param' / 'box-port'
+        self.targetPort = None
+        self.targetClass = None
+        self.targetParam = None
+
 class PortIn(Port):
     """ PortIn class 
     """

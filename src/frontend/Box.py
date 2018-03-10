@@ -18,6 +18,7 @@ class CommonModuleBox(QFrame):
         self.popupActions = []  # list of dictionary, Key :"title","desc","method"
         self.inPorts = []
         self.outPorts = []
+        self.cfgVars = []
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setLineWidth(2)
         self.setStyleSheet("background-color: rgb(230,230,230); border: 1px solid black;")
@@ -127,6 +128,22 @@ class CommonModuleBox(QFrame):
                 port_src.disconnectPort()
                 port_tgt.disconnectPort()
                 self.update()
+
+    def needConfigPorts(self,port):
+        if port.getView() in self.cfgVars: 
+            return False
+        else:
+            return True
+    
+    def setConfigParamPorts(self,ports):
+        for port_core in ports:
+            if self.needConfigPorts(port_core):
+                new_port = Port.ViewPortConfig(self)
+                new_port.setPortCore(port_core)
+                port_core.setView(new_port)
+                self.cfgVars.append(new_port)
+                new_port.move(200,200)
+                new_port.show()
 
     def needOutputPortView(self, port):
         need_flag = True

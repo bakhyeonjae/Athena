@@ -78,8 +78,15 @@ class Connection(object):
     def setDstCoord(self, pos):
         self.coordDst = pos
 
+class ViewPortConfig(ViewPort):
+    def __init__(self, parent):
+        ViewPort.__init__(self,parent)
+        self.connectedTo = None
+        self.parent = parent
+        self.data = None
+        self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
+
 class ViewPortIn(ViewPort):
-    
     def __init__(self, parent):
         ViewPort.__init__(self,parent)
         self.connectedTo = None
