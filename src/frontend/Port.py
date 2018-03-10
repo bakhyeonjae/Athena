@@ -84,7 +84,7 @@ class ViewPortConfig(ViewPort):
         self.connectedTo = None
         self.parent = parent
         self.data = None
-        self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
+        self.setStyleSheet("QLabel { background-color:yellow; color:black; border:1px solid black}")
 
 class ViewPortIn(ViewPort):
     def __init__(self, parent):
@@ -92,7 +92,7 @@ class ViewPortIn(ViewPort):
         self.connectedTo = None
         self.parent = parent
         self.data = None
-        self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid white}")
+        self.setStyleSheet("QLabel { background-color:blue; color:black; border:1px solid black}")
 
     def getPos(self):
         return QPoint(self.pos().x() + self.width()/2, self.pos().y() + self.height()) + self.parent.pos()
@@ -143,7 +143,7 @@ class ViewPortOut(ViewPort):
         self.connection = None
         self.connectedTo = None
         self.parent = parent
-        self.setStyleSheet("QLabel {background-color:red; color:black; border:1px solid white}")
+        self.setStyleSheet("QLabel {background-color:red; color:black; border:1px solid black}")
 
     def getPos(self):
         return QPoint(self.pos().x()+self.width()/2, self.pos().y()) + self.parent.pos()
