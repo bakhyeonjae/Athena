@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox
+from PySide2.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox, QPushButton, QHBoxLayout
 from PySide2.QtCore import Qt, QDateTime
 from PySide2.QtWidgets import QTableWidget, QTableWidgetItem
 
@@ -14,6 +14,7 @@ class ConfigDialog(QDialog):
         else:
             row_cnt = 0
 
+        self.new_param_idx = 0
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(row_cnt)
         self.tableWidget.setColumnCount(2)
@@ -24,7 +25,17 @@ class ConfigDialog(QDialog):
                 item = QTableWidgetItem(params[key])
                 self.tableWidget.setItem(idx,0,key_name)
                 self.tableWidget.setItem(idx,1,item)
-        
+       
+        button_add = QPushButton('+',self)
+        button_add.clicked.connect(self.addParam)
+        button_del = QPushButton('-',self)
+        button_del.clicked.connect(self.delParam)
+
+        control_layout = QHBoxLayout(self)
+        control_layout.addWidget(button_add)
+        control_layout.addWidget(button_del)
+
+        layout.addLayout(control_layout) 
         layout.addWidget(self.tableWidget)
         
         # OK and Cancel buttons
@@ -33,6 +44,35 @@ class ConfigDialog(QDialog):
 
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
+
+    def updateTable(self, newParams):
+        if not newParams:
+            return 
+
+        row_cnt = self.tableWidget.rowCount()
+        addition = 0
+        for idx, key in enumerate(list(newParams)):
+            new_param_flag = True
+            for row in range(row_cnt):
+                item = self.tableWidget.item(row,0).text()
+                if item == key:
+                    new_param_flag = False
+                    break
+            if new_param_flag:
+                key_name = QTableWidgetItem(key)
+                item = QTableWidgetItem(newParams[key])
+                self.tableWidget.insertRow(row_cnt+addition)
+                self.tableWidget.setItem(row_cnt+addition,0,key_name)
+                self.tableWidget.setItem(row_cnt+addition,1,item)
+                addition += 1
+
+    def addParam(self):
+        name = 'param_{}'.format(self.new_param_idx)
+        self.updateTable({name:''})
+        self.new_param_idx += 1
+
+    def delParam(self):
+        pass
 
     # get current date and time from the dialog
     def getParams(self):

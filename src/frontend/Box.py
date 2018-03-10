@@ -89,8 +89,14 @@ class CommonModuleBox(QFrame):
         self.setPopupActionList(menus)
         self.configPopupMenu()
 
+    def addConfigParams(self):
+        self.core.addConfigParams()
+
+    def getConfigParams(self):
+        self.core.getConfigParams()
+
     def configParams(self):
-        params, ret = ConfigDialog().getParameters(self.core.getConfigParams())
+        params, ret = ConfigDialog().getParameters(params=self.core.getConfigParams())
         self.core.setConfigParams(params)
 
     def rename(self):
