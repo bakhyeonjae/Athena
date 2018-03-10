@@ -274,6 +274,7 @@ class CommonModuleBox(QFrame):
             menu.addAction(act)
 
         menu.exec_(QCursor.pos())
+        menu = None
 
     def setPopupActionList(self,menuList):
         for menu in menuList:
