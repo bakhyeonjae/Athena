@@ -30,9 +30,17 @@ class Box(object):
         self.isOpened = False
         self.ancestor = ancestor
         self.specNotVisible = ['boxes.','private.','builtin.']
+        self.configParams = {}
 
         self.buildStructure()
+    
+    def getConfigParams(self):
+        return self.configParams
 
+    def setConfigParams(self,params):
+        for key in params.keys():
+            self.configParams[key] = params[key]
+ 
     def hasSubBox(self):
         if self.boxes:
             return True
@@ -130,6 +138,10 @@ class Box(object):
             inputs   = box['in-port']
         if 'out-port' in box.keys():
             outputs  = box['out-port']
+        if 'config' in box.keys():
+            configParams = box['config']
+            for key in configParams.keys():
+                self.configParams[key] = configParams[key]
         
         for out_port in outputs:
             new_port = PortOut(self,out_port['name'])
@@ -333,6 +345,17 @@ class Box(object):
                     writer.write('},')
             writer.decIndent()
             writer.write('],')
+
+        if len(self.configParams) > 0:
+            writer.write('\"config\":{')
+            writer.incIndent()
+            for key in list(self.configParams):
+                if key == list(self.configParams)[-1]:
+                    writer.write('\"{}\":\"{}\"'.format(key,self.configParams[key]))
+                else:
+                    writer.write('\"{}\":\"{}\",'.format(key,self.configParams[key]))
+            writer.decIndent()
+            writer.write('},')
 
         # write outputs
         if self.outputs:

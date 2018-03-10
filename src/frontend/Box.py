@@ -6,6 +6,7 @@ import math
 import Port
 
 from framework.dialog.TextInputDialog import TextInputDialog
+from framework.dialog.ConfigDialog import ConfigDialog
 
 class CommonModuleBox(QFrame):
     
@@ -83,9 +84,14 @@ class CommonModuleBox(QFrame):
                  {"title":"Another input port","desc":"Add an input port", "method":self.addInPort},
                  {"title":"Another output port","desc":"Add an output port", "method":self.addOutPort},
                  {"title":"Name","desc":"Give a name to this box", "method":self.rename},
+                 {"title":"Config variables","desc":"Configure internal variables", "method":self.configParams}
                 ]
         self.setPopupActionList(menus)
         self.configPopupMenu()
+
+    def configParams(self):
+        params, ret = ConfigDialog().getParameters(self.core.getConfigParams())
+        self.core.setConfigParams(params)
 
     def rename(self):
         name, ret = TextInputDialog.getText('Give a name to the box')
