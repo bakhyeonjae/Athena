@@ -350,6 +350,10 @@ class CommonModuleBox(QFrame):
             for port in self.inPorts:
                 if port.checkPosition(pos):
                     return port
+        elif 'CONFIG' == beginFrom:
+            for port in self.cfgVars:
+                if port.checkPosition(pos):
+                    return port
         return None
 
     def isArrived(self, pos, arriveAt='INPORT'):
@@ -402,10 +406,11 @@ class CommonModuleBox(QFrame):
             else:
                 self.compensated_pos = e.pos() - self.selectedBox.pos()
         else:
-            port = self.isConnecting(e.pos(),beginFrom='INPORT')
-            if port:
+            in_port = self.isConnecting(e.pos(),beginFrom='INPORT')
+            cfg_port =self.isConnecting(e.pos(),beginFrom='CONFIG')
+            if in_port or cfg_port:
                 self.beingConnected = True
-                self.beginningPort = port
+                self.beginningPort = in_port if in_port else cfg_port
                 self.beginningPort.createConnectionLine()
             else:
                 self.compensated_pos = e.pos() - self.pos()
@@ -491,6 +496,11 @@ class CommonModuleBox(QFrame):
 
         if self.core.isOpened:
             for port in self.core.inputs:
+                if port.isConnected():
+                    port.getEdge().updateViewPos()
+                    port.getEdge().getView().drawLine(qp)
+
+            for port in self.core.cfgVars:
                 if port.isConnected():
                     port.getEdge().updateViewPos()
                     port.getEdge().getView().drawLine(qp)
