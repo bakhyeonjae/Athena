@@ -120,7 +120,6 @@ class CommonModuleBox(QFrame):
     def keyPressEvent(self, event):
         key = event.key()
         if ord('d') == key or ord('D') == key:
-            print('delete edge')
             edge = self.getHighlightedEdge()
             if edge:
                 port_src = edge.source
@@ -253,43 +252,62 @@ class CommonModuleBox(QFrame):
 
     def configPopupMenu(self):
         pass
+    
+    def getSelectedOne(self,ports):
+        for port in ports:
+            if port.getEdge():
+                if port.getEdge().getView().isHighlighted():
+                    return port.getEdge()
 
     def getHighlightedEdge(self):
         if self.core.boxes:
             for box in self.core.boxes:
-                for port in box.inputs:
-                    if port.getEdge():
-                        if port.getEdge().getView().isHighlighted():
-                            return port.getEdge()
-                for port in box.outputs:
-                    if port.getEdge():
-                        if port.getEdge().getView().isHighlighted():
-                            return port.getEdge()
+                ret = self.getSelectedOne(box.inputs)
+                if ret:
+                    return ret
+                ret = self.getSelectedOne(box.outputs)
+                if ret:
+                    return ret
+        ret = self.getSelectedOne(self.cfgVars)
+        if ret:
+            return ret
+        ret = self.getSelectedOne(self.inPorts)
+        if ret:
+            return ret
+        ret = self.getSelectedOne(self.outPorts)
+        if ret:
+            return ret
+
+    def clearEdges(self,ports):
+        for port in ports:
+            if port.getEdge():
+                port.getEdge().getView().setHighlight(False)
 
     def clearAllHighlightedEdges(self):
         if self.core.boxes:
             for box in self.core.boxes:
-                for port in box.inputs:
-                    if port.getEdge():
-                        port.getEdge().getView().setHighlight(False)
-                for port in box.outputs:
-                    if port.getEdge():
-                        port.getEdge().getView().setHighlight(False)
+                self.clearEdges(box.inputs)
+                self.clearEdges(box.outputs)
+        self.clearEdges(self.cfgVars)
+        self.clearEdges(self.inPorts)
+        self.clearEdges(self.outPorts)
+
+    def selectOneEdge(self, ports, event):
+        for port in ports:
+            if port.getEdge():
+                if port.getEdge().getView().isOnEdge(event.pos()):
+                    self.clearAllHighlightedEdges()
+                    port.getEdge().getView().setHighlight(True)
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             if self.core.boxes:
                 for box in self.core.boxes:
-                    for port in box.inputs:
-                        if port.getEdge():
-                            if port.getEdge().getView().isOnEdge(event.pos()):
-                                self.clearAllHighlightedEdges()
-                                port.getEdge().getView().setHighlight(True)
-                    for port in box.outputs:
-                        if port.getEdge():
-                            if port.getEdge().getView().isOnEdge(event.pos()):
-                                self.clearAllHighlightedEdges()
-                                port.getEdge().getView().setHighlight(True)
+                    self.selectOneEdge(box.inputs,event)
+                    self.selectOneEdge(box.outputs,event)
+            self.selectOneEdge(self.cfgVars,event)
+            self.selectOneEdge(self.inPorts,event)
+            self.selectOneEdge(self.outPorts,event)
             self.update()        
         else:
             self.createPopupActions()
