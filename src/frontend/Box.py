@@ -135,6 +135,8 @@ class CommonModuleBox(QFrame):
             return True
     
     def setConfigParamPorts(self,ports):
+        print('setConfigParamsPorts --->')
+        print(ports)
         for port_core in ports:
             if self.needConfigPorts(port_core):
                 new_port = Port.ViewPortConfig(self)
@@ -151,6 +153,16 @@ class CommonModuleBox(QFrame):
             else:
                 port.hide()
         """
+        if self.isOpened:
+            num_var = len(self.cfgVars)
+            width = self.width()
+            interval = width / num_var
+            x = interval / 2
+            for port in self.cfgVars:
+                y = self.height() - port.height()
+                port.move(x,y-30)
+                x += interval
+                port.show()
 
     def needOutputPortView(self, port):
         need_flag = True

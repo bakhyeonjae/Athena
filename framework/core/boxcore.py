@@ -51,6 +51,19 @@ class Box(object):
 
         for key in removal_key:
             del self.configParams[key]
+       
+        for name in self.configParams.keys():
+            new_flag = True
+            for port in self.cfgVars:
+                if port.name == name:
+                    new_flag = False
+                    break
+            if new_flag:
+                new_port = PortConfig(self,name)
+                self.cfgVars.append(new_port)
+
+        # Update cfg ports on view
+        self.view.setConfigParamPorts(self.cfgVars)
 
     def hasSubBox(self):
         if self.boxes:
