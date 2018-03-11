@@ -59,7 +59,7 @@ class Box(object):
                     new_flag = False
                     break
             if new_flag:
-                new_port = PortConfig(self,name)
+                new_port = PortConfig(self,name,self.configParams[name])
                 self.cfgVars.append(new_port)
 
         # Update cfg ports on view
@@ -169,7 +169,7 @@ class Box(object):
                 self.configParams[key] = configParams[key]
 
         for name in self.configParams.keys():
-            new_port = PortConfig(self,name)
+            new_port = PortConfig(self,name,self.configParams[name])
             self.cfgVars.append(new_port)
         
         for out_port in outputs:

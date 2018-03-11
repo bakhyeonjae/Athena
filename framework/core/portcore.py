@@ -125,16 +125,16 @@ class Port(object):
             return self.edgeOut
 
 class PortConfig(Port):
-    def __init__(self, box, instName):  
+    def __init__(self, box, instName, value):  
         super().__init__(box, instName)
         self.targetType = None # 'code-param' / 'box-port'
         self.targetPort = None
         self.targetClass = None
         self.targetParam = None
+        self.data = value
 
     def propagateExecution(self):
-        data = 3
-        self.edgeIn.passToBox(data)
+        self.edgeIn.passToBox(float(self.data))  # for only test
 
 class PortIn(Port):
     """ PortIn class 
