@@ -142,8 +142,16 @@ class CommonModuleBox(QFrame):
                 new_port.setPortCore(port_core)
                 port_core.setView(new_port)
                 self.cfgVars.append(new_port)
-                new_port.move(200,200)
-                new_port.show()
+        # Put config ports just above input ports
+        """
+        for port in self.cfgVars:
+            y = self.height() - port.height()
+            port.move(30,y-10)
+            if self.isOpened:
+                port.show()
+            else:
+                port.hide()
+        """
 
     def needOutputPortView(self, port):
         need_flag = True
@@ -196,9 +204,20 @@ class CommonModuleBox(QFrame):
 
     def stepIntoBox(self):
         self.core.openBox()
+        num_var = len(self.cfgVars)
+        width = self.width()
+        interval = width / num_var
+        x = interval / 2
+        for port in self.cfgVars:
+            y = self.height() - port.height()
+            port.move(x,y-30)
+            x += interval
+            port.show()
 
     def stepOutBox(self):
         self.core.openParentBox()
+        for var in self.cfgVars:
+            var.hide()
 
     def hideTitles(self):
         """

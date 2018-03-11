@@ -11,16 +11,6 @@ from infoview import InfoView
 sys.path.append("..")
 sys.path.append("../..")
 
-from boxes.builtin.visualisers.plotscatter import BoxPlotScatter
-from boxes.builtin.primitives.genrandom import BoxRandomGenerator
-from boxes.builtin.learners.tmpmnist import BoxMNIST
-from boxes.builtin.loaders.image import BoxImageLoader
-from boxes.builtin.learners.models.imageclassifier import BoxImageClassifier
-from boxes.builtin.learners.trainers import BoxTrainer
-from boxes.builtin.visualisers.plottimeline import BoxPlotTimeline
-from boxes.builtin.visualisers.plotcrossvalidation import BoxPlotCrossValidation
-from boxes.builtin.visualisers.imageviewer import BoxImageViewer
-
 from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
 from controltower.controltower import ControlTower
