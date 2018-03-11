@@ -1,0 +1,65 @@
+{
+    "box":{
+        "version":"None",
+        "in-port":[
+            {
+                "name":"positive mean",
+                "connect":"mean@positive generator"
+            },
+            {
+                "name":"negative mean",
+                "connect":"mean@negative generator"
+            }
+        ],
+        "sub-box":[
+            {
+                "type":"builtin.primitives.genrandom.BoxRandomGenerator@0.0.1",
+                "name":"negative generator",
+                "in-port":[
+                    {
+                        "name":"mean"
+                    },
+                    {
+                        "name":"variance"
+                    }
+                ],
+                "out-port":[
+                    {
+                        "name":"data",
+                        "connect":"neg data"
+                    }
+                ]
+            },
+            {
+                "type":"builtin.primitives.genrandom.BoxRandomGenerator@0.0.1",
+                "name":"positive generator",
+                "in-port":[
+                    {
+                        "name":"mean"
+                    },
+                    {
+                        "name":"variance"
+                    }
+                ],
+                "out-port":[
+                    {
+                        "name":"data",
+                        "connect":"pos data"
+                    }
+                ]
+            }
+        ],
+        "config":{
+            "pos variance":"1.1",
+            "neg variance":"3.3"
+        },
+        "out-port":[
+            {
+                "name":"pos data"
+            },
+            {
+                "name":"neg data"
+            }
+        ]
+    }
+}
