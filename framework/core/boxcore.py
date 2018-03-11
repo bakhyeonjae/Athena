@@ -98,7 +98,7 @@ class Box(object):
 
     def setName(self,name):
         self.name = name
-        if self.view:
+        if self.view and name != self.view.getName():
             self.view.setName(self.name)
 
     def openBox(self):

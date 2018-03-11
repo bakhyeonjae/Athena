@@ -132,6 +132,10 @@ class PortConfig(Port):
         self.targetClass = None
         self.targetParam = None
 
+    def propagateExecution(self):
+        data = 3
+        self.edgeIn.passToBox(data)
+
 class PortIn(Port):
     """ PortIn class 
     """

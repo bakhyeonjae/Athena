@@ -204,6 +204,10 @@ class CommonModuleBox(QFrame):
 
     def setName(self,name):
         self.instName.setText(name)
+        self.core.setName(name)
+
+    def getName(self):
+        return self.instName.text()
 
     def export(self):
         pass
