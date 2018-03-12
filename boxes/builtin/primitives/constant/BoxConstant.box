@@ -10,10 +10,13 @@
                 }
             ]
         },
-        "config":{
-            "value":"3.5",
-            "variance":"4.2"
-        },
+        "config":[
+            {
+                "name":"value",
+                "value":"3.5",
+                "connect":""
+            }
+        ],
 		"out-port":[
             {
                 "data":"float",

@@ -163,14 +163,6 @@ class Box(object):
             inputs   = box['in-port']
         if 'out-port' in box.keys():
             outputs  = box['out-port']
-        if 'config' in box.keys():
-            configParams = box['config']
-            for key in configParams.keys():
-                self.configParams[key] = configParams[key]
-
-        for name in self.configParams.keys():
-            new_port = PortConfig(self,name,self.configParams[name])
-            self.cfgVars.append(new_port)
         
         for out_port in outputs:
             new_port = PortOut(self,out_port['name'])
@@ -219,9 +211,21 @@ class Box(object):
             self.inputs.append(new_port)
 
         self.view.setInputPorts(self.inputs)
+
+        # Connect all the config params
+        if 'config' in box.keys():
+            configParams = box['config']
+            for config in configParams:
+                self.configParams[config['name']] = config['value']
+                new_port = PortConfig(self,config['name'],config['value'])
+                target_port = self.findPortByName(config['connect'])
+                if target_port and new_port:
+                    edge = Edge()
+                    edge.connectPorts(new_port,target_port, edgeSrcDir='IN')
+                self.cfgVars.append(new_port)
+            
         self.view.setConfigParamPorts(self.cfgVars)
 
-        # Connect all the internal variables
         self.view.update()
 
     def addOutPort(self,name):
@@ -379,15 +383,21 @@ class Box(object):
             writer.write('],')
 
         if len(self.configParams) > 0:
-            writer.write('\"config\":{')
+            writer.write('\"config\":[')
             writer.incIndent()
-            for key in list(self.configParams):
-                if key == list(self.configParams)[-1]:
-                    writer.write('\"{}\":\"{}\"'.format(key,self.configParams[key]))
+            for config in self.cfgVars:
+                writer.write('{')
+                writer.incIndent()
+                writer.write('\"name\":\"{}\",'.format(config.getName()))
+                writer.write('\"value\":\"{}\",'.format(config.getData()))
+                writer.write('\"connect\":\"{}@{}\"'.format(config.edgeIn.target.name,config.edgeIn.target.box.name))
+                writer.decIndent()
+                if config == self.cfgVars[-1]:
+                    writer.write('}')
                 else:
-                    writer.write('\"{}\":\"{}\",'.format(key,self.configParams[key]))
+                    writer.write('},')
             writer.decIndent()
-            writer.write('},')
+            writer.write('],')
 
         # write outputs
         if self.outputs:

@@ -49,10 +49,18 @@
                 ]
             }
         ],
-        "config":{
-            "pos variance":"1.1",
-            "neg variance":"3.3"
-        },
+        "config":[
+            {
+                "name":"pos variance",
+                "value":"1.1",
+                "connect":"variance@positive generator"
+            },
+            {
+                "name":"neg variance",
+                "value":"3.3",
+                "connect":"variance@negative generator"
+            }
+        ],
         "out-port":[
             {
                 "name":"pos data"
