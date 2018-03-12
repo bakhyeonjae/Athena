@@ -56,6 +56,7 @@ class Box(object):
             new_flag = True
             for port in self.cfgVars:
                 if port.name == name:
+                    port.setData(self.configParams[name])
                     new_flag = False
                     break
             if new_flag:
@@ -218,6 +219,7 @@ class Box(object):
             for config in configParams:
                 self.configParams[config['name']] = config['value']
                 new_port = PortConfig(self,config['name'],config['value'])
+                new_port.configFromDesc(config)
                 target_port = self.findPortByName(config['connect'])
                 if target_port and new_port:
                     edge = Edge()
@@ -296,7 +298,16 @@ class Box(object):
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
-            print('port obj:{}'.format(port))
+        for idx,port in enumerate(self.cfgVars):
+            print('{},{}'.format(box['code']['class'],port.targetClass))
+            if box['code']['class'] != port.targetClass:
+                return #Raise exception
+            params = [p['name'] for p in box['code']['param']]
+            if port.targetParam not in params:
+                return #Raise exception
+            exec_str += '{}=self.cfgVars[{}].getData()'.format(port.targetParam,idx)
+            if self.cfgVars[-1] != port:
+                exec_str += ','
         exec_str += ')'
         print(exec_str)
         eval(exec_str)

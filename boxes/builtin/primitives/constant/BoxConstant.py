@@ -4,5 +4,5 @@ class Constant(object):
     def __init__(self):
         pass
 
-    def execute(self):
-        self.data = 3.0
+    def execute(self,val):
+        self.data = float(val)

@@ -139,8 +139,17 @@ class PortConfig(Port):
     def getData(self):
         return self.data
 
+    def setData(self,val):
+        self.data = val
+
     def propagateExecution(self):
         self.edgeIn.passToBox(float(self.data))  # for only test
+
+    def configFromDesc(self,desc):
+        # set target class and parameter name
+        target_desc = desc['connect']
+        self.targetClass = target_desc.split('@')[1]
+        self.targetParam = target_desc.split('@')[0]
 
 class PortIn(Port):
     """ PortIn class 

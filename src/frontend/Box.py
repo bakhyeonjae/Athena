@@ -220,14 +220,15 @@ class CommonModuleBox(QFrame):
     def stepIntoBox(self):
         self.core.openBox()
         num_var = len(self.cfgVars)
-        width = self.width()
-        interval = width / num_var
-        x = interval / 2
-        for port in self.cfgVars:
-            y = self.height() - port.height()
-            port.move(x,y-30)
-            x += interval
-            port.show()
+        if num_var > 0:
+            width = self.width()
+            interval = width / num_var
+            x = interval / 2
+            for port in self.cfgVars:
+                y = self.height() - port.height()
+                port.move(x,y-30)
+                x += interval
+                port.show()
 
     def stepOutBox(self):
         self.core.openParentBox()

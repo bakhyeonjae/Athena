@@ -1,0 +1,75 @@
+{
+    "box":{
+        "version":"None",
+        "sub-box":[
+            {
+                "type":"private.test.test@None",
+                "name":"random gen",
+                "in-port":[
+                    {
+                        "name":"positive mean"
+                    },
+                    {
+                        "name":"negative mean"
+                    }
+                ],
+                "out-port":[
+                    {
+                        "name":"pos data",
+                        "connect":"data"
+                    },
+                    {
+                        "name":"neg data",
+                        "connect":"data"
+                    }
+                ]
+            },
+            {
+                "type":"builtin.primitives.constant.BoxConstant@None",
+                "name":"neg mean",
+                "in-port":[
+                ],
+                "out-port":[
+                    {
+                        "name":"data",
+                        "connect":"negative mean"
+                    }
+                ]
+            },
+            {
+                "type":"builtin.primitives.constant.BoxConstant@None",
+                "name":"pos mean",
+                "in-port":[
+                ],
+                "out-port":[
+                    {
+                        "name":"data",
+                        "connect":"positive mean"
+                    }
+                ]
+            },
+            {
+                "type":"builtin.visualisers.plotscatter.BoxPlotScatter@None",
+                "name":"neg scatter",
+                "in-port":[
+                    {
+                        "name":"data"
+                    }
+                ],
+                "out-port":[
+                ]
+            },
+            {
+                "type":"builtin.visualisers.plotscatter.BoxPlotScatter@None",
+                "name":"pos scatter",
+                "in-port":[
+                    {
+                        "name":"data"
+                    }
+                ],
+                "out-port":[
+                ]
+            }
+        ]
+    }
+}

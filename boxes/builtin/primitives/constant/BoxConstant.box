@@ -2,6 +2,11 @@
 	"box":{
         "code":{
             "class":"Constant",
+            "param":[
+                {
+                    "name":"val"
+                }
+            ],
             "return":[
                 {
                     "type":"float",
@@ -14,7 +19,7 @@
             {
                 "name":"value",
                 "value":"3.5",
-                "connect":""
+                "connect":"val@Constant"
             }
         ],
 		"out-port":[
