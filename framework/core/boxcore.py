@@ -32,6 +32,7 @@ class Box(object):
         self.ancestor = ancestor
         self.specNotVisible = ['boxes.','private.','builtin.']
         self.configParams = {}
+        self.implType = ''   # 'CODE'/'COMPOSITION'
 
         self.buildStructure()
     
@@ -152,9 +153,13 @@ class Box(object):
 
         if 'version' in box.keys():
             self.version = box['version']
+
         if 'sub-box' in box.keys():
+            self.implType = 'COMPOSITION'
             subboxes = box['sub-box']
+
         if 'code' in box.keys():
+            self.implType = 'CODE'
             codespec = box['code']
             classname = codespec['class']
             my_class = getattr(importlib.import_module(self.spec), classname)
