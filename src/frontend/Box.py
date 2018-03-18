@@ -76,10 +76,11 @@ class CommonModuleBox(QFrame):
         self.resize(self.sizeHint())
         self.show()
 
+        
+    def configPopupMenu(self,menuType):
+        # Common - Run, Delete, Save, Another Input Port, Another Output Port, Name, Config variables
         menus = [{"title":"Run", "desc":"Configure module parameters", "method":self.run},
                  {"title":"Delete", "desc":"Configure module parameters", "method":self.deleteBox},
-                 {"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox},
-                 {"title":"Step out", "desc":"Open this box", "method":self.stepOutBox},
                  {"title":"Export","desc":"Generate Code", "method":self.export},
                  {"title":"Save","desc":"save to file", "method":self.save},
                  {"title":"Another input port","desc":"Add an input port", "method":self.addInPort},
@@ -87,8 +88,12 @@ class CommonModuleBox(QFrame):
                  {"title":"Name","desc":"Give a name to this box", "method":self.rename},
                  {"title":"Config variables","desc":"Configure internal variables", "method":self.configParams}
                 ]
+        # Composition - Step Into, Step out
+        if 'COMPOSITION' == menuType:
+            menus.append({"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox})
+            menus.append({"title":"Step out", "desc":"Open this box", "method":self.stepOutBox})
+
         self.setPopupActionList(menus)
-        self.configPopupMenu()
 
     def addConfigParams(self):
         self.core.addConfigParams()
@@ -267,9 +272,6 @@ class CommonModuleBox(QFrame):
 
        	self.parent.deleteBox(self) 
 
-    def configPopupMenu(self):
-        pass
-    
     def getSelectedOne(self,ports):
         for port in ports:
             if port.getEdge():
