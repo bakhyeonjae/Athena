@@ -169,7 +169,6 @@ class PortIn(Port):
         self.targetPort = None
         self.targetClass = None
         self.targetParam = None
-        #print('port init @ box spec:{}'.format(self.box.spec))
 
     def constructGraph(self):
         graph = None
@@ -208,7 +207,6 @@ class PortIn(Port):
         pass
 
     def propagateExecution(self):
-        #print('{}.propagateExecution'.format(type(self)))
         if self.edgeOut:
             self.edgeOut.propagateExecutionToSource()
 
@@ -234,7 +232,6 @@ class PortIn(Port):
         A box need to get data using getData().
         """
         # Todo : Check the data type.
-        #print('{}.passToBox, obj:{} box spec:{}'.format(type(self),self,self.box.spec))
         if self.box.hasSubBox():
             self.edgeIn.passToBox(data)
         else:
@@ -258,13 +255,11 @@ class PortOut(Port):
         self.data = None
 
     def transferData(self, data):
-        #print('{}.transferData, box spec:{}'.format(type(self),self.box.spec))
         if self.edgeOut:
             self.data = data
             self.edgeOut.passToBox(data)
         
     def propagateExecution(self):
-        #print('{}.propagateExecution'.format(type(self)))
         if self.box.hasSubBox():
             self.edgeIn.propagateExecutionToSource()
         else:
@@ -278,17 +273,13 @@ class PortOut(Port):
 
         if self.box.isComposition():
             if self.edgeIn:
-                print('HAS EDGE-IN')
                 graph = self.edgeIn.getGraph()
         else: 
-            print('CODE case')
             node = self.box.getCodeSpecNode()
             graphs = self.box.requestGraphToInputs()
             for graph in graphs:
                 if graph:
                     node.addSrcNode(graph)
-            print('node, {}'.format(node.boxSpec))
-            print('graph, {}'.format(graphs))
             # Check all the inputs
             return node
 

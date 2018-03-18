@@ -43,17 +43,14 @@ class Edge(object):
         self.view.updatePortPos(sourcePos, targetPos)
 
     def propagateExecutionToSource(self):
-        #print('{}.propagateExecutionToSource'.format(type(self)))
         self.source.propagateExecution()
 
     def passToBox(self,data):
-        #print('{}.passToBox'.format(type(self)))
         if isinstance(self.target,PortIn):
             self.target.passToBox(data)
         elif isinstance(self.target,PortOut):
             self.target.transferData(data)
 
     def getGraph(self):
-        print('in getGraph, source port name is {}'.format(self.source.name))
         return self.source.constructGraph()
 
