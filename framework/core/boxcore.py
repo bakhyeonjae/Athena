@@ -10,6 +10,7 @@ sys.path.append('../..')
 
 from src.frontend.Box import CommonModuleBox
 from framework.util.writer import BoxWriter
+from framework.core.codenode import CodeNode
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None):
@@ -161,8 +162,8 @@ class Box(object):
         if 'code' in box.keys():
             self.implType = 'CODE'
             codespec = box['code']
-            classname = codespec['class']
-            my_class = getattr(importlib.import_module(self.spec), classname)
+            self.classname = codespec['class']
+            my_class = getattr(importlib.import_module(self.spec), self.classname)
             self.instance = my_class()
 
         if 'in-port' in box.keys():
@@ -435,4 +436,24 @@ class Box(object):
         writer.write('}')
         writer.decIndent()
         writer.write('}')
-  
+
+    def isComposition(self):
+        return True if 'COMPOSITION' == self.implType else False
+   
+    def getCodeSpecNode(self):
+        node = CodeNode()
+        node.setBoxSpec(self.spec) 
+        node.setClassName(self.classname)
+        node.setInstanceID(self)
+        return node
+
+    def composeCode(self):
+        test_port = self.outputs[0]
+        graph = test_port.constructGraph()
+        graph.displayGraph()
+
+    def requestGraphToInputs(self):
+        graph = []
+        for port_in in self.inputs:
+            graph.append(port_in.constructGraph())
+        return graph

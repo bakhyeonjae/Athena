@@ -151,6 +151,9 @@ class PortConfig(Port):
         self.targetClass = target_desc.split('@')[1]
         self.targetParam = target_desc.split('@')[0]
 
+    def constructGraph(self):
+        return None
+
 class PortIn(Port):
     """ PortIn class 
     """
@@ -167,6 +170,12 @@ class PortIn(Port):
         self.targetClass = None
         self.targetParam = None
         #print('port init @ box spec:{}'.format(self.box.spec))
+
+    def constructGraph(self):
+        graph = None
+        if self.edgeOut:
+            graph = self.edgeOut.getGraph()
+        return graph
             
     def setEdge(self,edge):
         """ degree of all the edges is 2. 1 for incoming and 1 for outgoing.
@@ -264,3 +273,24 @@ class PortOut(Port):
     def getConnection(self):
         return self.view.getConnection()
 
+    def constructGraph(self):
+        graph = None
+
+        if self.box.isComposition():
+            if self.edgeIn:
+                print('HAS EDGE-IN')
+                graph = self.edgeIn.getGraph()
+        else: 
+            print('CODE case')
+            node = self.box.getCodeSpecNode()
+            graphs = self.box.requestGraphToInputs()
+            for graph in graphs:
+                if graph:
+                    node.addSrcNode(graph)
+            print('node, {}'.format(node.boxSpec))
+            print('graph, {}'.format(graphs))
+            # Check all the inputs
+            return node
+
+        # Merge them
+        return graph

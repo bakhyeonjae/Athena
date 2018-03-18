@@ -53,3 +53,7 @@ class Edge(object):
         elif isinstance(self.target,PortOut):
             self.target.transferData(data)
 
+    def getGraph(self):
+        print('in getGraph, source port name is {}'.format(self.source.name))
+        return self.source.constructGraph()
+

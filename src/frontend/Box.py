@@ -210,7 +210,7 @@ class CommonModuleBox(QFrame):
         return self.instName.text()
 
     def export(self):
-        pass
+        self.core.composeCode()
 
     def setAsBlackBox(self):
         self.showTitles()
