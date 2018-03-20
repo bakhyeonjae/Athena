@@ -431,21 +431,24 @@ class Box(object):
     def isComposition(self):
         return True if 'COMPOSITION' == self.implType else False
    
-    def getCodeSpecNode(self):
+    def getCodeSpecNode(self,nameParam,outPort):
         node = CodeNode()
         node.setBoxSpec(self.spec) 
         node.setClassName(self.classname)
         node.setInstanceID(self)
-        node.setRetName('')
+        node.setParamName(nameParam)
+        node.setRetName(outPort.name)
         return node
 
     def composeCode(self):
-        test_port = self.outputs[0]
-        graph = test_port.constructGraph()
+        target_port  = self.outputs[0]
+        nameParam = target_port.name
+        graph = target_port.constructGraph(nameParam)
         graph.displayGraph()
 
     def requestGraphToInputs(self):
         graph = []
         for port_in in self.inputs:
-            graph.append(port_in.constructGraph())
+            name_param = port_in.name
+            graph.append(port_in.constructGraph(name_param))
         return graph

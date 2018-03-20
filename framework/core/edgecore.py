@@ -51,6 +51,6 @@ class Edge(object):
         elif isinstance(self.target,PortOut):
             self.target.transferData(data)
 
-    def getGraph(self):
-        return self.source.constructGraph()
+    def getGraph(self,nameParam):
+        return self.source.constructGraph(nameParam)
 

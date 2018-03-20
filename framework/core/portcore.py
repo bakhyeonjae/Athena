@@ -151,7 +151,7 @@ class PortConfig(Port):
         self.targetClass = target_desc.split('@')[1]
         self.targetParam = target_desc.split('@')[0]
 
-    def constructGraph(self):
+    def constructGraph(self,nameParam):
         return None
 
 class PortIn(Port):
@@ -170,10 +170,10 @@ class PortIn(Port):
         self.targetClass = None
         self.targetParam = None
 
-    def constructGraph(self):
+    def constructGraph(self,nameParam):
         graph = None
         if self.edgeOut:
-            graph = self.edgeOut.getGraph()
+            graph = self.edgeOut.getGraph(nameParam)
         return graph
             
     def setEdge(self,edge):
@@ -268,14 +268,14 @@ class PortOut(Port):
     def getConnection(self):
         return self.view.getConnection()
 
-    def constructGraph(self):
+    def constructGraph(self,nameParam):
         graph = None
 
         if self.box.isComposition():
             if self.edgeIn:
-                graph = self.edgeIn.getGraph()
+                graph = self.edgeIn.getGraph(nameParam)
         else: 
-            node = self.box.getCodeSpecNode()
+            node = self.box.getCodeSpecNode(nameParam,self)
             graphs = self.box.requestGraphToInputs()
             for graph in graphs:
                 if graph:
