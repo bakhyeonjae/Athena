@@ -5,6 +5,8 @@ class CodeNode(object):
         self.instanceID = None
         self.dstNode = None
         self.srcNode = []
+        self.paramName = ''
+        self.retName = ''
 
     def setClassName(self,name):
         self.className = name
@@ -22,6 +24,12 @@ class CodeNode(object):
     def setInstanceID(self,ID):
         self.instanceID = ID
 
+    def setRetName(self,name):
+        self.retName = name
+
+    def setParamName(self,name):
+        self.paramName = name
+
     def displayGraph(self):
         print('-----------------')
         print('node ref : {}'.format(self))
@@ -29,6 +37,8 @@ class CodeNode(object):
         print('class : {}'.format(self.className))
         print('ID : {}'.format(self.instanceID))
         print('dst : {}'.format(self.dstNode))
+        print('param : {}'.format(self.retName))
+        print('return : {}'.format(self.paramName))
         print('')
         for node in self.srcNode:
             node.displayGraph()

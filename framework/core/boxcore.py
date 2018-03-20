@@ -436,6 +436,7 @@ class Box(object):
         node.setBoxSpec(self.spec) 
         node.setClassName(self.classname)
         node.setInstanceID(self)
+        node.setRetName('')
         return node
 
     def composeCode(self):
