@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox, QLineEdit, QLabel
-from PyQt5.QtCore import Qt, QDateTime
+from PySide2.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QComboBox, QLineEdit, QLabel
+from PySide2.QtCore import Qt, QDateTime
 
 class TextInputDialog(QDialog):
     def __init__(self, message, parent = None):

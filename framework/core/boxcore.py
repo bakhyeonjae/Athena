@@ -19,6 +19,7 @@ class Box(object):
         self.inputs = []
         self.outputs = []
         self.cfgVars = []
+        self.retVals = []
         self.name = ''
         self.type = ''
         if view:
@@ -165,6 +166,11 @@ class Box(object):
             self.classname = codespec['class']
             my_class = getattr(importlib.import_module(self.spec), self.classname)
             self.instance = my_class()
+            
+            if 'return' in codespec.keys():
+                return_values = codespec['return']
+                for ret_val in return_values:
+                    self.retVals.append({'retName':ret_val['name'], 'portname':ret_val['connect']})
 
         if 'in-port' in box.keys():
             inputs   = box['in-port']
@@ -437,7 +443,7 @@ class Box(object):
         node.setClassName(self.classname)
         node.setInstanceID(self)
         node.setParamName(nameParam)
-        node.setRetName(outPort.name)
+        node.setRetName(self.findRetNameByOutputName(outPort))
         return node
 
     def composeCode(self):
@@ -449,6 +455,12 @@ class Box(object):
     def requestGraphToInputs(self):
         graph = []
         for port_in in self.inputs:
-            name_param = port_in.name
+            name_param = port_in.targetParam
             graph.append(port_in.constructGraph(name_param))
         return graph
+
+    def findRetNameByOutputName(self,outPort):
+        for var in self.retVals:
+            if var['portname'] == outPort.name:
+                return var['retName']
+        return None
