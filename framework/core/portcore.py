@@ -281,8 +281,12 @@ class PortOut(Port):
                 graph = self.edgeIn.getGraph(nameParam)
         else: 
             node = self.box.getCodeSpecNode(nameParam,self)
-            graphs = self.box.requestGraphToInputs()
-            for graph in graphs:
+            igraphs = self.box.requestGraphToInputs()
+            for graph in igraphs:
+                if graph:
+                    node.addSrcNode(graph)
+            cgraphs = self.box.requestGraphToConfigs()
+            for graph in cgraphs:
                 if graph:
                     node.addSrcNode(graph)
             # Check all the inputs

@@ -12,6 +12,7 @@ from src.frontend.Box import CommonModuleBox
 from framework.util.writer import BoxWriter
 from framework.core.codenode import CodeNode
 from framework.core.topology import Topology
+from framework.core.codeexport import CodeGenerator
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None):
@@ -456,8 +457,15 @@ class Box(object):
         topology = Topology()
         topology.setGraph(graph)
         ordered = topology.sort()
-        for node in ordered:
-            node.displayNode()
+        exporter = CodeGenerator('./aa.py')
+        exporter.exportCode(target_port,ordered)
+
+    def requestGraphToConfigs(self):
+        graph = []
+        for port_cfg in self.cfgVars:
+            name_param = port_cfg.targetParam
+            graph.append(port_cfg.constructGraph(name_param))
+        return graph
 
     def requestGraphToInputs(self):
         graph = []

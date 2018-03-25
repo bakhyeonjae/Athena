@@ -51,6 +51,36 @@ class CodeNode(object):
         print('dst : {}'.format(self.dstNode))
         print('return variable name for extracting value : {}'.format(self.retName))
         print('param variable name for next code block : {}'.format(self.paramName))
+
+    def getInstStatement(self):
+        return '    {} = {}()\n'.format(self.getInstName(),self.className)
+
+    def getInstName(self):
+        return 'inst{}_{}'.format(id(self),self.className)
+
+    def getRetVarStatement(self):
+        return '    {} = {}.{}\n'.format(self.getRetVarName(),self.getInstName(),self.retName)
+
+    def getExecStatement(self):
+        exec_str = '    {}.execute('.format(self.getInstName())
+        for param in self.srcNode:
+            if param == self.srcNode[-1]:
+                exec_str += '{}={}'.format(param.paramName,param.getRetVarName())
+            else:
+                exec_str += '{}={},'.format(param.paramName,param.getRetVarName())
+        exec_str += ')\n'
+        return exec_str
+
+    def getImportStatement(self):
+        if self.boxSpec:
+            spec_ = self.boxSpec
+            module_name = spec_.split('.')[-1]
+            return 'from {} import {}\n'.format(module_name,self.className)
+        else:
+            return ''
+
+    def getRetVarName(self):
+        return 'var{}_{}'.format(id(self),self.retName)
         
 class ConfigNode(CodeNode):
     def __init__(self):
@@ -67,3 +97,12 @@ class ConfigNode(CodeNode):
         print('dst : {}'.format(self.dstNode))
         print('param variable name for next code block : {}'.format(self.paramName))
         print('return value : {}'.format(self.paramValue))
+
+    def getInstStatement(self):
+        return ''
+
+    def getExecStatement(self):
+        return ''
+
+    def getRetVarStatement(self):
+        return '    {} = {}\n'.format(self.getRetVarName(),self.paramValue)
