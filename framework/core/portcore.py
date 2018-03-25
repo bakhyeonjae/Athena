@@ -40,6 +40,8 @@
 
 """
 
+from framework.core.codenode import ConfigNode
+
 class Port(object):
     """ Common port interface
     """
@@ -152,7 +154,10 @@ class PortConfig(Port):
         self.targetParam = target_desc.split('@')[0]
 
     def constructGraph(self,nameParam):
-        return None
+        node = ConfigNode()
+        node.setParamName(nameParam)
+        node.setParamValue(self.data)
+        return node
 
 class PortIn(Port):
     """ PortIn class 
