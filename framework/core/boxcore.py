@@ -11,6 +11,7 @@ sys.path.append('../..')
 from src.frontend.Box import CommonModuleBox
 from framework.util.writer import BoxWriter
 from framework.core.codenode import CodeNode
+from framework.core.topology import Topology
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None):
@@ -451,6 +452,12 @@ class Box(object):
         nameParam = target_port.name
         graph = target_port.constructGraph(nameParam)
         graph.displayGraph()
+        
+        topology = Topology()
+        topology.setGraph(graph)
+        ordered = topology.sort()
+        for node in ordered:
+            node.displayNode()
 
     def requestGraphToInputs(self):
         graph = []

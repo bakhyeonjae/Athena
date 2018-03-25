@@ -17,6 +17,9 @@ class CodeNode(object):
     def addSrcNode(self,node):
         self.srcNode.append(node)
         node.setDstNode(self)
+    
+    def getSrcNodes(self):
+        return self.srcNode
 
     def setDstNode(self,node):
         self.dstNode = node
@@ -31,6 +34,15 @@ class CodeNode(object):
         self.paramName = name
 
     def displayGraph(self):
+        self.displayNode()
+        self.displayChild()
+
+    def displayChild(self):
+        print('')
+        for node in self.srcNode:
+            node.displayGraph()
+
+    def displayNode(self):
         print('-----------------')
         print('node ref : {}'.format(self))
         print('spec : {}'.format(self.boxSpec))
@@ -39,13 +51,7 @@ class CodeNode(object):
         print('dst : {}'.format(self.dstNode))
         print('return variable name for extracting value : {}'.format(self.retName))
         print('param variable name for next code block : {}'.format(self.paramName))
-        self.displayChild()
-
-    def displayChild(self):
-        print('')
-        for node in self.srcNode:
-            node.displayGraph()
-
+        
 class ConfigNode(CodeNode):
     def __init__(self):
         super().__init__()
@@ -54,11 +60,10 @@ class ConfigNode(CodeNode):
     def setParamValue(self, val):
         self.paramValue = val
 
-    def displayGraph(self):
+    def displayNode(self):
         print('--------------------------')
         print('node ref : {}'.format(self))
         print('ID : {}'.format(self.instanceID))
         print('dst : {}'.format(self.dstNode))
         print('param variable name for next code block : {}'.format(self.paramName))
         print('return value : {}'.format(self.paramValue))
-        self.displayChild()
