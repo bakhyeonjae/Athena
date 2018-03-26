@@ -449,16 +449,27 @@ class Box(object):
         return node
 
     def composeCode(self):
-        target_port  = self.outputs[0]
-        nameParam = target_port.name
-        graph = target_port.constructGraph(nameParam)
-        graph.displayGraph()
+        func_names = []
+        module_names = []
+        local_dir = './export'
+        CodeGenerator.createDir(local_dir) 
+        for target_port in self.outputs:
+            nameParam = target_port.name
+            graph = target_port.constructGraph(nameParam)
+            graph.displayGraph()
+            
+            topology = Topology()
+            topology.setGraph(graph)
+            ordered = topology.sort()
+            exporter = CodeGenerator(local_dir)
+            module_name = '{}_{}.py'.format(target_port.name,target_port.box.name).replace(' ','')
+            callable_func = exporter.exportCode(target_port,ordered,module_name)
+            exporter.transferLibFiles(ordered,local_dir)
+            func_names.append(callable_func)
+            module_names.append(module_name)
         
-        topology = Topology()
-        topology.setGraph(graph)
-        ordered = topology.sort()
-        exporter = CodeGenerator('./aa.py')
-        exporter.exportCode(target_port,ordered)
+        main_module = CodeGenerator(local_dir)
+        main_module.exportExampleModule(func_names,module_names)
 
     def requestGraphToConfigs(self):
         graph = []

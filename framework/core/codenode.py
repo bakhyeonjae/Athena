@@ -17,6 +17,22 @@ class CodeNode(object):
     def addSrcNode(self,node):
         self.srcNode.append(node)
         node.setDstNode(self)
+
+    def getCodeDir(self):
+        module_name = self.boxSpec
+        if module_name:
+            related_dir = module_name.replace('.','/')
+            return related_dir
+        else:
+            return None
+
+    def getCodeFile(self):
+        module_name = self.boxSpec
+        if module_name:
+            file_name = module_name.replace('.','/')
+            return '{}.py'.format(file_name)
+        else:
+            return None
     
     def getSrcNodes(self):
         return self.srcNode
@@ -71,11 +87,11 @@ class CodeNode(object):
         exec_str += ')\n'
         return exec_str
 
-    def getImportStatement(self):
+    def getImportStatement(self,directory):
         if self.boxSpec:
             spec_ = self.boxSpec
             module_name = spec_.split('.')[-1]
-            return 'from {} import {}\n'.format(module_name,self.className)
+            return 'from {}.{} import {}\n'.format(directory,module_name,self.className)
         else:
             return ''
 
