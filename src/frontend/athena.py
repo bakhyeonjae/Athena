@@ -7,6 +7,7 @@ import os
 
 from Box import CommonModuleBox
 from infoview import InfoView
+from mainwnd import MainWnd
 
 sys.path.append("..")
 sys.path.append("../..")
@@ -15,8 +16,7 @@ from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
 from controltower.controltower import ControlTower
 
-#class MainWindow(QFrame):
-class MainWindow(QMainWindow):
+class MainWindow(QFrame):
     listBox = []
     selectedBox = None
     compensated_pos = 0
@@ -144,11 +144,13 @@ if __name__ == "__main__":
     app = QApplication.instance()
     if not app:     # create QApplication if it doesnt exist
         app = QApplication(sys.argv)
+    mainWnd = MainWnd()
     mywin = TopWindow()
     controlTower = ControlTower()
     controlTower.setWorkSpace(mywin.frame)
     controlTower.setInfoWindow(mywin.viewInfo)
     controlTower.setBoxTree(mywin.tree)
     controlTower.constructInitState()
-    mywin.show()
+    mainWnd.setCentralWidget(mywin)
+    mainWnd.show()
     sys.exit(app.exec_())
