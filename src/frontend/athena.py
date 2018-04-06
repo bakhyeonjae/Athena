@@ -15,18 +15,6 @@ from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
 from controltower.controltower import ControlTower
 
-class ModelBox(CommonModuleBox):
-    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
-        super().__init__(parent, inputPort, outputPort, instName, typeName)
-
-class TesterBox(CommonModuleBox):
-    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
-        super().__init__(parent, inputPort, outputPort, instName, typeName)
-
-class OptimizerBox(CommonModuleBox):
-    def __init__(self, parent=None, inputPort = [], outputPort = [], instName = '', typeName = ''):
-        super().__init__(parent, inputPort, outputPort, instName, typeName)
-
 class MainWindow(QFrame):
     listBox = []
     selectedBox = None
