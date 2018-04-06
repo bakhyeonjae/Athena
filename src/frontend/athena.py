@@ -15,7 +15,8 @@ from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
 from controltower.controltower import ControlTower
 
-class MainWindow(QFrame):
+#class MainWindow(QFrame):
+class MainWindow(QMainWindow):
     listBox = []
     selectedBox = None
     compensated_pos = 0
