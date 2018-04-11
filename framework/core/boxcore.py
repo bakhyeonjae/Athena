@@ -242,6 +242,15 @@ class Box(object):
 
         self.view.update()
 
+    def removePort(self,port):
+        if port in self.outputs:
+            self.view.removePort(port.getView())
+            self.outputs.remove(port)
+        if port in self.inputs:
+            self.view.removePort(port.getView())
+            self.inputs.remove(port)
+        self.view.update()
+
     def addOutPort(self,name):
         # Allow a user specify name
         new_port = PortOut(self,name)

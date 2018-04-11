@@ -72,7 +72,7 @@ class ViewPort(QLabel):
         self.setPopupActionList(menus)
 
     def deletePort(self):
-        pass
+        self.core.box.removePort(self.core)
 
     def markPort(self):
         pass

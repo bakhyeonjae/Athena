@@ -197,6 +197,16 @@ class CommonModuleBox(QFrame):
                 break
         return need_flag
 
+    def removePort(self, port):
+        if port in self.inPorts:
+            idx = self.inPorts.index(port)
+            self.inputLayout.removeWidget(port)
+            port.setParent(None) 
+        if port in self.outPorts:
+            idx = self.outPorts.index(port)
+            self.outputLayout.removeWidget(port)
+            port.setParent(None)
+
     def setInputPorts(self,ports):
         for port_core in ports:
             if self.needInputPortView(port_core):
