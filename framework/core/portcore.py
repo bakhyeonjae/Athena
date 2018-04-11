@@ -54,6 +54,15 @@ class Port(object):
         self.edgeIn = None
         self.edgeOut = None
         self.view = None
+        self.exportFlag = False
+
+    def setExportFlag(self):
+        self.exportFlag = True
+        self.view.setHighLighted()
+
+    def resetExportFlag(self):
+        self.exportFlag = False
+        self.view.resetHighLighted()
     
     def isBoxOpened(self):
         """ Check if the box is opened or not

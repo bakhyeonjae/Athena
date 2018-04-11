@@ -28,6 +28,13 @@ class ViewPort(QLabel):
         menu_list = []
         self.setPopupActionList(menu_list)
 
+    def setHighLighted(self):
+        self.setStyleSheet("background-color: rgb(230,230,230); border: 3px solid red;")
+        self.show()
+
+    def resetHighLighted(self):
+        self.setStyleSheet("background-color: rgb(230,230,230); border: 1px solid black;")
+
     def createPopupMenu(self):
         """ This method creates popup menu and display on screen. Menu items will be given by child classes. Child classes must override createPopupActions to set menu items.
         """
@@ -75,7 +82,7 @@ class ViewPort(QLabel):
         self.core.box.removePort(self.core)
 
     def markPort(self):
-        pass
+        self.core.setExportFlag()
 
     def setPopupActionList(self,menuList):
         for menu in menuList:

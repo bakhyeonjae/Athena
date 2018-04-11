@@ -197,6 +197,7 @@ class CommonModuleBox(QFrame):
                 break
         return need_flag
 
+    
     def removePort(self, port):
         if port in self.inPorts:
             idx = self.inPorts.index(port)
