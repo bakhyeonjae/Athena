@@ -16,6 +16,31 @@ class ViewPort(QLabel):
     def __init__(self, parent=None):
         QLabel.__init__(self,parent)
         self.dataType = None
+        self.popupActions = []  # list of dictionary, Key :"title","desc","method"
+        self.configPopupMenu()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self.createPopupActions()
+            self.createPopupMenu()
+
+    def createPopupActions(self):
+        menu_list = []
+        self.setPopupActionList(menu_list)
+
+    def createPopupMenu(self):
+        """ This method creates popup menu and display on screen. Menu items will be given by child classes. Child classes must override createPopupActions to set menu items.
+        """
+        menu = QMenu()
+
+        for action in self.popupActions:
+            act = QAction(action["title"], self)
+            act.setStatusTip(action["desc"])
+            act.triggered.connect(action["method"])
+            menu.addAction(act)
+
+        menu.exec_(QCursor.pos())
+        menu = None
 
     def createConnectionLine(self):
         """ 
@@ -38,6 +63,24 @@ class ViewPort(QLabel):
 
     def getPos(self):
         return QPoint(self.pos().x()+self.width()/2, self.pos().y()+self.height()/2) + self.parent.pos()
+
+    def configPopupMenu(self):
+        menus = [{"title":"delete", "desc":"Delete this port", "method":self.deletePort},
+                 {"title":"Mark for export","desc":"Mark for export", "method":self.markPort}
+                ]
+
+        self.setPopupActionList(menus)
+
+    def deletePort(self):
+        pass
+
+    def markPort(self):
+        pass
+
+    def setPopupActionList(self,menuList):
+        for menu in menuList:
+            if menu not in self.popupActions:
+                self.popupActions.append(menu) 
 
     def setPortCore(self, core):
         self.core = core
@@ -80,7 +123,7 @@ class Connection(object):
 
 class ViewPortConfig(ViewPort):
     def __init__(self, parent):
-        ViewPort.__init__(self,parent)
+        super().__init__(parent)
         self.connectedTo = None
         self.parent = parent
         self.data = None
@@ -88,7 +131,7 @@ class ViewPortConfig(ViewPort):
 
 class ViewPortIn(ViewPort):
     def __init__(self, parent):
-        ViewPort.__init__(self,parent)
+        super().__init__(parent)
         self.connectedTo = None
         self.parent = parent
         self.data = None
@@ -138,7 +181,7 @@ class ViewPortIn(ViewPort):
 class ViewPortOut(ViewPort):
 
     def __init__(self,parent):
-        ViewPort.__init__(self,parent)
+        super().__init__(parent)
         self.data = None
         self.connection = None
         self.connectedTo = None
