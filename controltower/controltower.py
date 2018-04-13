@@ -10,6 +10,9 @@ class ControlTower(object):
         self.infoWnd = None
         self.boxTree = None
 
+    def getRootBox(self):
+        return self.rootBox
+
     def setWorkSpace(self, workspace):
         self.workspace = workspace
         self.workspace.setControlTower(self)
@@ -26,6 +29,9 @@ class ControlTower(object):
         self.rootBox = Box(None,None,None,self,self.workspace)
         self.openedBox = self.rootBox
         self.workspace.dockBox(self.openedBox.view)
+
+    def getOpenedBox(self):
+        return self.openedBox
 
     def openBox(self, box):
         if self.openedBox is not box:

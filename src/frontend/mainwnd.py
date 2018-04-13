@@ -10,6 +10,10 @@ class MainWnd(QMainWindow):
         super().__init__()
         self.exporter = Exporter()
         self.initUI()
+        self.controlTower = None
+
+    def setControlTower(self, ct):
+        self.controlTower = ct
         
     def initUI(self):         
 
@@ -30,7 +34,7 @@ class MainWnd(QMainWindow):
 
         config_menu = self.menuBar.addMenu('Tools')
         config_menu.addAction('Preferences')
-        config_menu.addAction('Export',self.exporter.processExport)
+        config_menu.addAction('Export',self.export)
 
         window_menu = self.menuBar.addMenu('Window')
         window_menu.addAction('Description')
@@ -44,8 +48,11 @@ class MainWnd(QMainWindow):
         self.statusBar().show()
 
     def save(self):
+        pass
+
+    def export(self):
         exporter = Exporter()
-        exporter.processExport()
+        exporter.processExport(self.controlTower.getOpenedBox())
 
     def quit(self):
         sys.exit(0)

@@ -151,5 +151,6 @@ if __name__ == "__main__":
     controlTower.setBoxTree(mywin.tree)
     controlTower.constructInitState()
     mainWnd.setCentralWidget(mywin)
+    mainWnd.setControlTower(controlTower)
     mainWnd.show()
     sys.exit(app.exec_())

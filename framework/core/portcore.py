@@ -56,6 +56,9 @@ class Port(object):
         self.view = None
         self.exportFlag = False
 
+    def getExportFlag(self):
+        return self.exportFlag
+
     def setExportFlag(self):
         self.exportFlag = True
         self.view.setHighLighted()
