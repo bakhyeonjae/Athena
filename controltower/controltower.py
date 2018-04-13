@@ -38,6 +38,11 @@ class ControlTower(object):
             self.openedBox.closeBox()
         self.openedBox = box
 
+    def createNewBox(self,implType):
+        new_box = Box(None, self.openedBox, None, self, implType=implType)
+        self.openedBox.addBox(new_box) 
+        self.openedBox.view.setFocus()
+
     def createBoxFromDesc(self,selectedBox):
         box_dir = '../../boxes'
         new_box = BoxLoader.createBox('../../boxes{}'.format(BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(box_dir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)

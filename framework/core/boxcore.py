@@ -15,7 +15,7 @@ from framework.core.topology import Topology
 from framework.core.codeexport import CodeGenerator
 
 class Box(object):
-    def __init__(self, desc, ancestor, boxspec, controlTower, view=None):
+    def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
         self.desc = desc
         self.boxes = []   # type : boxcore.Box
         self.inputs = []
@@ -36,7 +36,7 @@ class Box(object):
         self.ancestor = ancestor
         self.specNotVisible = ['boxes.','private.','builtin.']
         self.configParams = {}
-        self.implType = ''   # 'CODE'/'COMPOSITION'
+        self.implType = implType
 
         self.buildStructure()
     
@@ -146,7 +146,9 @@ class Box(object):
 
     def buildStructure(self):
         if not self.desc:
-            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
+            type_name = self.spec if self.spec else 'NOT SPECIFIED'
+            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',type_name)
+            self.view.configPopupMenu(self.implType)
             return
 
         box = self.desc['box']

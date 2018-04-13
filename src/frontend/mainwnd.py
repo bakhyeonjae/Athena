@@ -35,6 +35,9 @@ class MainWnd(QMainWindow):
         config_menu = self.menuBar.addMenu('Tools')
         config_menu.addAction('Preferences')
         config_menu.addAction('Export',self.export)
+        box_menu = config_menu.addMenu('Box')
+        box_menu.addAction('New combo box',self.createCompositeBox)
+        box_menu.addAction('New Code box',self.createCodeBox)    
 
         window_menu = self.menuBar.addMenu('Window')
         window_menu.addAction('Description')
@@ -46,6 +49,12 @@ class MainWnd(QMainWindow):
 
         self.setWindowTitle('Athena')
         self.statusBar().show()
+
+    def createCodeBox(self):
+        self.controlTower.createNewBox('CODE')
+
+    def createCompositeBox(self):
+        self.controlTower.createNewBox('COMPOSITION')
 
     def save(self):
         pass
