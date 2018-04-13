@@ -15,3 +15,6 @@ Athena is a visual AI programming environment.
 ## Task Management
 
 https://tree.taiga.io/project/hjbak-athena
+
+## User guide
+https://bakhyeonjae.github.io/Athena/
