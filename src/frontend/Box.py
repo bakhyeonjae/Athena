@@ -81,7 +81,6 @@ class CommonModuleBox(QFrame):
         # Common - Run, Delete, Save, Another Input Port, Another Output Port, Name, Config variables
         menus = [{"title":"Run", "desc":"Configure module parameters", "method":self.run},
                  {"title":"Delete", "desc":"Configure module parameters", "method":self.deleteBox},
-                 {"title":"Export","desc":"Generate Code", "method":self.export},
                  {"title":"Save","desc":"save to file", "method":self.save},
                  {"title":"Another input port","desc":"Add an input port", "method":self.addInPort},
                  {"title":"Another output port","desc":"Add an output port", "method":self.addOutPort},

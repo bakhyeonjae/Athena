@@ -132,7 +132,6 @@ class TopWindow(QWidget):
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
 
-
         layout = QHBoxLayout()
         layout.addWidget(self.tree)
         layout.addWidget(self.frame)
