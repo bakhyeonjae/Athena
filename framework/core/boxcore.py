@@ -148,10 +148,12 @@ class Box(object):
         self.view.hide()
 
     def loadNewCode(self):
-        self.classname = 'Anonymous'
-        my_class = getattr(importlib.import_module('tmp_box.code'), self.classname)
+        self.codedesc.targetClass = 'Anonymous'
+        my_class = getattr(importlib.import_module('tmp_box.code'), self.codedesc.targetClass)
         self.instance = my_class()
         print('----->',self.instance)
+
+        ParamStruct().name = 'val'
         """
         if 'return' in codespec.keys():
             return_values = codespec['return']
@@ -212,8 +214,7 @@ class Box(object):
         if 'code' in box.keys():
             self.loadCodeDescription()
             self.implType = 'CODE'
-            self.classname = self.codedesc.targetClass
-            my_class = getattr(importlib.import_module(self.spec), self.classname)
+            my_class = getattr(importlib.import_module(self.spec), self.codedesc.targetClass)
             self.instance = my_class()
             for ret_val in self.codedesc.returns:
                 self.retVals.append({'retName':ret_val.name, 'portname':ret_val.connect})
@@ -494,7 +495,7 @@ class Box(object):
     def getCodeSpecNode(self,nameParam,outPort):
         node = CodeNode()
         node.setBoxSpec(self.spec) 
-        node.setClassName(self.classname)
+        node.setClassName(self.codedesc.targetClass)
         node.setInstanceID(self)
         node.setParamName(nameParam)
         node.setRetName(self.findRetNameByOutputName(outPort))
