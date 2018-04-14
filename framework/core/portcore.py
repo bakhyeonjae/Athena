@@ -241,6 +241,13 @@ class PortIn(Port):
         self.targetClass = target_desc.split('@')[1]
         self.targetParam = target_desc.split('@')[0]
 
+    def isCodeConfigured(self):
+        if not self.targetClass:
+            return False
+        if not self.targetPort:
+            return False
+        return True
+
     def passToBox(self,data):
         """
         This method is for PortOut.
@@ -258,6 +265,7 @@ class PortIn(Port):
         """
         A box should call this method to get data transferred from connected boxes.
         """
+        print('IN PortIn - it\'s box name is ',self.box.name)
         return self.data
 
     def connectPort(self,portOut):

@@ -148,18 +148,10 @@ class Box(object):
         self.view.hide()
 
     def loadNewCode(self):
+        self.codedesc = CodeStruct()
         self.codedesc.targetClass = 'Anonymous'
         my_class = getattr(importlib.import_module('tmp_box.code'), self.codedesc.targetClass)
         self.instance = my_class()
-        print('----->',self.instance)
-
-        ParamStruct().name = 'val'
-        """
-        if 'return' in codespec.keys():
-            return_values = codespec['return']
-            for ret_val in return_values:
-                self.retVals.append({'retName':ret_val['name'], 'portname':ret_val['connect']})
-        """
 
     def loadCodeDescription(self):
         box = self.desc['box']
@@ -299,6 +291,11 @@ class Box(object):
     def addOutPort(self,name):
         # Allow a user specify name
         new_port = PortOut(self,name)
+        if 'CODE' == self.implType:
+            ret = ReturnStruct()
+            ret.name = name
+            ret.connect = name
+            self.codedesc.returns.append(ret)
         self.outputs.append(new_port)
         self.view.setOutputPorts(self.outputs)
         self.view.update()
@@ -306,6 +303,11 @@ class Box(object):
     def addInPort(self,name):
         # Allow a user specify name
         new_port = PortIn(self,name)
+        if 'CODE' == self.implType and not new_port.isCodeConfigured():
+            new_port.configFromDesc({'connect':'{}@{}'.format(name,self.codedesc.targetClass)})
+            param = ParamStruct()
+            param.name = name
+            self.codedesc.params.append(param)
         self.inputs.append(new_port)
         self.view.setInputPorts(self.inputs)
         self.view.update()
@@ -335,6 +337,7 @@ class Box(object):
 
     def run(self):
         self.propagateExecution()
+        print('run - box name is ',self.name)
         self.execute()
 
     def propagateExecution(self):
@@ -345,35 +348,46 @@ class Box(object):
         if self.boxes:
             pass
         else:
+            print('execute - box name is ',self.name)
             self.executeCode()
 
     def executeCode(self):
         
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
+            if 'newbox' == self.name:
+                print('targetClass : {}, port.targetClass : {}'.format(self.codedesc.targetClass,port.targetClass))
             if self.codedesc.targetClass != port.targetClass:
                 return #Raise exception
             params = [p.name for p in self.codedesc.params]
+            if 'newbox' == self.name:
+                print('targetParam : {}, params : {}'.format(port.targetParam,params))
             if port.targetParam not in params:
                 return #Raise exception
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
         for idx,port in enumerate(self.cfgVars):
+            if 'newbox' == self.name:
+                print('#targetClass : {}, port.targetClass : {}'.format(self.codedesc.targetClass,port.targetClass))
             if self.codedesc.targetClass != port.targetClass:
                 return #Raise exception
             params = [p.name for p in self.codedesc.params]
+            if 'newbox' == self.name:
+                print('#targetParam : {}, params : {}'.format(port.targetParam,params))
             if port.targetParam not in params:
                 return #Raise exception
             exec_str += '{}=self.cfgVars[{}].getData()'.format(port.targetParam,idx)
             if self.cfgVars[-1] != port:
                 exec_str += ','
         exec_str += ')'
+        print('------',self.codedesc.targetClass,'>>>>>>',exec_str)
         eval(exec_str)
 
         for ret in self.codedesc.returns:
             if ret.name in [output.name for output in self.outputs]:
                 varname = 'self.instance.{}'.format(ret.name)
+                print('varname = ','self.instance.{}'.format(ret.name))
                 var = eval(varname)
                 out_port = next(output for output in self.outputs if output.name == ret.name)
                 out_port.transferData(var)
