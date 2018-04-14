@@ -13,6 +13,9 @@ from framework.util.writer import BoxWriter
 from framework.core.codenode import CodeNode
 from framework.core.topology import Topology
 from framework.core.codeexport import CodeGenerator
+from framework.core.structcode import CodeStruct
+from framework.core.structcode import ParamStruct
+from framework.core.structcode import ReturnStruct
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
@@ -144,14 +147,56 @@ class Box(object):
             box.view.hide()
         self.view.hide()
 
+    def loadNewCode(self):
+        self.classname = 'Anonymous'
+        my_class = getattr(importlib.import_module('tmp_box.code'), self.classname)
+        self.instance = my_class()
+        print('----->',self.instance)
+        """
+        if 'return' in codespec.keys():
+            return_values = codespec['return']
+            for ret_val in return_values:
+                self.retVals.append({'retName':ret_val['name'], 'portname':ret_val['connect']})
+        """
+
+    def loadCodeDescription(self):
+        box = self.desc['box']
+        self.codedesc = CodeStruct()
+        self.codedesc.targetClass = box['code']['class']
+        if 'param' in box['code'].keys():
+            for p in box['code']['param']:
+                param = ParamStruct()
+                if 'type' in p.keys():
+                    param.type = p['type']
+                if 'name' in p.keys():
+                    param.name = p['name']
+                if 'optional' in p.keys():
+                    param.optional = p['optional']
+                self.codedesc.params.append(param)
+        if 'return' in box['code'].keys():
+            for r in box['code']['return']:
+                ret = ReturnStruct()
+                if 'type' in r.keys():
+                    ret.type = r['type']
+                if 'name' in r.keys():
+                    ret.name = r['name']
+                if 'connect' in r.keys():
+                    ret.connect = r['connect']
+                self.codedesc.returns.append(ret)
+
     def buildStructure(self):
         if not self.desc:
             type_name = self.spec if self.spec else 'NOT SPECIFIED'
             self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',type_name)
             self.view.configPopupMenu(self.implType)
+
+            if 'CODE' == self.implType:
+                self.loadNewCode()
+
             return
 
         box = self.desc['box']
+
 
         subboxes = []
         inputs   = []
@@ -165,16 +210,13 @@ class Box(object):
             subboxes = box['sub-box']
 
         if 'code' in box.keys():
+            self.loadCodeDescription()
             self.implType = 'CODE'
-            codespec = box['code']
-            self.classname = codespec['class']
+            self.classname = self.codedesc.targetClass
             my_class = getattr(importlib.import_module(self.spec), self.classname)
             self.instance = my_class()
-            
-            if 'return' in codespec.keys():
-                return_values = codespec['return']
-                for ret_val in return_values:
-                    self.retVals.append({'retName':ret_val['name'], 'portname':ret_val['connect']})
+            for ret_val in self.codedesc.returns:
+                self.retVals.append({'retName':ret_val.name, 'portname':ret_val.connect})
 
         if 'in-port' in box.keys():
             inputs   = box['in-port']
@@ -305,21 +347,21 @@ class Box(object):
             self.executeCode()
 
     def executeCode(self):
-        box = self.desc['box']
+        
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
-            if box['code']['class'] != port.targetClass:
+            if self.codedesc.targetClass != port.targetClass:
                 return #Raise exception
-            params = [p['name'] for p in box['code']['param']]
+            params = [p.name for p in self.codedesc.params]
             if port.targetParam not in params:
                 return #Raise exception
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
         for idx,port in enumerate(self.cfgVars):
-            if box['code']['class'] != port.targetClass:
+            if self.codedesc.targetClass != port.targetClass:
                 return #Raise exception
-            params = [p['name'] for p in box['code']['param']]
+            params = [p.name for p in self.codedesc.params]
             if port.targetParam not in params:
                 return #Raise exception
             exec_str += '{}=self.cfgVars[{}].getData()'.format(port.targetParam,idx)
@@ -328,12 +370,11 @@ class Box(object):
         exec_str += ')'
         eval(exec_str)
 
-        rets = box['code']['return']
-        for ret in rets:
-            if ret['name'] in [output.name for output in self.outputs]:
-                varname = 'self.instance.{}'.format(ret['name'])
+        for ret in self.codedesc.returns:
+            if ret.name in [output.name for output in self.outputs]:
+                varname = 'self.instance.{}'.format(ret.name)
                 var = eval(varname)
-                out_port = next(output for output in self.outputs if output.name == ret['name'])
+                out_port = next(output for output in self.outputs if output.name == ret.name)
                 out_port.transferData(var)
 
     def addBox(self,box):
