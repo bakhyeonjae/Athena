@@ -92,7 +92,13 @@ class CommonModuleBox(QFrame):
             menus.append({"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox})
             menus.append({"title":"Step out", "desc":"Open this box", "method":self.stepOutBox})
 
+        elif 'CODE' == menuType:
+            menus.append({"title":"Open Code", "desc":"Open Code", "method":self.editCode})
+
         self.setPopupActionList(menus)
+
+    def editCode(self):
+        self.core.editCode()
 
     def addConfigParams(self):
         self.core.addConfigParams()

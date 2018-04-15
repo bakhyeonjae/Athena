@@ -43,6 +43,9 @@ class Box(object):
         self.implType = implType
 
         self.buildStructure()
+
+    def editCode(self):
+        print('edit code')
     
     def getConfigParams(self):
         return self.configParams
