@@ -16,6 +16,7 @@ from framework.core.codeexport import CodeGenerator
 from framework.core.structcode import CodeStruct
 from framework.core.structcode import ParamStruct
 from framework.core.structcode import ReturnStruct
+from framework.core.codetemplate import CodeTemplate
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
@@ -352,6 +353,10 @@ class Box(object):
             self.executeCode()
 
     def executeCode(self):
+
+        code_template = CodeTemplate()
+        code_template.setPath('tt')
+        code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs)
         
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
