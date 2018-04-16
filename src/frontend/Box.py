@@ -289,7 +289,7 @@ class CommonModuleBox(QFrame):
                     port.connectedTo.disconnectPort()
                 port.disconnectPort()
 
-       	self.parent.deleteBox(self) 
+       	self.parent.core.deleteBox(self.core) 
 
     def getSelectedOne(self,ports):
         for port in ports:

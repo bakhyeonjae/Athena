@@ -46,6 +46,13 @@ class Box(object):
 
         self.buildStructure()
 
+    def deleteBox(self,box):
+        selected = next(x for x in self.boxes if x == box)
+        selected.view.setParent(None)
+        self.boxes.remove(selected)
+        del selected
+        self.view.update()
+
     def editCode(self):
 
         self.path_name = self.spec
