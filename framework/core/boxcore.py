@@ -1,6 +1,7 @@
 import os,sys,inspect
 import importlib
 import math
+import traceback
 
 from boxloader import BoxLoader
 from portcore import *
@@ -41,11 +42,25 @@ class Box(object):
         self.specNotVisible = ['boxes.','private.','builtin.']
         self.configParams = {}
         self.implType = implType
+        self.path_name = ''
 
         self.buildStructure()
 
     def editCode(self):
-        print('edit code')
+
+        self.path_name = self.spec
+
+        try:
+            os.makedirs(self.path_name)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+
+        code_template = CodeTemplate()
+        code_template.setPath(self.path_name)
+        code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs)
+
+        #self.loadCode(self.path_name,self.codedesc.targetClass)
     
     def getConfigParams(self):
         return self.configParams
@@ -114,6 +129,13 @@ class Box(object):
         if self.view and name != self.view.getName():
             self.view.setName(self.name)
 
+        if 'NOT SPECIFIED' == self.spec:
+            self.codedesc = CodeStruct()
+            self.codedesc.targetClass = self.name
+            self.spec = self.name
+            if self.view:
+                self.view.setTypeName(self.name)
+
     def openBox(self):
         """
         Set widget's flag to show and resize to dock it in workspace and show child boxes.
@@ -151,10 +173,9 @@ class Box(object):
             box.view.hide()
         self.view.hide()
 
-    def loadNewCode(self):
-        self.codedesc = CodeStruct()
-        self.codedesc.targetClass = 'Anonymous'
-        my_class = getattr(importlib.import_module('tmp_box.code'), self.codedesc.targetClass)
+    def loadCode(self,pathName,className):
+        module_name = '{}.{}'.format(pathName,className)
+        my_class = getattr(importlib.import_module(module_name), self.codedesc.targetClass)
         self.instance = my_class()
 
     def loadCodeDescription(self):
@@ -184,12 +205,12 @@ class Box(object):
 
     def buildStructure(self):
         if not self.desc:
-            type_name = self.spec if self.spec else 'NOT SPECIFIED'
-            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',type_name)
+            self.spec = self.spec if self.spec else 'NOT SPECIFIED'
+            self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
             self.view.configPopupMenu(self.implType)
 
-            if 'CODE' == self.implType:
-                self.loadNewCode()
+            #if 'CODE' == self.implType:
+            #    self.loadNewCode()
 
             return
 
@@ -356,10 +377,9 @@ class Box(object):
             self.executeCode()
 
     def executeCode(self):
-
-        code_template = CodeTemplate()
-        code_template.setPath('tt')
-        code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs)
+        
+        if '' != self.path_name:
+            self.loadCode(self.path_name,self.codedesc.targetClass)
         
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
@@ -389,7 +409,6 @@ class Box(object):
             if self.cfgVars[-1] != port:
                 exec_str += ','
         exec_str += ')'
-        print('------',self.codedesc.targetClass,'>>>>>>',exec_str)
         eval(exec_str)
 
         for ret in self.codedesc.returns:

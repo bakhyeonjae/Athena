@@ -97,6 +97,9 @@ class CommonModuleBox(QFrame):
 
         self.setPopupActionList(menus)
 
+    def setTypeName(self,name):
+        self.typeName.setText(name)
+
     def editCode(self):
         self.core.editCode()
 
