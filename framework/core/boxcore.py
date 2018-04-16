@@ -50,12 +50,8 @@ class Box(object):
 
         self.path_name = self.spec
 
-        try:
-            os.makedirs(self.path_name)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-
+        os.makedirs(self.path_name, exist_ok=True) 
+        
         code_template = CodeTemplate()
         code_template.setPath(self.path_name)
         code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs)
@@ -321,6 +317,7 @@ class Box(object):
             ret.name = name
             ret.connect = name
             self.codedesc.returns.append(ret)
+            new_port.setDescription(ret)
         self.outputs.append(new_port)
         self.view.setOutputPorts(self.outputs)
         self.view.update()
@@ -333,6 +330,7 @@ class Box(object):
             param = ParamStruct()
             param.name = name
             self.codedesc.params.append(param)
+            new_port.setDescription(param)
         self.inputs.append(new_port)
         self.view.setInputPorts(self.inputs)
         self.view.update()
@@ -377,7 +375,6 @@ class Box(object):
             self.executeCode()
 
     def executeCode(self):
-        
         if '' != self.path_name:
             self.loadCode(self.path_name,self.codedesc.targetClass)
         
@@ -423,8 +420,12 @@ class Box(object):
         self.boxes.append(box)
         box.view.move(500,500)
 
-    def save(self, fileName):
-        writer = BoxWriter(fileName)
+    def save(self):
+
+        os.makedirs(self.path_name, exist_ok=True) 
+
+        file_name = '{}/{}.box'.format(self.path_name,self.spec)
+        writer = BoxWriter(file_name)
         writer.write('{')
         writer.incIndent()
         writer.write('\"box\":{')
@@ -438,7 +439,10 @@ class Box(object):
                 writer.write('{')
                 writer.incIndent()
                 writer.write('\"name\":\"{}\",'.format(port.name))
-                writer.write('\"connect\":\"{}@{}\"'.format(port.edgeIn.target.name,port.edgeIn.target.box.name)) # only if sub boxes exist
+                if 'CODE' == self.implType:
+                    writer.write('\"connect\":\"{}@{}\"'.format(port.name,self.codedesc.targetClass)) 
+                else:
+                    writer.write('\"connect\":\"{}@{}\"'.format(port.edgeIn.target.name,port.edgeIn.target.box.name)) # only if sub boxes exist
                 writer.decIndent()
                 if port == self.inputs[-1]:
                     writer.write('}')
@@ -446,6 +450,39 @@ class Box(object):
                     writer.write('},')
             writer.decIndent()
             writer.write('],')
+        # write code
+        if 'CODE' == self.implType:
+            writer.write('\"code\":{')
+            writer.incIndent()
+            writer.write('\"class\":\"{}\",'.format(self.codedesc.targetClass))
+            writer.write('\"param\":[')
+            writer.incIndent()
+            for param in self.codedesc.params:
+                writer.write('{')
+                writer.write('\"type\":\"{}\",'.format(param.type))
+                writer.write('\"name\":\"{}\",'.format(param.name))
+                writer.write('\"optional\":\"{}\"'.format(param.optional))
+                if param == self.codedesc.params[-1]:
+                    writer.write('}')
+                else:
+                    writer.write('},')
+            writer.decIndent()
+            writer.write('],')
+            writer.write('\"return\":[')
+            writer.incIndent()
+            for ret in self.codedesc.returns:
+                writer.write('{')
+                writer.write('\"type\":\"{}\",'.format(ret.type))
+                writer.write('\"name\":\"{}\",'.format(ret.name))
+                writer.write('\"connect\":\"{}\"'.format(ret.connect))
+                if ret == self.codedesc.returns[-1]:
+                    writer.write('}')
+                else:
+                    writer.write('},')
+            writer.decIndent()
+            writer.write(']')
+            writer.decIndent()
+            writer.write('},')
             
         # write boxes
         if self.boxes:

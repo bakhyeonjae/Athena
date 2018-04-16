@@ -42,6 +42,7 @@ class ControlTower(object):
         new_box = Box(None, self.openedBox, None, self, implType=implType)
         self.openedBox.addBox(new_box) 
         self.openedBox.view.setFocus()
+        new_box.view.rename()
 
     def createBoxFromDesc(self,selectedBox):
         box_dir = '../../boxes'

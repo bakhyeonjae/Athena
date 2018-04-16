@@ -55,6 +55,10 @@ class Port(object):
         self.edgeOut = None
         self.view = None
         self.exportFlag = False
+        self.desc = None
+
+    def setDescription(self,desc):
+        self.desc = desc
 
     def getExportFlag(self):
         return self.exportFlag

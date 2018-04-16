@@ -128,7 +128,7 @@ class CommonModuleBox(QFrame):
             self.core.addOutPort(name)
 
     def save(self):
-        self.core.save('test.box')
+        self.core.save()
 
     def keyPressEvent(self, event):
         key = event.key()
