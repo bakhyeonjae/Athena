@@ -6,12 +6,14 @@ class CodeTemplate(object):
     def setPath(self,path):
         self.pathName = path
 
-    def compose(self, className, portIn, portOut):
+    def compose(self, className, portIn, portOut, cfgs):
         self.className =  className
 
         with open('{}/{}.py'.format(self.pathName,self.className),'w') as of:
             of.write('class {}(object):\n'.format(self.className))
             of.write('    def __init__(self):\n')
+            for cfg in cfgs:
+                of.write('        {} = {}\n'.format(cfg.getName(),cfg.getData()))
             of.write('        pass\n')
             of.write('\n')
             func_def = '    def execute(self'

@@ -1,0 +1,32 @@
+{
+    "box":{
+        "version":"None",
+        "in-port":[
+            {
+                "name":"pos_data",
+                "connect":"pos_data@PosNegScatter"
+            },
+            {
+                "name":"neg_data",
+                "connect":"neg_data@PosNegScatter"
+            }
+        ],
+        "code":{
+            "class":"PosNegScatter",
+            "param":[
+                {
+                "type":"",
+                "name":"pos_data",
+                "optional":""
+                },
+                {
+                "type":"",
+                "name":"neg_data",
+                "optional":""
+                }
+            ],
+            "return":[
+            ]
+        }
+    }
+}

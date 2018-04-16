@@ -61,7 +61,7 @@ class Box(object):
         
         code_template = CodeTemplate()
         code_template.setPath(self.path_name)
-        code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs)
+        code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs,self.cfgVars)
 
         #self.loadCode(self.path_name,self.codedesc.targetClass)
     
@@ -544,7 +544,10 @@ class Box(object):
                 writer.incIndent()
                 writer.write('\"name\":\"{}\",'.format(config.getName()))
                 writer.write('\"value\":\"{}\",'.format(config.getData()))
-                writer.write('\"connect\":\"{}@{}\"'.format(config.edgeIn.target.name,config.edgeIn.target.box.name))
+                if 'CODE' == self.implType:
+                    writer.write('\"connect\":\"{}@{}\"'.format(config.getName(),config.getData()))
+                else:
+                    writer.write('\"connect\":\"{}@{}\"'.format(config.edgeIn.target.name,config.edgeIn.target.box.name))
                 writer.decIndent()
                 if config == self.cfgVars[-1]:
                     writer.write('}')
