@@ -18,6 +18,9 @@ from framework.core.structcode import CodeStruct
 from framework.core.structcode import ParamStruct
 from framework.core.structcode import ReturnStruct
 from framework.core.codetemplate import CodeTemplate
+from framework.core.systemconfig import SystemConfig
+
+sys.path.append(SystemConfig.getLocalWorkSpaceDir())
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
@@ -55,7 +58,7 @@ class Box(object):
 
     def editCode(self):
 
-        self.path_name = self.spec
+        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),self.spec)
 
         os.makedirs(self.path_name, exist_ok=True) 
         
@@ -63,8 +66,6 @@ class Box(object):
         code_template.setPath(self.path_name)
         code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs,self.cfgVars)
 
-        #self.loadCode(self.path_name,self.codedesc.targetClass)
-    
     def getConfigParams(self):
         return self.configParams
 
@@ -177,7 +178,9 @@ class Box(object):
         self.view.hide()
 
     def loadCode(self,pathName,className):
-        module_name = '{}.{}'.format(pathName,className)
+        #module_name = '{}.{}'.format(pathName,className)
+        module_name = '{}.{}'.format(self.spec,className)
+        print('module_name:{}, target_class:{}'.format(module_name,self.codedesc.targetClass))
         my_class = getattr(importlib.import_module(module_name), self.codedesc.targetClass)
         self.instance = my_class()
 
@@ -211,14 +214,9 @@ class Box(object):
             self.spec = self.spec if self.spec else 'NOT SPECIFIED'
             self.view = CommonModuleBox(self,self.viewContainter,self.inputs,self.outputs,'',self.spec)
             self.view.configPopupMenu(self.implType)
-
-            #if 'CODE' == self.implType:
-            #    self.loadNewCode()
-
             return
 
         box = self.desc['box']
-
 
         subboxes = []
         inputs   = []
