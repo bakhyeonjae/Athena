@@ -13,13 +13,18 @@ class CodeTemplate(object):
             of.write('class {}(object):\n'.format(self.className))
             of.write('    def __init__(self):\n')
             for cfg in cfgs:
-                of.write('        {} = {}\n'.format(cfg.getName(),cfg.getData()))
+                of.write('        self.{} = {}\n'.format(cfg.getName(),cfg.getData()))
             of.write('        pass\n')
             of.write('\n')
             func_def = '    def execute(self'
             for iport in portIn:
                 func_def += ','
                 func_def += iport.name
+            for cfg in cfgs:
+                func_def += ','
+                func_def += cfg.getName()
+                func_def += '='
+                func_def += cfg.getData()
             func_def += '):\n'
             of.write(func_def)
             indentation = '        '

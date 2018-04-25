@@ -1,0 +1,33 @@
+{
+    "box":{
+        "version":"None",
+        "in-port":[
+            {
+                "name":"datain",
+                "connect":"datain@Shuffle"
+            }
+        ],
+        "code":{
+            "class":"Shuffle",
+            "param":[
+                {
+                "type":"",
+                "name":"datain",
+                "optional":""
+                }
+            ],
+            "return":[
+                {
+                "type":"",
+                "name":"dataout",
+                "connect":"dataout"
+                }
+            ]
+        },
+        "out-port":[
+            {
+                "name":"dataout"
+            }
+        ]
+    }
+}

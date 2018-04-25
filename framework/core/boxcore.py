@@ -267,14 +267,18 @@ class Box(object):
             # TODO : Analyse sub-box spec and find box spec.
             # And then create box with the box specs.
             self.boxes.append(new_box)
-
+        for idx, subbox in enumerate(subboxes):
             outputs = subbox['out-port']
             for out_port in outputs:
                 source_port = self.findPortByName('{}@{}'.format(out_port['name'],subbox['name']))
                 target_port = self.findPortByName(out_port['connect'])
                 if target_port and source_port:
                     edge = Edge()
-                    edge.connectPorts(source_port, target_port, edgeTgtDir='IN')
+                    if target_port in self.outputs:
+                        edge.connectPorts(source_port, target_port, edgeTgtDir='IN')
+                    else:
+                        edge.connectPorts(source_port, target_port)
+                    
 
         # connect all the ports and logic or boxes
         for in_port in inputs:
@@ -397,6 +401,8 @@ class Box(object):
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
             if self.inputs[-1] != port:
                 exec_str += ','
+        if self.inputs and self.cfgVars:
+            exec_str += ','
         for idx,port in enumerate(self.cfgVars):
             if 'newbox' == self.name:
                 print('#targetClass : {}, port.targetClass : {}'.format(self.codedesc.targetClass,port.targetClass))
@@ -426,6 +432,8 @@ class Box(object):
         box.view.move(500,500)
 
     def save(self):
+
+        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),self.spec)
 
         os.makedirs(self.path_name, exist_ok=True) 
 
@@ -468,6 +476,20 @@ class Box(object):
                 writer.write('\"name\":\"{}\",'.format(param.name))
                 writer.write('\"optional\":\"{}\"'.format(param.optional))
                 if param == self.codedesc.params[-1]:
+                    if self.cfgVars:
+                        writer.write('},')
+                    else:
+                        writer.write('}')
+                else:
+                    writer.write('},')
+            for config in self.cfgVars:
+                writer.write('{')
+                writer.incIndent()
+                writer.write('\"name\":\"{}\",'.format(config.getName()))
+                writer.write('\"value\":\"{}\",'.format(config.getData()))
+                writer.write('\"connect\":\"{}@{}\"'.format(config.getName(),self.codedesc.targetClass))
+                writer.decIndent()
+                if config == self.cfgVars[-1]:
                     writer.write('}')
                 else:
                     writer.write('},')
@@ -518,7 +540,7 @@ class Box(object):
                     writer.write('{')
                     writer.incIndent()
                     writer.write('\"name\":\"{}\",'.format(port.name))
-                    writer.write('\"connect\":\"{}\"'.format(port.edgeOut.target.name))
+                    writer.write('\"connect\":\"{}@{}\"'.format(port.edgeOut.target.name,port.edgeOut.target.box.name))
                     writer.decIndent()
                     if port == box.outputs[-1]:
                         writer.write('}')
@@ -543,7 +565,7 @@ class Box(object):
                 writer.write('\"name\":\"{}\",'.format(config.getName()))
                 writer.write('\"value\":\"{}\",'.format(config.getData()))
                 if 'CODE' == self.implType:
-                    writer.write('\"connect\":\"{}@{}\"'.format(config.getName(),config.getData()))
+                    writer.write('\"connect\":\"{}@{}\"'.format(config.getName(),self.codedesc.targetClass))
                 else:
                     writer.write('\"connect\":\"{}@{}\"'.format(config.edgeIn.target.name,config.edgeIn.target.box.name))
                 writer.decIndent()

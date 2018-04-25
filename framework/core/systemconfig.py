@@ -11,7 +11,7 @@ class SystemConfig(object):
 
     @classmethod
     def getLocalWorkSpaceDir(cls):
-        return '/Users/viv3.mac.sec/bakhyeonjae/athena_workspace'
+        return '/Users/hj.bak/projects'
 
     @classmethod
     def getToolDir(cls):
