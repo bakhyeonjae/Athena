@@ -73,8 +73,7 @@ class Box(object):
                         cfg.setData(new_param['value'])
         else:
             if object_list[0] == self.name:
-                box_name = ''
-                box_name,new_param['name'] == param['name'].split('.',1)
+                box_name, new_param['name'] = param['name'].split('.',1)
                 for box in self.boxes:
                     box.setComponentConfig(new_param)
 
