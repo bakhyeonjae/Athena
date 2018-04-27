@@ -7,6 +7,7 @@ import Port
 
 from framework.dialog.TextInputDialog import TextInputDialog
 from framework.dialog.ConfigDialog import ConfigDialog
+from framework.dialog.GlobalConfigDialog import GlobalConfigDialog
 
 class CommonModuleBox(QFrame):
     
@@ -91,11 +92,17 @@ class CommonModuleBox(QFrame):
         if 'COMPOSITION' == menuType:
             menus.append({"title":"Step Into", "desc":"Open this box", "method":self.stepIntoBox})
             menus.append({"title":"Step out", "desc":"Open this box", "method":self.stepOutBox})
+            menus.append({"title":"Config components", "desc":"Open this box", "method":self.configSubBoxParams})
 
         elif 'CODE' == menuType:
             menus.append({"title":"Open Code", "desc":"Open Code", "method":self.editCode})
 
         self.setPopupActionList(menus)
+
+    def configSubBoxParams(self):
+        params, ret = GlobalConfigDialog().getParameters(params=self.core.getConfigList())
+        if QDialog.Accepted == ret:
+            self.core.updateComponentConfig(params)
 
     def setTypeName(self,name):
         self.typeName.setText(name)
@@ -111,7 +118,8 @@ class CommonModuleBox(QFrame):
 
     def configParams(self):
         params, ret = ConfigDialog().getParameters(params=self.core.getConfigParams())
-        self.core.setConfigParams(params)
+        if QDialog.Accepted == ret:
+            self.core.setConfigParams(params)
 
     def rename(self):
         name, ret = TextInputDialog.getText('Give a name to the box')

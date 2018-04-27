@@ -2,6 +2,7 @@ import os,sys,inspect
 import importlib
 import math
 import traceback
+from copy import deepcopy
 
 from boxloader import BoxLoader
 from portcore import *
@@ -48,6 +49,45 @@ class Box(object):
         self.path_name = ''
 
         self.buildStructure()
+
+    def updateComponentConfig(self, newParams):
+        print('#########################################')
+        prev = self.getConfigList()
+        changed = []
+        for old_param in prev:
+            changed = changed + [item for item in newParams if item['name'] == old_param['name'] and item['value'] != old_param['value']]
+
+        if changed:
+            for item in changed:
+                self.setComponentConfig(item)
+        
+    def setComponentConfig(self,param):
+        print('{}-'.format(param))
+        new_param = deepcopy(param)
+        name_hierarchy = param['name']
+        object_list = name_hierarchy.split('.')
+        if len(object_list) <= 2:
+            if object_list[0] == self.name:
+                for cfg in self.cfgVars:
+                    if cfg.getName() == object_list[1]:
+                        cfg.setData(new_param['value'])
+        else:
+            if object_list[0] == self.name:
+                box_name = ''
+                box_name,new_param['name'] == param['name'].split('.',1)
+                for box in self.boxes:
+                    box.setComponentConfig(new_param)
+
+    def getConfigList(self):
+        config_vars = []
+        for cfg in self.cfgVars:
+            var = {'spec':self.spec, 'name':cfg.getName(), 'value':cfg.getData()}
+            config_vars.append(var)
+        for box in self.boxes:
+            config_vars = config_vars + box.getConfigList()
+        for cfg in config_vars:
+            cfg['name'] = '{}.{}'.format(self.name,cfg['name'])
+        return config_vars
 
     def deleteBox(self,box):
         selected = next(x for x in self.boxes if x == box)
