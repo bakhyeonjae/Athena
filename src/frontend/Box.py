@@ -29,6 +29,7 @@ class CommonModuleBox(QFrame):
         self.isOpened = False
         self.beginningPort = None
         self.selectedBox = None
+        self.flagCoordSaved = False
 
         self.penStart = QPen(QColor(255,0,0))
         self.penStart.setWidth(3)        
@@ -77,6 +78,18 @@ class CommonModuleBox(QFrame):
         self.resize(self.sizeHint())
         self.show()
 
+    def saveCoordinate(self):
+        self.flagCoordSaved = True
+        self.posX = self.x()
+        self.posY = self.y()
+        self.sizeWidth = self.width()
+        self.sizeHeight = self.height()
+
+    def restoreCoordinate(self):
+        if self.flagCoordSaved:
+            self.move(self.posX, self.posY)
+            self.resize(self.sizeWidth, self.sizeHeight)
+            self.flagCoordSaved = False
         
     def configPopupMenu(self,menuType):
         # Common - Run, Delete, Save, Another Input Port, Another Output Port, Name, Config variables

@@ -51,7 +51,6 @@ class Box(object):
         self.buildStructure()
 
     def updateComponentConfig(self, newParams):
-        print('#########################################')
         prev = self.getConfigList()
         changed = []
         for old_param in prev:
@@ -62,7 +61,6 @@ class Box(object):
                 self.setComponentConfig(item)
         
     def setComponentConfig(self,param):
-        print('{}-'.format(param))
         new_param = deepcopy(param)
         name_hierarchy = param['name']
         object_list = name_hierarchy.split('.')
@@ -188,6 +186,7 @@ class Box(object):
         self.climbToShow()
         # Suppose that ancestor(parent) widget is docked in workspace and its size is full size.
         if self.ancestor:
+            self.view.saveCoordinate()
             width = self.ancestor.view.size().width()
             height = self.ancestor.view.size().height()
             self.view.move(0,0)
@@ -196,6 +195,7 @@ class Box(object):
         for box in self.boxes:
             box.view.setAsBlackBox()
             box.view.show()
+            box.view.restoreCoordinate()
         # Show config ports
         self.view.hideTitles()
         self.view.setFocus()  # To get keyboard event 
