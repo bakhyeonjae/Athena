@@ -78,6 +78,12 @@ class CommonModuleBox(QFrame):
         self.resize(self.sizeHint())
         self.show()
 
+    def getX(self):
+        return self.x()
+
+    def getY(self):
+        return self.y()
+
     def saveCoordinate(self):
         self.flagCoordSaved = True
         self.posX = self.x()

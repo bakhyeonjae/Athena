@@ -303,6 +303,11 @@ class Box(object):
             else:
                 new_box.view.hide()
 
+            if 'geometry' in subbox.keys():
+                w = self.controlTower.openedBox.view.width()
+                h = self.controlTower.openedBox.view.height()
+                new_box.view.move(subbox['geometry']['x']*w,subbox['geometry']['y']*h)
+
             # TODO : Analyse sub-box spec and find box spec.
             # And then create box with the box specs.
             self.boxes.append(new_box)
@@ -560,6 +565,12 @@ class Box(object):
                 spec_str = '{}@{}'.format(box.spec.replace('boxes.',''),box.version)
                 writer.write('\"type\":\"{}\",'.format(spec_str))
                 writer.write('\"name\":\"{}\",'.format(box.name))
+                writer.write('\"geometry\":{')
+                writer.incIndent()
+                writer.write('\"x\":{},'.format(box.view.getX()/self.view.width()))
+                writer.write('\"y\":{}'.format(box.view.getY()/self.view.height()))
+                writer.decIndent()
+                writer.write('},')
                 writer.write('\"in-port\":[')
                 writer.incIndent()
                 for port in box.inputs:
