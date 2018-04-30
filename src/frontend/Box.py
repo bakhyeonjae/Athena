@@ -552,13 +552,13 @@ class CommonModuleBox(QFrame):
             self.beginningPort.getEdge().getView().drawLine(qp)
 
         # Scan all the output ports to draw connected lines.
-        for box in self.core.boxes:
-            for port in box.outputs:
-                if port.isConnected():
-                    port.getEdge().updateViewPos()
-                    port.getEdge().getView().drawLine(qp)
-
         if self.core.isOpened:
+            for box in self.core.boxes:
+                for port in box.outputs:
+                    if port.isConnected():
+                        port.getEdge().updateViewPos()
+                        port.getEdge().getView().drawLine(qp)
+
             for port in self.core.inputs:
                 if port.isConnected():
                     port.getEdge().updateViewPos()
