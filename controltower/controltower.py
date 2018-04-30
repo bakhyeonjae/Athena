@@ -49,4 +49,4 @@ class ControlTower(object):
         new_box = BoxLoader.createBox('../../boxes{}'.format(BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(box_dir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
         self.openedBox.addBox(new_box) 
         self.openedBox.view.setFocus()
-
+        new_box.view.rename()
