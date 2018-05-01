@@ -176,8 +176,6 @@ class CommonModuleBox(QFrame):
             return True
     
     def setConfigParamPorts(self,ports):
-        print('setConfigParamsPorts --->')
-        print(ports)
         for port_core in ports:
             if self.needConfigPorts(port_core):
                 new_port = Port.ViewPortConfig(self)
@@ -542,15 +540,19 @@ class CommonModuleBox(QFrame):
             condition_flag = False if not port else condition_flag
             condition_flag = False if currBox == self.selectedBox else condition_flag
 
-            if not self.beginningPort.checkPortMatch(port): 
-                condition_flag = False 
-                AlertDialog.show(self,'Port types do not match.\nCheck the types')
+            if port:
+                if not self.beginningPort.checkPortMatch(port): 
+                    condition_flag = False 
+                    AlertDialog.show(self,'Port types do not match.\nCheck the types')
+            else:
+                condition_flag = False
 
             if condition_flag:
                 edge = self.beginningPort.getEdge()
                 edge.connectPorts(self.beginningPort.core,port.core)
             else:
-                self.beginningPort.deleteConnectionLine()
+                #self.beginningPort.deleteConnectionLine()
+                self.beginningPort.disconnectPort()
    
             self.beingConnected = False
             

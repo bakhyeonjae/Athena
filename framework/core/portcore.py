@@ -122,11 +122,6 @@ class Port(object):
                 return True
             else:
                 return False
-            
-        #if self.edge:
-        #    return True
-        #else:
-        #    return False
 
     def disconnectPort(self):
         if self.isBoxOpened():
@@ -269,7 +264,6 @@ class PortIn(Port):
         """
         A box should call this method to get data transferred from connected boxes.
         """
-        print('IN PortIn - it\'s box name is ',self.box.name)
         return self.data
 
     def connectPort(self,portOut):

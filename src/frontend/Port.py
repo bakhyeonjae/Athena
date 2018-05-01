@@ -190,7 +190,6 @@ class ViewPortOut(ViewPort):
     def __init__(self,parent):
         super().__init__(parent)
         self.data = None
-        self.connection = None
         self.connectedTo = None
         self.parent = parent
         self.setStyleSheet("QLabel {background-color:red; color:black; border:1px solid black}")
