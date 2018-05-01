@@ -9,6 +9,7 @@ class ControlTower(object):
         self.workspace = None
         self.infoWnd = None
         self.boxTree = None
+        self.localBoxTree = None
 
     def getRootBox(self):
         return self.rootBox
@@ -24,6 +25,10 @@ class ControlTower(object):
     def setBoxTree(self, boxTree):
         self.boxTree = boxTree
         self.boxTree.setControlTower(self)
+
+    def setLocalBoxTree(self, boxTree):
+        self.localBoxTree = boxTree
+        self.localBoxTree.setControlTower(self)
 
     def constructInitState(self):
         self.rootBox = Box(None,None,None,self,self.workspace)
@@ -44,9 +49,10 @@ class ControlTower(object):
         self.openedBox.view.setFocus()
         new_box.view.rename()
 
-    def createBoxFromDesc(self,selectedBox):
+    def createBoxFromDesc(self,selectedBox,boxDir):
         box_dir = '../../boxes'
-        new_box = BoxLoader.createBox('../../boxes{}'.format(BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(box_dir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
+        #new_box = BoxLoader.createBox('../../boxes{}'.format(BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(box_dir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
+        new_box = BoxLoader.createBox('{}{}'.format(boxDir,BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(boxDir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
         self.openedBox.addBox(new_box) 
         self.openedBox.view.setFocus()
         new_box.view.rename()

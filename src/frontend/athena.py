@@ -15,6 +15,7 @@ sys.path.append("../..")
 from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
 from controltower.controltower import ControlTower
+from framework.core.systemconfig import SystemConfig
 
 class MainWindow(QFrame):
     listBox = []
@@ -64,22 +65,23 @@ class MainWindow(QFrame):
 # left Tree class
 class TreeWidget(QTreeWidget):
 
-    def __init__(self,canvas,infoView):
+    def __init__(self,canvas,infoView,boxDir,title):
 
         QTreeWidget.__init__(self)
 
         self.canvas = canvas
         self.infoView = infoView
+        self.boxDir = boxDir
 
-        box_dir = '../../boxes'
-        categories = self.getSubDir(box_dir)
+        #box_dir = '../../boxes'
+        categories = self.getSubDir(self.boxDir)
 
-        self.header = QTreeWidgetItem(["Boxes"])
+        self.header = QTreeWidgetItem([title])
         self.setHeaderItem(self.header)
 
-        self.constructSubTree(box_dir,self)
+        self.constructSubTree(self.boxDir,self)
 
-        self.itemDoubleClicked.connect(lambda:self.controlTower.createBoxFromDesc(self.currentItem()))
+        self.itemDoubleClicked.connect(lambda:self.controlTower.createBoxFromDesc(self.currentItem(),self.boxDir))
 
     def setControlTower(self, ct):
         self.controlTower = ct
@@ -108,6 +110,10 @@ class TreeWidget(QTreeWidget):
         else:
             return ''
 
+    def update(self):
+        self.clear()
+        self.constructSubTree(self.boxDir,self)
+
 # Top main window has tree and right frame
 class TopWindow(QWidget):
     def __init__(self, parent=None):
@@ -121,12 +127,20 @@ class TopWindow(QWidget):
         self.viewInfo = InfoView()
         self.viewInfo.setFixedWidth(280)
 
-        self.tree = TreeWidget(self.frame,self.viewInfo)
+        self.tree = TreeWidget(self.frame,self.viewInfo,'../../boxes','Cloud Workspace')
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
 
+        self.boxRepoLocal = TreeWidget(self.frame,self.viewInfo,SystemConfig.getLocalWorkSpaceDir(),'Local Workspace')
+        self.boxRepoLocal.setFixedWidth(280)
+        self.boxRepoLocal.setStyleSheet("background-color: rgb(200, 255, 255)")
+        self.boxRepoLocal.update()
+
         layout = QHBoxLayout()
-        layout.addWidget(self.tree)
+        treeLayout = QVBoxLayout()
+        treeLayout.addWidget(self.tree)
+        treeLayout.addWidget(self.boxRepoLocal)
+        layout.addLayout(treeLayout)
         layout.addWidget(self.frame)
         layout.addWidget(self.viewInfo)
         self.setLayout(layout)
@@ -142,6 +156,7 @@ if __name__ == "__main__":
     controlTower.setWorkSpace(mywin.frame)
     controlTower.setInfoWindow(mywin.viewInfo)
     controlTower.setBoxTree(mywin.tree)
+    controlTower.setLocalBoxTree(mywin.boxRepoLocal)
     controlTower.constructInitState()
     mainWnd.setCentralWidget(mywin)
     mainWnd.setControlTower(controlTower)

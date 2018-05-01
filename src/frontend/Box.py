@@ -156,6 +156,7 @@ class CommonModuleBox(QFrame):
 
     def save(self):
         self.core.save()
+        self.core.controlTower.localBoxTree.update()
 
     def keyPressEvent(self, event):
         key = event.key()

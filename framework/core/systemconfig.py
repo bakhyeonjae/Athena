@@ -11,7 +11,7 @@ class SystemConfig(object):
 
     @classmethod
     def getLocalWorkSpaceDir(cls):
-        return '/Users/hj.bak/projects'
+        return '/Users/hj.bak/AthenaBoxes'
 
     @classmethod
     def getToolDir(cls):
