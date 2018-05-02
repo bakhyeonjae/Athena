@@ -3,6 +3,7 @@ import importlib
 import math
 import traceback
 from copy import deepcopy
+from subprocess import call
 
 from boxloader import BoxLoader
 from portcore import *
@@ -98,10 +99,13 @@ class Box(object):
         self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),self.spec)
 
         os.makedirs(self.path_name, exist_ok=True) 
-        
-        code_template = CodeTemplate()
-        code_template.setPath(self.path_name)
-        code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs,self.cfgVars)
+        if not os.path.exists('{}/{}.py'.format(self.path_name,self.codedesc.targetClass)):
+            code_template = CodeTemplate()
+            code_template.setPath(self.path_name)
+            code_template.compose(self.codedesc.targetClass,self.inputs,self.outputs,self.cfgVars)
+
+        cmd_str = ['mvim','{}/{}.py'.format(self.path_name,self.codedesc.targetClass)]
+        call(cmd_str)
 
     def getConfigParams(self):
         return self.configParams
@@ -271,6 +275,7 @@ class Box(object):
         if 'code' in box.keys():
             self.loadCodeDescription()
             self.implType = 'CODE'
+            print('=========> {}'.format(self.spec))
             my_class = getattr(importlib.import_module(self.spec), self.codedesc.targetClass)
             self.instance = my_class()
             for ret_val in self.codedesc.returns:
@@ -295,6 +300,8 @@ class Box(object):
             file_path = BoxLoader.findModuleNameByBoxID(subbox['type'])
             class_name = '{}.box'.format(file_path.split('/')[-1]) 
             module_name = '/'.join(file_path.split('/')[:-1])
+            print('file_path:{}'.format(file_path))
+            print('In boxcore.buildStructure - subbox_name:{}, module_name:{}, class_name:{}'.format(subbox['type'],module_name,class_name))
             new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
             new_box.setName(subbox['name'])
             
