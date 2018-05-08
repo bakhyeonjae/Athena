@@ -23,6 +23,7 @@ from framework.core.codetemplate import CodeTemplate
 from framework.core.systemconfig import SystemConfig
 
 sys.path.append(SystemConfig.getLocalWorkSpaceDir())
+sys.path.append(SystemConfig.getRepository())
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
@@ -41,6 +42,7 @@ class Box(object):
         self.controlTower = controlTower
         self.logic = None
         self.spec = boxspec
+        print('Box initialisation : {}'.format(self.spec))
         self.version = None
         self.isOpened = False
         self.ancestor = ancestor
@@ -221,7 +223,6 @@ class Box(object):
         self.view.hide()
 
     def loadCode(self,pathName,className):
-        #module_name = '{}.{}'.format(pathName,className)
         module_name = '{}.{}'.format(self.spec,className)
         print('module_name:{}, target_class:{}'.format(module_name,self.codedesc.targetClass))
         my_class = getattr(importlib.import_module(module_name), self.codedesc.targetClass)
@@ -276,7 +277,7 @@ class Box(object):
             self.loadCodeDescription()
             self.implType = 'CODE'
             print('=========> {}'.format(self.spec))
-            my_class = getattr(importlib.import_module(self.spec), self.codedesc.targetClass)
+            my_class = getattr(importlib.import_module(self.spec.replace('.Users.hj.bak.AthenaBoxes.','')), self.codedesc.targetClass)
             self.instance = my_class()
             for ret_val in self.codedesc.returns:
                 self.retVals.append({'retName':ret_val.name, 'portname':ret_val.connect})

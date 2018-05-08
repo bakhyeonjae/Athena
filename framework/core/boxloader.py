@@ -15,11 +15,22 @@ from systemconfig import SystemConfig
 class BoxLoader(object):
     @classmethod
     def createBox(cls, module_name, class_name, ancestor, controlTower):
+        print('module_name : {}, class_name : {}'.format(module_name,class_name))
+        repo_indicator = module_name.split('/')[0] 
+        if 'global' == repo_indicator:
+            file_name = '{}/{}/{}'.format(SystemConfig.getRepository(),module_name,class_name)
+        elif 'workspace' == repo_indicator:
+            file_name = '{}/{}/{}'.format(SystemConfig.getRepository(),module_name,class_name)
+        else:
+            file_name = '{}/{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),module_name,class_name)
+
         boxes = []
         spec_name = '{}/{}'.format(module_name,class_name)
-        with open(spec_name,'r') as f:
+        print('file_name in createBox is {}'.format(file_name))
+        with open(file_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
+            print('createBox : {}'.format(spec_name))
             box = boxcore.Box(desc,ancestor,spec_name.replace('../','').replace('/','.').replace('.box',''),controlTower)
         return box
 
@@ -59,7 +70,7 @@ class BoxLoader(object):
     def getModuleName(cls,currItem):
         if currItem:
             name = currItem.text(0)
-            return '{}/{}'.format(cls.getModuleName(currItem.parent()),name)
+            return '{}/{}'.format(cls.getModuleName(currItem.parent()),name).lstrip('/')
         else:
             return ''
 

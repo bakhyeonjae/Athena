@@ -16,3 +16,7 @@ class SystemConfig(object):
     @classmethod
     def getToolDir(cls):
         return cls.toolRootDir 
+
+    @classmethod
+    def getRepository(cls):
+        return '/Users/hj.bak/AthenaRepo'

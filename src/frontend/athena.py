@@ -127,7 +127,7 @@ class TopWindow(QWidget):
         self.viewInfo = InfoView()
         self.viewInfo.setFixedWidth(280)
 
-        self.tree = TreeWidget(self.frame,self.viewInfo,'../../boxes','Cloud Workspace')
+        self.tree = TreeWidget(self.frame,self.viewInfo,SystemConfig.getRepository(),'Cloud Workspace')
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
 
