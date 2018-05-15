@@ -15,7 +15,9 @@ from systemconfig import SystemConfig
 class BoxLoader(object):
     @classmethod
     def createBox(cls, module_name, class_name, ancestor, controlTower):
-        print('module_name : {}, class_name : {}'.format(module_name,class_name))
+        """
+        module_name : module name located at 'local dir' / 'server-private' / 'server-global'
+        """
         repo_indicator = module_name.split('/')[0] 
         if 'global' == repo_indicator:
             file_name = '{}/{}/{}'.format(SystemConfig.getRepository(),module_name,class_name)
@@ -26,11 +28,15 @@ class BoxLoader(object):
 
         boxes = []
         spec_name = '{}/{}'.format(module_name,class_name)
-        print('file_name in createBox is {}'.format(file_name))
-        with open(file_name,'r') as f:
+
+        if os.path.isdir('{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),module_name)):
+            boxspec_file_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),spec_name)
+        elif os.path.isdir('{}/{}'.format(SystemConfig.getBoxDir(),module_name)):
+            boxspec_file_name = '{}/{}'.format(SystemConfig.getBoxDir(),spec_name)
+        
+        with open(boxspec_file_name,'r') as f:
             data = f.read()
             desc = json.loads(data)
-            print('createBox : {}'.format(spec_name))
             box = boxcore.Box(desc,ancestor,spec_name.replace('../','').replace('/','.').replace('.box',''),controlTower)
         return box
 

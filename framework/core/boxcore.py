@@ -24,6 +24,7 @@ from framework.core.systemconfig import SystemConfig
 
 sys.path.append(SystemConfig.getLocalWorkSpaceDir())
 sys.path.append(SystemConfig.getRepository())
+sys.path.append(SystemConfig.getBoxDir())
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
@@ -303,7 +304,12 @@ class Box(object):
             module_name = '/'.join(file_path.split('/')[:-1])
             print('file_path:{}'.format(file_path))
             print('In boxcore.buildStructure - subbox_name:{}, module_name:{}, class_name:{}'.format(subbox['type'],module_name,class_name))
-            new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
+            #new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
+            if SystemConfig.getLocalWorkSpaceDir() in module_name:
+                only_module_name = module_name.replace(SystemConfig.getLocalWorkSpaceDir(),'')
+            elif SystemConfig.getBoxDir() in module_name:
+                only_module_name = module_name.replace(SystemConfig.getBoxDir(),'')
+            new_box = BoxLoader.createBox(only_module_name.lstrip('/'),class_name,self,self.controlTower)
             new_box.setName(subbox['name'])
             
             if self.isOpened:

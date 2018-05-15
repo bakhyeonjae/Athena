@@ -51,8 +51,8 @@ class ControlTower(object):
 
     def createBoxFromDesc(self,selectedBox,boxDir):
         print('createBoxFromDesc, boxDir:{}, module:{}'.format(boxDir,BoxLoader.getModuleName(selectedBox)))
-        #new_box = BoxLoader.createBox('{}{}'.format(boxDir,BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(boxDir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
-        new_box = BoxLoader.createBox('{}'.format(BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(boxDir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
+        #new_box = BoxLoader.createBox('{}'.format(BoxLoader.getModuleName(selectedBox)),BoxLoader.findModuleName(boxDir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
+        new_box = BoxLoader.createBox(BoxLoader.getModuleName(selectedBox).lstrip('/'),BoxLoader.findModuleName(boxDir,BoxLoader.getModuleName(selectedBox)),self.openedBox,self)
         self.openedBox.addBox(new_box) 
         self.openedBox.view.setFocus()
         new_box.view.rename()

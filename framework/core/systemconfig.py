@@ -6,8 +6,9 @@ class SystemConfig(object):
     @classmethod
     def getBoxDir(cls):
         # temporary implementation
-        cls.boxDir = '../../boxes'
-        return cls.boxDir
+        #cls.boxDir = '../../boxes'
+        #return cls.boxDir
+        return '/Users/hj.bak/AthenaRepo'
 
     @classmethod
     def getLocalWorkSpaceDir(cls):
