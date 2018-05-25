@@ -22,6 +22,8 @@ from framework.core.structcode import ReturnStruct
 from framework.core.codetemplate import CodeTemplate
 from framework.core.systemconfig import SystemConfig
 
+from utils import stringutils
+
 sys.path.append(SystemConfig.getLocalWorkSpaceDir())
 sys.path.append(SystemConfig.getRepository())
 sys.path.append(SystemConfig.getBoxDir())
@@ -99,7 +101,8 @@ class Box(object):
 
     def editCode(self):
 
-        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),self.spec)
+        class_stripped = stringutils.removeSameName(self.spec)
+        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),class_stripped)
 
         os.makedirs(self.path_name, exist_ok=True) 
         if not os.path.exists('{}/{}.py'.format(self.path_name,self.codedesc.targetClass)):
@@ -180,9 +183,9 @@ class Box(object):
         if 'NOT SPECIFIED' == self.spec:
             self.codedesc = CodeStruct()
             self.codedesc.targetClass = self.name
-            self.spec = self.name
+            self.spec = '{}.{}'.format(self.name,self.name)
             if self.view:
-                self.view.setTypeName(self.name)
+                self.view.setTypeName('{}.{}'.format(self.name,self.name))
 
     def openBox(self):
         """
@@ -490,12 +493,13 @@ class Box(object):
         box.view.move(500,500)
 
     def save(self):
+        class_stripped = stringutils.removeSameName(self.spec)
 
-        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),self.spec)
+        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),class_stripped)
 
         os.makedirs(self.path_name, exist_ok=True) 
 
-        file_name = '{}/{}.box'.format(self.path_name,self.spec)
+        file_name = '{}/{}.box'.format(self.path_name,class_stripped)
         writer = BoxWriter(file_name)
         writer.write('{')
         writer.incIndent()
