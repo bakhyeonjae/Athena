@@ -8,6 +8,7 @@ import Port
 from framework.dialog.TextInputDialog import TextInputDialog
 from framework.dialog.ConfigDialog import ConfigDialog
 from framework.dialog.GlobalConfigDialog import GlobalConfigDialog
+from framework.dialog.PortArrayDialog import PortArrayDialog
 
 class CommonModuleBox(QFrame):
     
@@ -105,7 +106,9 @@ class CommonModuleBox(QFrame):
                  {"title":"Another input port","desc":"Add an input port", "method":self.addInPort},
                  {"title":"Another output port","desc":"Add an output port", "method":self.addOutPort},
                  {"title":"Name","desc":"Give a name to this box", "method":self.rename},
-                 {"title":"Config variables","desc":"Configure internal variables", "method":self.configParams}
+                 {"title":"Config variables","desc":"Configure internal variables", "method":self.configParams},
+                 {"title":"Add an Input Port Array","desc":"Add an input port array", "method":self.addInputPortArray},
+                 {"title":"Add an Output Port Array","desc":"Add an output port array", "method":self.addOutputPortArray}
                 ]
         # Composition - Step Into, Step out
         if 'COMPOSITION' == menuType:
@@ -117,6 +120,16 @@ class CommonModuleBox(QFrame):
             menus.append({"title":"Open Code", "desc":"Open Code", "method":self.editCode})
 
         self.setPopupActionList(menus)
+
+    def addInputPortArray(self):
+        name, number, ret = PortArrayDialog.getParameters('Add Input port array')
+        if QDialog.Accepted == ret:
+            self.core.createPortArray(name,number, 'IN')
+
+    def addOutputPortArray(self):
+        name, number, ret = PortArrayDialog.getParameters('Add output port array')
+        if QDialog.Accepted == ret:
+            self.core.createPortArray(name,number, 'OUT')
 
     def configSubBoxParams(self):
         params, ret = GlobalConfigDialog().getParameters(params=self.core.getConfigList())

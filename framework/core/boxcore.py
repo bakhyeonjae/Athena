@@ -21,6 +21,7 @@ from framework.core.structcode import ParamStruct
 from framework.core.structcode import ReturnStruct
 from framework.core.codetemplate import CodeTemplate
 from framework.core.systemconfig import SystemConfig
+from framework.core.portarray import PortArray
 
 from utils import stringutils
 
@@ -53,8 +54,18 @@ class Box(object):
         self.configParams = {}
         self.implType = implType
         self.path_name = ''
+        self.portArrOut = []
+        self.portArrIn  = []
 
         self.buildStructure()
+
+    def createPortArray(self, name, number, portType):
+        port_arr = PortArray(self,name,number,portType)
+        port_arr.updatePort()
+        if 'IN' == portType:
+            self.portArrIn.append(port_arr)
+        elif 'OUT' == portType:
+            self.portArrOut.append(port_arr)       
 
     def updateComponentConfig(self, newParams):
         prev = self.getConfigList()
