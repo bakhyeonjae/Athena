@@ -27,7 +27,6 @@ class CommonModuleBox(QFrame):
         self.setContentsMargins(1,1,1,1)
         self.instName = instName
         self.core = core
-        self.isOpened = False
         self.beginningPort = None
         self.selectedBox = None
         self.flagCoordSaved = False
@@ -205,7 +204,7 @@ class CommonModuleBox(QFrame):
             else:
                 port.hide()
         """
-        if self.isOpened:
+        if self.core.isOpened:
             num_var = len(self.cfgVars)
             width = self.width()
             interval = width / num_var
@@ -302,7 +301,7 @@ class CommonModuleBox(QFrame):
         """
         Hide texts on Box View when a box is docked on main workspace
         """
-        self.isOpened = True
+        self.core.isOpened = True
         self.instName.hide()
         self.typeName.hide()
         self.setAcceptDrops(True)
@@ -485,7 +484,7 @@ class CommonModuleBox(QFrame):
             port.propagateExecution()
 
     def dragEnterEvent(self, e):
-        if not self.isOpened:
+        if not self.core.isOpened:
             return
 
         for box in self.core.boxes:
@@ -513,7 +512,7 @@ class CommonModuleBox(QFrame):
         e.accept()
 
     def dragMoveEvent(self, e):
-        if not self.isOpened:
+        if not self.core.isOpened:
             return
 
         if self.beingConnected:
@@ -528,7 +527,7 @@ class CommonModuleBox(QFrame):
         e.accept()
 
     def dropEvent(self, e):
-        if not self.isOpened:
+        if not self.core.isOpened:
             return
 
         if self.beingConnected:
