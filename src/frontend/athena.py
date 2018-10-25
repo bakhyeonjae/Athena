@@ -126,6 +126,14 @@ class TopWindow(QWidget):
 
         self.viewInfo = InfoView()
         self.viewInfo.setFixedWidth(280)
+        sample_html = '''
+        <html>
+            <body>
+            Hello!
+            </body>
+        </html>
+        '''
+        self.viewInfo.setHtml(sample_html)
 
         self.tree = TreeWidget(self.frame,self.viewInfo,SystemConfig.getRepository(),'Cloud Workspace')
         self.tree.setFixedWidth(280)

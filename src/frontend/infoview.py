@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import *
+from PySide2.QtWebEngineWidgets import QWebEngineView
 
-class InfoView(QLabel):
+class InfoView(QWebEngineView):
     def __init__(self):
         super().__init__()
 
