@@ -56,3 +56,7 @@ class ControlTower(object):
         self.openedBox.addBox(new_box) 
         self.openedBox.view.setFocus()
         new_box.view.rename()
+
+    def displayBoxDescription(self,selectedBox,boxDir):
+        BoxLoader.loadBoxDescription(boxDir,BoxLoader.getModuleName(selectedBox).lstrip('/'),self.infoWnd)
+

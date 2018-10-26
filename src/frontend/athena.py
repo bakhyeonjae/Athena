@@ -82,6 +82,7 @@ class TreeWidget(QTreeWidget):
         self.constructSubTree(self.boxDir,self)
 
         self.itemDoubleClicked.connect(lambda:self.controlTower.createBoxFromDesc(self.currentItem(),self.boxDir))
+        self.itemClicked.connect(lambda:self.controlTower.displayBoxDescription(self.currentItem(),self.boxDir))
 
     def setControlTower(self, ct):
         self.controlTower = ct
