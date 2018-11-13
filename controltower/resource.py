@@ -8,7 +8,7 @@ class Resource(object):
         self.configFileName = '.config'
         self.checkResource()
         self.checkConfig()
-        self.loadConfig()
+        self.checkBoxDirConfigured()
 
     def checkResource(self):
         """ Check if there's a resource directory.
@@ -28,9 +28,12 @@ class Resource(object):
         with open(pathName, 'w') as outfile:
             json.dump(data, outfile)
         
-    def loadConfig(self):
+    def checkBoxDirConfigured(self):
         cfg_path_name = '{}/{}/{}'.format(Path.home(),self.resourceName,self.configFileName)
         with open(cfg_path_name,'r') as f:
             data = json.load(f)
             if not data['local_box_storage']:
                 print('LOCAL BOX is not set')
+                return False
+            else:
+                return True

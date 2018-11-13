@@ -31,6 +31,13 @@ class MainWindow(QFrame):
     def setControlTower(self, ct):
         self.controlTower = ct
 
+        if not self.controlTower.resource.checkBoxDirConfigured():
+            dirDlg = QFileDialog()
+            dirDlg.setFileMode(QFileDialog.Directory)
+            if dirDlg.exec_():
+                local_box_dir = dirDlg.selectedFiles()
+                print('{} is configured as local workspace'.format(local_box_dir))
+
     def initUI(self):
         self.setAcceptDrops(True)
 
@@ -136,6 +143,7 @@ class TopWindow(QWidget):
         '''
         self.viewInfo.setHtml(sample_html)
 
+        
         self.tree = TreeWidget(self.frame,self.viewInfo,SystemConfig.getRepository(),'Cloud Workspace')
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
@@ -159,9 +167,9 @@ if __name__ == "__main__":
     app = QApplication.instance()
     if not app:     # create QApplication if it doesnt exist
         app = QApplication(sys.argv)
+    controlTower = ControlTower()
     mainWnd = MainWnd()
     mywin = TopWindow()
-    controlTower = ControlTower()
     controlTower.setWorkSpace(mywin.frame)
     controlTower.setInfoWindow(mywin.viewInfo)
     controlTower.setBoxTree(mywin.tree)
