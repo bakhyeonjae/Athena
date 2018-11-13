@@ -2,6 +2,8 @@ from framework.core.boxcore import Box
 from framework.core.boxloader import BoxLoader
 from framework.core.boxloader import BoxLoader
 
+from controltower.resource import Resource
+
 class ControlTower(object):
     def __init__(self):
         self.rootBox = None
@@ -10,6 +12,7 @@ class ControlTower(object):
         self.infoWnd = None
         self.boxTree = None
         self.localBoxTree = None
+        self.resource = Resource()
 
     def getRootBox(self):
         return self.rootBox
