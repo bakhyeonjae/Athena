@@ -20,19 +20,19 @@ class BoxLoader(object):
         """
         repo_indicator = module_name.split('/')[0] 
         if 'global' == repo_indicator:
-            file_name = '{}/{}/{}'.format(SystemConfig.getRepository(),module_name,class_name)
+            file_name = '{}/{}/{}'.format(controlTower.resource.getWorkspaceDir(),module_name,class_name)
         elif 'workspace' == repo_indicator:
-            file_name = '{}/{}/{}'.format(SystemConfig.getRepository(),module_name,class_name)
+            file_name = '{}/{}/{}'.format(controlTower.resource.getWorkspaceDir(),module_name,class_name)
         else:
-            file_name = '{}/{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),module_name,class_name)
+            file_name = '{}/{}/{}'.format(controlTower.resource.getLocalWorkSpaceDir(),module_name,class_name)
 
         boxes = []
         spec_name = '{}/{}'.format(module_name,class_name)
 
-        if os.path.isdir('{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),module_name)):
-            boxspec_file_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),spec_name)
-        elif os.path.isdir('{}/{}'.format(SystemConfig.getBoxDir(),module_name)):
-            boxspec_file_name = '{}/{}'.format(SystemConfig.getBoxDir(),spec_name)
+        if os.path.isdir('{}/{}'.format(controlTower.resource.getLocalWorkSpaceDir(),module_name)):
+            boxspec_file_name = '{}/{}'.format(controlTower.resource.getLocalWorkSpaceDir(),spec_name)
+        elif os.path.isdir('{}/{}'.format(controlTower.resource.getWorkspaceDir(),module_name)):
+            boxspec_file_name = '{}/{}'.format(controlTower.resource.getWorkspaceDir(),spec_name)
         
         with open(boxspec_file_name,'r') as f:
             data = f.read()
@@ -55,12 +55,12 @@ class BoxLoader(object):
         fname = 'Description.md'
         path_name = '{}/{}'.format(baseDir,moduleName.replace('.','/'))
         full_name = '{}/{}'.format(path_name,fname)
-        with open(full_name) as f:
+        with open(full_name,'r') as f:
             md_data = f.read()
             receiver.displayBoxDescription(md_data)
 
     @classmethod
-    def findModuleNameByBoxID(cls,boxID):
+    def findModuleNameByBoxID(cls,boxID,resource):
         """
         Find module name by box ID
 
@@ -69,7 +69,7 @@ class BoxLoader(object):
         :rtype: list of strings
         """
         version = boxID.split('@')[1]
-        box_dir = '{}/{}'.format(SystemConfig.getBoxDir(),boxID.split('@')[0].replace('.','/'))
+        box_dir = '{}/{}'.format(resource.getWorkspaceDir(),boxID.split('@')[0].replace('.','/'))
         return box_dir
 
     @classmethod

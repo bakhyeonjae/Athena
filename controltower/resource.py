@@ -27,6 +27,12 @@ class Resource(object):
         data = {'local_box_storage':'', 'workspace':'{}/artifacts'.format(Path.home())}
         with open(pathName, 'w') as outfile:
             json.dump(data, outfile)
+
+    def updateConfigFile(self,path_name):
+        cfg_path_name = '{}/{}/{}'.format(Path.home(), self.resourceName, self.configFileName)
+        data = {'local_box_storage':'{}'.format(path_name), 'workspace':'{}/artifacts'.format(Path.home())}
+        with open(cfg_path_name, 'w') as outfile:
+            json.dump(data, outfile)
         
     def checkBoxDirConfigured(self):
         cfg_path_name = '{}/{}/{}'.format(Path.home(),self.resourceName,self.configFileName)
@@ -37,3 +43,16 @@ class Resource(object):
                 return False
             else:
                 return True
+
+    def getWorkspaceDir(self):
+        artifact_dir = '{}/artifacts'.format(Path.home())
+        if not os.path.exists(artifact_dir):
+            os.makedirs(artifact_dir)
+        return artifact_dir
+
+    def getLocalWorkSpaceDir(self):
+        cfg_path_name = '{}/{}/{}'.format(Path.home(), self.resourceName, self.configFileName)
+        with open(cfg_path_name,'r') as f:
+            data = json.load(f)
+            return data['local_box_storage']
+        return ''

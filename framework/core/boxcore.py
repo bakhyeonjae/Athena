@@ -25,12 +25,16 @@ from framework.core.portarray import PortArray
 
 from utils import stringutils
 
-sys.path.append(SystemConfig.getLocalWorkSpaceDir())
-sys.path.append(SystemConfig.getRepository())
-sys.path.append(SystemConfig.getBoxDir())
+#sys.path.append(SystemConfig.getLocalWorkSpaceDir())
+#sys.path.append(SystemConfig.getRepository())
+#sys.path.append(SystemConfig.getBoxDir())
 
 class Box(object):
     def __init__(self, desc, ancestor, boxspec, controlTower, view=None, implType=''):
+
+        sys.path.append(controlTower.resource.getLocalWorkSpaceDir())
+        sys.path.append(controlTower.resource.getWorkspaceDir())
+
         self.desc = desc
         self.boxes = []   # type : boxcore.Box
         self.inputs = []
@@ -113,7 +117,7 @@ class Box(object):
     def editCode(self):
 
         class_stripped = stringutils.removeSameName(self.spec)
-        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),class_stripped)
+        self.path_name = '{}/{}'.format(self.controlTower.resource.getLocalWorkSpaceDir(),class_stripped)
 
         os.makedirs(self.path_name, exist_ok=True) 
         if not os.path.exists('{}/{}.py'.format(self.path_name,self.codedesc.targetClass)):
@@ -292,6 +296,7 @@ class Box(object):
             self.loadCodeDescription()
             self.implType = 'CODE'
             print('=========> {}'.format(self.spec))
+            print('*********> {}'.format(self.codedesc.targetClass))
             my_class = getattr(importlib.import_module(self.spec.replace('.Users.hj.bak.AthenaBoxes.','')), self.codedesc.targetClass)
             self.instance = my_class()
             for ret_val in self.codedesc.returns:
@@ -313,16 +318,16 @@ class Box(object):
         self.view.configPopupMenu(self.implType)
 
         for idx, subbox in enumerate(subboxes):
-            file_path = BoxLoader.findModuleNameByBoxID(subbox['type'])
+            file_path = BoxLoader.findModuleNameByBoxID(subbox['type'],self.controlTower.resource)
             class_name = '{}.box'.format(file_path.split('/')[-1]) 
             module_name = '/'.join(file_path.split('/')[:-1])
             print('file_path:{}'.format(file_path))
             print('In boxcore.buildStructure - subbox_name:{}, module_name:{}, class_name:{}'.format(subbox['type'],module_name,class_name))
             #new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
-            if SystemConfig.getLocalWorkSpaceDir() in module_name:
-                only_module_name = module_name.replace(SystemConfig.getLocalWorkSpaceDir(),'')
-            elif SystemConfig.getBoxDir() in module_name:
-                only_module_name = module_name.replace(SystemConfig.getBoxDir(),'')
+            if self.controlTower.resource.getLocalWorkSpaceDir() in module_name:
+                only_module_name = module_name.replace(self.controlTower.resource.getLocalWorkSpaceDir(),'')
+            elif self.controlTower.resource.getWorkspaceDir() in module_name:
+                only_module_name = module_name.replace(self.controlTower.resource.getWorkspaceDir(),'')
             new_box = BoxLoader.createBox(only_module_name.lstrip('/'),class_name,self,self.controlTower)
             new_box.setName(subbox['name'])
             
@@ -506,7 +511,7 @@ class Box(object):
     def save(self):
         class_stripped = stringutils.removeSameName(self.spec)
 
-        self.path_name = '{}/{}'.format(SystemConfig.getLocalWorkSpaceDir(),class_stripped)
+        self.path_name = '{}/{}'.format(self.controlTower.resource.getLocalWorkSpaceDir(),class_stripped)
 
         os.makedirs(self.path_name, exist_ok=True) 
 

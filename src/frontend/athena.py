@@ -30,14 +30,7 @@ class MainWindow(QFrame):
 
     def setControlTower(self, ct):
         self.controlTower = ct
-
-        if not self.controlTower.resource.checkBoxDirConfigured():
-            dirDlg = QFileDialog()
-            dirDlg.setFileMode(QFileDialog.Directory)
-            if dirDlg.exec_():
-                local_box_dir = dirDlg.selectedFiles()
-                print('{} is configured as local workspace'.format(local_box_dir))
-
+        
     def initUI(self):
         self.setAcceptDrops(True)
 
@@ -124,7 +117,7 @@ class TreeWidget(QTreeWidget):
 
 # Top main window has tree and right frame
 class TopWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, resource, parent=None):
         QWidget.__init__(self, parent)
 
         self.setGeometry(100, 100, 1600, 900)
@@ -143,12 +136,19 @@ class TopWindow(QWidget):
         '''
         self.viewInfo.setHtml(sample_html)
 
+        if not resource.checkBoxDirConfigured():
+            dirDlg = QFileDialog()
+            dirDlg.setFileMode(QFileDialog.Directory)
+            if dirDlg.exec_():
+                local_box_dir = dirDlg.selectedFiles()
+                resource.updateConfigFile(local_box_dir[0])
+
         
-        self.tree = TreeWidget(self.frame,self.viewInfo,SystemConfig.getRepository(),'Cloud Workspace')
+        self.tree = TreeWidget(self.frame,self.viewInfo,resource.getWorkspaceDir(),'Cloud Workspace')
         self.tree.setFixedWidth(280)
         self.tree.setStyleSheet("background-color: rgb(200, 255, 255)")
 
-        self.boxRepoLocal = TreeWidget(self.frame,self.viewInfo,SystemConfig.getLocalWorkSpaceDir(),'Local Workspace')
+        self.boxRepoLocal = TreeWidget(self.frame,self.viewInfo,resource.getLocalWorkSpaceDir(),'Local Workspace')
         self.boxRepoLocal.setFixedWidth(280)
         self.boxRepoLocal.setStyleSheet("background-color: rgb(200, 255, 255)")
         self.boxRepoLocal.update()
@@ -169,7 +169,7 @@ if __name__ == "__main__":
         app = QApplication(sys.argv)
     controlTower = ControlTower()
     mainWnd = MainWnd()
-    mywin = TopWindow()
+    mywin = TopWindow(controlTower.resource)
     controlTower.setWorkSpace(mywin.frame)
     controlTower.setInfoWindow(mywin.viewInfo)
     controlTower.setBoxTree(mywin.tree)
