@@ -16,6 +16,7 @@ from framework.dialog.AlertDialog import AlertDialog
 from framework.core.boxloader import BoxLoader
 from controltower.controltower import ControlTower
 from framework.core.systemconfig import SystemConfig
+from framework.core.syncbox import SyncBox
 
 class MainWindow(QFrame):
     listBox = []
@@ -83,6 +84,24 @@ class TreeWidget(QTreeWidget):
 
         self.itemDoubleClicked.connect(lambda:self.controlTower.createBoxFromDesc(self.currentItem(),self.boxDir))
         self.itemClicked.connect(lambda:self.controlTower.displayBoxDescription(self.currentItem(),self.boxDir))
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self.createPopupMenu()
+        QTreeWidget.mouseReleaseEvent(self,event)
+
+    def moveToRepo(self):
+        synchroniser = SyncBox(controlTower.resource)
+        synchroniser.moveBoxToRepo(BoxLoader.getModuleName(self.currentItem()))
+
+    def createPopupMenu(self):
+        menu = QMenu()
+        act = QAction('Move to cloud workspace', self)
+        act.triggered.connect(self.moveToRepo)
+        menu.addAction(act)
+
+        menu.exec_(QCursor.pos())
+        menu = None
 
     def setControlTower(self, ct):
         self.controlTower = ct
