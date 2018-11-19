@@ -75,7 +75,7 @@ class BoxLoader(object):
     @classmethod
     def getModuleName(cls,currItem):
         if currItem:
-            name = currItem.text(0)
+            name = currItem.text(0).replace('.','_')
             return '{}/{}'.format(cls.getModuleName(currItem.parent()),name).lstrip('/')
         else:
             return ''

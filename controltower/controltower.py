@@ -25,6 +25,10 @@ class ControlTower(object):
         self.infoWnd = infoWnd
         self.infoWnd.setControlTower(self)
 
+    def updateBoxTrees(self):
+        self.boxTree.update()
+        self.localBoxTree.update()
+
     def setBoxTree(self, boxTree):
         self.boxTree = boxTree
         self.boxTree.setControlTower(self)

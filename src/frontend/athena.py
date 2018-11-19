@@ -93,6 +93,8 @@ class TreeWidget(QTreeWidget):
     def moveToRepo(self):
         synchroniser = SyncBox(controlTower.resource)
         synchroniser.moveBoxToRepo(BoxLoader.getModuleName(self.currentItem()))
+        synchroniser.syncWorkspace()
+        self.controlTower.updateBoxTrees()
 
     def createPopupMenu(self):
         menu = QMenu()
@@ -111,7 +113,7 @@ class TreeWidget(QTreeWidget):
         for category in subitem:
             if '__pycache__' in category:
                 continue
-            subWidgetItem = QTreeWidgetItem(parentItem, [category])
+            subWidgetItem = QTreeWidgetItem(parentItem, [category.replace('_','.')])
             self.constructSubTree('{}/{}'.format(pathName,category),subWidgetItem)
 
     def getSubDir(self,pathName):

@@ -14,3 +14,7 @@ class Compressor(object):
             os.remove('{}/{}.zip'.format(destDir,BOX_PACKAGE_NAME))
         shutil.move('./{}.zip'.format(BOX_PACKAGE_NAME), destDir)
         return '{}/{}.zip'.format(destDir,BOX_PACKAGE_NAME)
+
+    def decompress(self, pathName):
+        path_name, file_name = os.path.split(pathName)
+        shutil.unpack_archive(pathName, path_name, 'zip')
