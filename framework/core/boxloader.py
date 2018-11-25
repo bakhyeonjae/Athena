@@ -52,9 +52,10 @@ class BoxLoader(object):
 
     @classmethod
     def loadBoxDescription(cls,baseDir,moduleName,receiver):
-        fname = 'Description.md'
+        fname = 'desc'
+        extension = 'md'
         path_name = '{}/{}'.format(baseDir,moduleName.replace('.','/'))
-        full_name = '{}/{}'.format(path_name,fname)
+        full_name = '{}/{}.{}'.format(path_name,fname,extension)
         with open(full_name,'r') as f:
             md_data = f.read()
             receiver.displayBoxDescription(md_data)

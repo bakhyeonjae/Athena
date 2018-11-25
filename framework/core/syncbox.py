@@ -9,6 +9,7 @@ sys.path.append('../..')
 
 from framework.util.compressor import Compressor
 from src.frontend.boxverpathdlg import BoxVerPathDlg
+from controltower.resource import Resource
 
 class SyncBox(object):
     def __init__(self, resource):

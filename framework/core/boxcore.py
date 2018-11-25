@@ -20,8 +20,10 @@ from framework.core.structcode import CodeStruct
 from framework.core.structcode import ParamStruct
 from framework.core.structcode import ReturnStruct
 from framework.core.codetemplate import CodeTemplate
+from framework.core.desctemplate import DescTemplate
 from framework.core.systemconfig import SystemConfig
 from framework.core.portarray import PortArray
+from framework.core.documentcomposer import DocumentComposer
 
 from utils import stringutils
 
@@ -50,7 +52,6 @@ class Box(object):
         self.controlTower = controlTower
         self.logic = None
         self.spec = boxspec
-        print('Box initialisation : {}'.format(self.spec))
         self.version = None
         self.isOpened = False
         self.ancestor = ancestor
@@ -295,8 +296,6 @@ class Box(object):
         if 'code' in box.keys():
             self.loadCodeDescription()
             self.implType = 'CODE'
-            print('=========> {}'.format(self.spec))
-            print('*********> {}'.format(self.codedesc.targetClass))
             my_class = getattr(importlib.import_module(self.spec.replace('.Users.hj.bak.AthenaBoxes.','')), self.codedesc.targetClass)
             self.instance = my_class()
             for ret_val in self.codedesc.returns:
@@ -321,9 +320,6 @@ class Box(object):
             file_path = BoxLoader.findModuleNameByBoxID(subbox['type'],self.controlTower.resource)
             class_name = '{}.box'.format(file_path.split('/')[-1]) 
             module_name = '/'.join(file_path.split('/')[:-1])
-            print('file_path:{}'.format(file_path))
-            print('In boxcore.buildStructure - subbox_name:{}, module_name:{}, class_name:{}'.format(subbox['type'],module_name,class_name))
-            #new_box = BoxLoader.createBox(module_name,class_name,self,self.controlTower)
             if self.controlTower.resource.getLocalWorkSpaceDir() in module_name:
                 only_module_name = module_name.replace(self.controlTower.resource.getLocalWorkSpaceDir(),'')
             elif self.controlTower.resource.getWorkspaceDir() in module_name:
@@ -446,7 +442,6 @@ class Box(object):
 
     def run(self):
         self.propagateExecution()
-        print('run - box name is ',self.name)
         self.execute()
 
     def propagateExecution(self):
@@ -457,7 +452,6 @@ class Box(object):
         if self.boxes:
             pass
         else:
-            print('execute - box name is ',self.name)
             self.executeCode()
 
     def executeCode(self):
@@ -467,12 +461,10 @@ class Box(object):
         exec_str = 'self.instance.{}('.format(self.instance.execute.__name__)
         for idx,port in enumerate(self.inputs):
             if 'newbox' == self.name:
-                print('targetClass : {}, port.targetClass : {}'.format(self.codedesc.targetClass,port.targetClass))
             if self.codedesc.targetClass != port.targetClass:
                 return #Raise exception
             params = [p.name for p in self.codedesc.params]
             if 'newbox' == self.name:
-                print('targetParam : {}, params : {}'.format(port.targetParam,params))
             if port.targetParam not in params:
                 return #Raise exception
             exec_str += '{}=self.inputs[{}].getData()'.format(port.targetParam,idx)
@@ -482,12 +474,10 @@ class Box(object):
             exec_str += ','
         for idx,port in enumerate(self.cfgVars):
             if 'newbox' == self.name:
-                print('#targetClass : {}, port.targetClass : {}'.format(self.codedesc.targetClass,port.targetClass))
             if self.codedesc.targetClass != port.targetClass:
                 return #Raise exception
             params = [p.name for p in self.codedesc.params]
             if 'newbox' == self.name:
-                print('#targetParam : {}, params : {}'.format(port.targetParam,params))
             if port.targetParam not in params:
                 return #Raise exception
             exec_str += '{}=self.cfgVars[{}].getData()'.format(port.targetParam,idx)
@@ -499,7 +489,6 @@ class Box(object):
         for ret in self.codedesc.returns:
             if ret.name in [output.name for output in self.outputs]:
                 varname = 'self.instance.{}'.format(ret.name)
-                print('varname = ','self.instance.{}'.format(ret.name))
                 var = eval(varname)
                 out_port = next(output for output in self.outputs if output.name == ret.name)
                 out_port.transferData(var)
@@ -508,7 +497,41 @@ class Box(object):
         self.boxes.append(box)
         box.view.move(500,500)
 
-    def save(self):
+    def checkDocumentFile(self):
+        class_stripped = stringutils.removeSameName(self.spec)
+        self.path_name = '{}/{}'.format(self.controlTower.resource.getLocalWorkSpaceDir(),class_stripped)
+        if not os.path.exists('{}/desc.md'.format(self.path_name)):
+            self.saveBoxPackage()
+
+    def getDocumentComposer(self):
+        class_stripped = stringutils.removeSameName(self.spec)
+        self.path_name = '{}/{}'.format(self.controlTower.resource.getLocalWorkSpaceDir(),class_stripped)
+        
+        file_name = '{}/desc.md'.format(self.path_name)
+        if os.path.exists(file_name):
+            self.documentComposer = DocumentComposer(file_name)
+            return self.documentComposer 
+
+    def saveBoxPackage(self):
+        class_stripped = stringutils.removeSameName(self.spec)
+        self.path_name = '{}/{}'.format(self.controlTower.resource.getLocalWorkSpaceDir(),class_stripped)
+        os.makedirs(self.path_name, exist_ok=True)
+        
+        self.saveBox()
+
+        if not os.path.exists('{}/{}.py'.format(self.path_name, self.codedesc.targetClass)):
+            code_template = CodeTemplate()
+            code_template.setPath(self.path_name)
+            code_template.compose(self.codedesc.targetClass, self.inputs, self.outputs, self.cfgVars)
+
+        if not os.path.exists('{}/desc.md'.format(self.path_name)):
+            desc_template = DescTemplate()
+            desc_template.setPath(self.path_name)
+            desc_template.compose(self.codedesc.targetClass, self.inputs, self.outputs, self.cfgVars)
+
+        self.controlTower.updateBoxTrees()
+
+    def saveBox(self):
         class_stripped = stringutils.removeSameName(self.spec)
 
         self.path_name = '{}/{}'.format(self.controlTower.resource.getLocalWorkSpaceDir(),class_stripped)

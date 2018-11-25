@@ -9,6 +9,7 @@ from framework.dialog.TextInputDialog import TextInputDialog
 from framework.dialog.ConfigDialog import ConfigDialog
 from framework.dialog.GlobalConfigDialog import GlobalConfigDialog
 from framework.dialog.PortArrayDialog import PortArrayDialog
+from framework.dialog.documentdialog import DocumentDialog
 
 class CommonModuleBox(QFrame):
     
@@ -107,7 +108,8 @@ class CommonModuleBox(QFrame):
                  {"title":"Name","desc":"Give a name to this box", "method":self.rename},
                  {"title":"Config variables","desc":"Configure internal variables", "method":self.configParams},
                  {"title":"Add an Input Port Array","desc":"Add an input port array", "method":self.addInputPortArray},
-                 {"title":"Add an Output Port Array","desc":"Add an output port array", "method":self.addOutputPortArray}
+                 {"title":"Add an Output Port Array","desc":"Add an output port array", "method":self.addOutputPortArray},
+                 {"title":"Document","desc":"Document on this box", "method":self.composeDoc}
                 ]
         # Composition - Step Into, Step out
         if 'COMPOSITION' == menuType:
@@ -119,6 +121,13 @@ class CommonModuleBox(QFrame):
             menus.append({"title":"Open Code", "desc":"Open Code", "method":self.editCode})
 
         self.setPopupActionList(menus)
+
+    def composeDoc(self):
+        self.core.checkDocumentFile()
+        composer = self.core.getDocumentComposer()
+        desc, inport, outport, cfg, ret = DocumentDialog.getText(composer.getDesc(), composer.getInText(), composer.getOutText(), composer.getConfigText())
+        if QDialog.Accepted == ret:
+            composer.compose(desc,outport,inport,cfg)
 
     def addInputPortArray(self):
         name, number, ret = PortArrayDialog.getParameters('Add Input port array')
@@ -167,7 +176,7 @@ class CommonModuleBox(QFrame):
             self.core.addOutPort(name)
 
     def save(self):
-        self.core.save()
+        self.core.saveBoxPackage()
         self.core.controlTower.localBoxTree.update()
 
     def keyPressEvent(self, event):
